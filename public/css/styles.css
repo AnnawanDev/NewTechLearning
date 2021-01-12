@@ -1,0 +1,99 @@
+/*
+   CS 340 Final Project: New Tech Learning
+   Nora Marji
+   Ed Wied
+   January 11, 2021
+*/
+
+/*  -------------------------------------------- GENERAL */
+html, body {
+  margin: 0px;
+  padding: 0px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+body {
+  background-color: #dfe3f0;
+}
+
+h1, h2 {
+  color: #000000;
+}
+
+h1, h2 {
+  font-size: 1.1em;
+}
+
+p, label {
+  color: #000000;
+}
+
+textarea, input {
+  color: #000000;
+}
+
+#mainContent {
+  padding: 10px 10px 10px 85px;
+}
+
+.maxwidth900 {
+  max-width: 900px;
+}
+
+.styleLinks a {
+  text-decoration: underline;
+  color: #fff3db;
+}
+
+.styleLinks a:hover {
+  color: #333333;
+}
+
+.styleLinks {
+  color: #fff3db;
+}
+
+/*  -------------------------------------------- NAVIGATION */
+.navContainer {
+  width: 100%;
+  height: 50px;
+  background-color: #86a3fc;
+  margin: 0px 0px 0px 0px;
+  padding: 0px;
+}
+
+.navigation ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 17px 0px 0px 85px;
+}
+
+.navigation li {
+  display: inline;
+  margin: 0px 40px 0px 0px;
+}
+
+.navigation a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.navigation a:hover {
+  background-color: #333333;
+}
+
+/* .navigation > li:last-child {
+    float:right;
+} */
+
+.hideLink {
+  display: none;
+}
+
+.showLink {
+  display: block;
+}
+
+/*  -------------------------------------------- 404 */
+.large404 {
+  font-size: 4em;
+}
