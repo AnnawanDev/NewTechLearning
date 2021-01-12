@@ -1,0 +1,30 @@
+{
+  "name": "NewTechLearning",
+  "version": "1.0.0",
+  "description": "CS340 Final Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js -e js,css,handlebars",
+    "prod": "./node_modules/forever/bin/forever start src/index.js",
+    "stopProd": "./node_modules/forever/bin/forever stop src/index.js"
+  },
+  "keywords": [],
+  "author": "Nora Marji, Ed Wied",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.0",
+    "forever": "^3.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
