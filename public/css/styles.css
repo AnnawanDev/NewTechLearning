@@ -93,6 +93,28 @@ textarea, input {
   display: block;
 }
 
+
+
+
+/*  -------------------------------------------- COURSES */
+#availableClasses div {
+  float: left; margin: 0px 20px 0px 0px;
+  padding: 0px;
+  width: 150px;
+  height: 150px;
+}
+
+#availableClasses div>a {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: #000000;
+}
+
+
+
+
+
 /*  -------------------------------------------- 404 */
 .large404 {
   font-size: 4em;

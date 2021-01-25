@@ -150,7 +150,7 @@ app.post('/api/createUser', async (req,res,next) => {
 app.get('/api/getCourses', async (req,res,next) => {
   let context = {};
 
-  mysql.pool.query('SELECT `courseName` FROM `Courses`;', (err, rows, fields) => {
+  mysql.pool.query('SELECT `courseId`, `courseName` FROM `Courses`;', (err, rows, fields) => {
       if (err) {
         logIt("ERROR FROM /api/getCourses: " + err);
         return;
