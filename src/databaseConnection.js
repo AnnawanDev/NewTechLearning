@@ -2,10 +2,10 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   January 11, 2021
+   January 25, 2021
 */
 
-require('dotenv').config({path: __dirname + '../.env'})
+require('dotenv').config({path: __dirname + '/.env'})
 let mysql = require('mysql');
 
 let pool = mysql.createPool({
