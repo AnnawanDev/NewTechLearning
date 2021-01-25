@@ -29,18 +29,22 @@ function getAvailableClasses() {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       console.log("DATA ---" + JSON.stringify(data))
-      feedbackToUser = "<ul>";
+
 
       if (data.results.length == 0) {
         feedbackToUser = "<p>Sorry, we currently don't have any available classes.</p>";
       } else {
         for (let someClass of data.results) {
-          let fakeCourseID = 3; //TODO: REPLACE
+          let fakeCourseID = someClass.courseId;
           let classURL = baseURL + coursesURLString + "/" + fakeCourseID + "/" + someClass.courseName + courseOverviewLandingpage;
-          feedbackToUser += "<li><a href=\"" + classURL + "\">" + someClass.courseName + "</a></li>";
+          feedbackToUser += "<div>";
+          feedbackToUser += "<a href=\"" + classURL + "\"><img src=\"/images/courseImage1.jpg\" width=\"150\" height=\"150\" /></a>";
+          feedbackToUser += "<a href=\"" + classURL + "\">" + someClass.courseName + "</a>";
+          feedbackToUser += "</div>";
         }
+        feedbackToUser += "<div style=\"clear: both;\"></div>";
       }
-      feedbackToUser += "</ul>";
+
     } else {
       feedbackToUser = "<p>Sorry, there was an error in getting the available classes.</p>";
     }
