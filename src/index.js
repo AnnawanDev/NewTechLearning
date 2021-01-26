@@ -166,7 +166,7 @@ app.post('/api/createUser', async (req,res,next) => {
   let context = {};
 
   //verify user posted name, email, password
-  if (!req.body['firstName'] || !req.body['lastName'] || !req.body['email'] || !req.body['password']) {
+  if (!req.body['firstName'] || !req.body['lastName'] || !req.body['userName'] || !req.body['email'] || !req.body['password']) {
     logIt('ERROR! Required values not in POST body');
     res.status(400).send();
     return;
@@ -175,13 +175,23 @@ app.post('/api/createUser', async (req,res,next) => {
   //TODO: ideally make sure email is valid, use some kind of validation on first and last name
 
   let hashedPassword = await bcrypt.hash(req.body['password'], 8);  //hash password sent in with bcrypt
-  const inserts = [req.body['firstName'], req.body['lastName'], req.body['email'], [hashedPassword]];  //set up variables to insert into db
+  const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword]];  //set up variables to insert into db
 
-  mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `email`, `password`) VALUES (?, ?, ?, ?);', inserts, (err, result) => {
+  mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`) VALUES (?, ?, ?, ?, ?);', inserts, (err, result) => {
     if (err) {
       // next(err);
-      res.status(400).send()
-      return;
+      console.log("/api/createUser ERROR: " + err)
+
+
+      if (err.toString().includes("ER_DUP_ENTRY")) {
+        context.result = "DUPLICATE"
+        res.status(400).send(context);
+        return;
+      } else {
+        res.status(400).send()
+        return;
+      }
+
     }
 
       context.results = "Inserted ID " + result.insertId;
