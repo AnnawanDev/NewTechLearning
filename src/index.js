@@ -37,7 +37,7 @@ app.use(session({
   activeDuration: 5 * 60 * 1000,
 }));
 
-// page navigation ---------------------------------------------------
+// public / student page navigation ---------------------------------------------------
 app.get('/', (req, res) => {
   res.render('home', {
     title: 'New Tech Learning | Home'
@@ -60,6 +60,12 @@ app.get('/Logout', (req, res) => {
   req.session.reset();
   res.render('logout', {
     title: 'New Tech Learning | Logout'
+  });
+});
+
+app.get('/CreateAccount', (req, res) => {
+  res.render('createAccount', {
+    title: 'New Tech Learning | Create Account'
   });
 });
 
@@ -133,6 +139,25 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
   });
 });
 
+
+// admin page navigation ---------------------------------------------------
+app.get('/Admin/', (req, res) => {
+  res.render('adminHome', {
+    title: 'New Tech Learning | Admin Home'
+  });
+});
+
+app.get('/Admin/Users/', (req, res) => {
+  res.render('adminUsers', {
+    title: 'New Tech Learning | Admin Users'
+  });
+});
+
+app.get('/Admin/Courses/', (req, res) => {
+  res.render('adminCourses', {
+    title: 'New Tech Learning | Admin Courses'
+  });
+});
 
 // APIs ----------------------------------------------------------------
 
