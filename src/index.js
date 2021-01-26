@@ -78,13 +78,27 @@ app.get('/Courses/:id/:courseName/overview', (req, res) => {
 
 
   //TODO: get real course details from query
-  let courseName = "Java";  //TODO- replace with real API
-  let htmlContent = "<h1>Java</h1><p>Welcome to an Introduction to Java</p>"; //TODO - get real HTML dump from course overview
+  // let courseName = "Java";  //TODO- replace with real API
+  // let htmlContent = "<h1>Java</h1><p>Welcome to an Introduction to Java</p>"; //TODO - get real HTML dump from course overview
 
-  res.render('courseOverview', {
-    title: courseName,
-    htmlContent: htmlContent
-  });
+  let context = {};
+  context.results = "";
+  logIt("ID: " + req.params.id)
+
+  mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /Courses/:id/:courseName/overview: " + err);
+        return;
+      }
+
+      logIt("/Courses/:id/:courseName/overview query result: " + JSON.stringify(rows[0].courseDescription));
+
+      res.render('courseOverview', {
+        title: rows[0].courseName,
+        htmlContent: rows[0].courseDescription,
+        moduleLink: '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1'
+      });
+    });
 });
 
 
@@ -95,20 +109,23 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
     req.params.courseModule = 1;
   }
 
-  //do sql query to see what course corresponds to req.params.courseName
-  //pretending here that we did a query and it resulted in "assembly-language"
-  //otherwise query resulted in either (1) error (so we say, "oops - sorry") or (2) course not found
-  let courseName = "{ UPDATE WITH COURSE NAME }";  //would get nonHTML name to show from db query
-  let htmlContent; //html dump from db query
+  // //do sql query to see what course corresponds to req.params.courseName
+  // //pretending here that we did a query and it resulted in "assembly-language"
+  // //otherwise query resulted in either (1) error (so we say, "oops - sorry") or (2) course not found
+  // let courseName = "{ UPDATE WITH COURSE NAME }";  //would get nonHTML name to show from db query
+  // let htmlContent; //html dump from db query
+  //
+  // //would have to  update this with actual sql query
+  // if (req.params.courseModule == 1) {
+  //   htmlContent = "<h1>Welcome to the class</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
+  // } else if (req.params.courseModule == 2){
+  //   htmlContent = "<h1>Module 2</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
+  // } else {
+  //   htmlContent = "<h1>Sorry, that's module can't be found</h1>"; //pretending can't find that module
+  // }
 
-  //would have to  update this with actual sql query
-  if (req.params.courseModule == 1) {
-    htmlContent = "<h1>Welcome to the class</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
-  } else if (req.params.courseModule == 2){
-    htmlContent = "<h1>Module 2</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
-  } else {
-    htmlContent = "<h1>Sorry, that's module can't be found</h1>"; //pretending can't find that module
-  }
+  let courseName = "TEMP PLACEHOLDER TEXT";
+  let htmlContent = "TEMP PLACEHOLDER TEXT FOR MODULE # " + req.params.courseModule;
 
   res.render('coursePage', {
     title: courseName,
