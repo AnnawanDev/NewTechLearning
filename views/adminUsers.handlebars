@@ -1,9 +1,55 @@
+<!-- bad place for this -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
 <div style="background-color: #ff0000; height: 50px;">
   {{>adminNavigation}}
 </div>
 
 <div id="mainContent">
   <h1>Admin Users</h1>
-  
-
+  <table>
+    <thead>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Change password</th>
+      <th>User Type</th>
+      <th colspan="2"></th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Darth</td>
+        <td>Vader</td>
+        <td>Vader1</td>
+        <td>vader@vader.com</td>
+        <td></td>
+        <td>Student</td>
+        <td><button id="editButton1">Edit</button></td>
+        <td><button id="deleteButton1">Delete</button></td>
+      </tr>
+      <tr>
+        <td>Darth</td>
+        <td>Vader</td>
+        <td>Vader2</td>
+        <td>vader@vader.com</td>
+        <td></td>
+        <td>Student</td>
+        <td><button id="editButton2">Edit</button></td>
+        <td><button id="deleteButton2">Delete</button></td>
+      </tr>
+      <tr>
+        <td>Darth</td>
+        <td>Vader</td>
+        <td>Vader3</td>
+        <td>vader@vader.com</td>
+        <td></td>
+        <td>Student</td>
+        <td><button id="editButton3">Edit</button></td>
+        <td><button id="deleteButton3">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
 </div>

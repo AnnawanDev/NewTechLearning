@@ -1,9 +1,37 @@
+<!-- bad place for this -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
 <div style="background-color: #ff0000; height: 50px;">
   {{>adminNavigation}}
 </div>
 
 <div id="mainContent">
   <h1>Admin Courses</h1>
-  
 
+  <table>
+    <thead>
+      <th>Course Name</th>
+      <th>Course Description</th>
+      <th>Course Start Date</th>
+      <th colspan="2"></th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Intro to Java</td>
+        <td>{ some content }</td>
+        <td>2021-01-03</td>
+        <td><button id="editButton1">Edit</button></td>
+        <td><button id="deleteButton1">Delete</button></td>
+      </tr>
+      <tr>
+        <td>C++</td>
+        <td>{ some content }</td>
+        <td>2021-01-10</td>
+        <td><button id="editButton2">Edit</button></td>
+        <td><button id="deleteButton2">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
 </div>

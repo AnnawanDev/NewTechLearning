@@ -159,6 +159,18 @@ app.get('/Admin/Courses/', (req, res) => {
   });
 });
 
+app.get('/Admin/AddUsersCourses/', (req, res) => {
+  res.render('adminAddUsersCourses', {
+    title: 'New Tech Learning | Admin Add Users to Courses'
+  });
+});
+
+app.get('/Admin/DropUsersCourses/', (req, res) => {
+  res.render('adminDropUsersCourses', {
+    title: 'New Tech Learning | Admin Drop Users from Courses'
+  });
+});
+
 // APIs ----------------------------------------------------------------
 
 //TODO: Add security eventually, but leave alone for now to create test users via Postman
