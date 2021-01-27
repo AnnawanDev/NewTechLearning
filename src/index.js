@@ -153,9 +153,27 @@ app.get('/Admin/Users/', (req, res) => {
   });
 });
 
+app.get('/Admin/Languages/', (req, res) => {
+  res.render('adminLanguages', {
+    title: 'New Tech Learning | Admin Languages'
+  });
+});
+
+app.get('/Admin/Categories/', (req, res) => {
+  res.render('adminCategories', {
+    title: 'New Tech Learning | Admin Categories'
+  });
+});
+
 app.get('/Admin/Courses/', (req, res) => {
   res.render('adminCourses', {
     title: 'New Tech Learning | Admin Courses'
+  });
+});
+
+app.get('/Admin/CourseModules/', (req, res) => {
+  res.render('adminCourseModules', {
+    title: 'New Tech Learning | Admin CourseModules'
   });
 });
 
@@ -168,6 +186,23 @@ app.get('/Admin/AddUsersCourses/', (req, res) => {
 app.get('/Admin/DropUsersCourses/', (req, res) => {
   res.render('adminDropUsersCourses', {
     title: 'New Tech Learning | Admin Drop Users from Courses'
+  });
+});
+
+app.get('/Admin/AddDropCoursesCategories/', (req, res) => {
+  res.render('adminAddDropCoursesCategories', {
+    title: 'New Tech Learning | Admin Add/Drop Categories to/from Courses'
+  });
+});
+
+app.get('/Admin/AddDropLanguagesCourses/', (req, res) => {
+  res.render('adminAddDropLanguagesCourses', {
+    title: 'New Tech Learning | Admin Add/Drop Languages to/from Courses'
+  });
+});
+app.get('/Admin/AddDropLanguagesModules/', (req, res) => {
+  res.render('adminAddDropLanguagesModules', {
+    title: 'New Tech Learning | Admin Add/Drop Languages to/from Course Modules'
   });
 });
 

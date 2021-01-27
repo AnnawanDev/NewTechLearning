@@ -1,0 +1,52 @@
+<!--still a bad place for this -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
+<div style="background-color: #ff0000; height: 50px;">
+  {{>adminNavigation}}
+</div>
+
+<div id="mainContent">
+  <h1>Admin Add/Drop Categories to/from Courses</h1>
+  <form>
+      <label for="course">Select Course:</label>
+      <select name="course" id="course">
+        <option value="1">Intro to Java</option>
+        <option value="2">C++</option>
+        <option value="3">Advanced SQL</option>
+        <option value="4">Python Boot Camp</option>
+      </select>
+    </form>
+
+
+    <br /><br />
+
+    <table>
+        <thead>
+        <th>Category</th>
+        <th colspan="2"></th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Web Development</td>
+            <td><button id="drop1">Drop from Course</button></td>
+        </tr>
+        <tr>
+            <td>Front End</td>
+            <td><button id="drop1">Drop from Course</button></td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>Add category</h2>
+    <form>
+      <label for="category">Select Category:</label>
+      <select name="category" id="course">
+        <option value="1">Front End</option>
+        <option value="2">Back End</option>
+        <option value="3">Web Development</option>
+        <option value="4">HTML</option>
+      </select>
+      <input type="submit">
+    </form>
+</div>

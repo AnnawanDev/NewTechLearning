@@ -1,0 +1,56 @@
+<!--still a bad place for this -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
+<div style="background-color: #ff0000; height: 50px;">
+  {{>adminNavigation}}
+</div>
+
+<div id="mainContent">
+  <h1>Admin Course Modules</h1>
+  <form>
+      <label for="course">Select Course:</label>
+      <select name="course" id="course">
+        <option value="1">Intro to Java</option>
+        <option value="2">C++</option>
+        <option value="3">Advanced SQL</option>
+        <option value="4">Python Boot Camp</option>
+      </select>
+    </form>
+
+    <br /><br />
+
+    <table>
+    <thead>
+        <th>Module #</th>
+        <th>HTML</th>
+        <th ></th>
+        <th></th>
+    </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>{html content}</td>
+            <td><button id= "edit1">Edit</button></td>
+            <td><button id="drop1">Drop from Course</button></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>{html content}</td>
+            <td><button id= "edit2">Edit</button></td>
+            <td><button id="drop2">Drop from Course</button></td>
+        </tr>
+        </tbody>
+
+    </table>
+    <h2>Add Module</h2>
+    <form action="">
+        <input type="text" name = "moduleOrder" placeholder = "module order">
+        <textarea rows="4" cols="50" type="textarea" name ="languageCountry" placeholder = "HTML" ></textarea>
+        <input type="submit">
+    </form>
+  
+
+  
+</div>

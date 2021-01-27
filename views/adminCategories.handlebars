@@ -1,0 +1,38 @@
+<!--still a bad place for this -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
+<div style="background-color: #ff0000; height: 50px;">
+  {{>adminNavigation}}
+</div>
+
+<div id="mainContent">
+  <h1>Admin Categories</h1>
+
+  <table>
+    <thead>
+      <th>Category Name</th>
+      <th colspan="2"></th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Front End</td>
+        <td><button id="editButton1">Edit</button></td>
+        <td><button id="deleteButton1">Delete</button></td>
+      </tr>
+      <tr>
+        <td>Back End </td>
+        <td><button id="editButton2">Edit</button></td>
+        <td><button id="deleteButton2">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Add Category</h2>
+  <form action="">
+    <input type="text" name = "categoryName" placeholder = "category name">
+    <input type="submit">
+  </form>
+
+</div>
