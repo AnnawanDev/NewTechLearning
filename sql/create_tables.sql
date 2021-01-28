@@ -14,7 +14,9 @@ CREATE TABLE Users (
 CREATE TABLE Courses (
 	courseId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   courseName VARCHAR(255) NOT NULL,
-  courseDescription MEDIUMTEXT
+  courseDescription MEDIUMTEXT,
+	isLive BOOLEAN NOT NULL,
+	dateWentLive DATE
 ) ENGINE=InnoDB;
 
 CREATE TABLE UsersCourses (

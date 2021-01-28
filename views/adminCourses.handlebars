@@ -10,18 +10,42 @@
 <div id="mainContent">
   <h1>Admin Courses</h1>
 
+  <h2>Add Course</h2>
+  <form>
+  <table>
+    <thead>
+      <th>Course Name</th>
+      <th>Course Description</th>
+      <th>Instructor email</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" id="courseName" /></td>
+        <td><input type="text" id="courseDescription" /></td>
+        <td><input type="text" id="instructorEmail" /></td>
+      </tr>
+    </tbody>
+  </table>
+  <button id="addButton" style="margin-top: 20px">Add Course</button>
+</form>
+
+  <br /><br />
+
+
+  <h2>Edit/Delete Courses</h2>
   <table>
     <thead>
       <th>Course Name</th>
       <th>Course Description</th>
       <th>Course Start Date</th>
-      <th colspan="2"></th>
+      <th>Instructor</th>
     </thead>
     <tbody>
       <tr>
         <td>Intro to Java</td>
         <td>{ some content }</td>
         <td>2021-01-03</td>
+        <td>NULL</td>
         <td><button id="editButton1">Edit</button></td>
         <td><button id="deleteButton1">Delete</button></td>
       </tr>
@@ -29,6 +53,7 @@
         <td>C++</td>
         <td>{ some content }</td>
         <td>2021-01-10</td>
+        <td>NULL</td>
         <td><button id="editButton2">Edit</button></td>
         <td><button id="deleteButton2">Delete</button></td>
       </tr>
