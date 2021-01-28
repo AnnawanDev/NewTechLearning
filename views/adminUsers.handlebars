@@ -9,6 +9,41 @@
 
 <div id="mainContent">
   <h1>Admin Users</h1>
+  <h2>Add User</h2>
+  <form>
+  <table>
+    <thead>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Password</th>
+      <th>User Type</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" id="addFirstName" /></td>
+        <td><input type="text" id="addLastName" /></td>
+        <td><input type="text" id="addUserName" /></td>
+        <td><input type="text" id="addEmail" /></td>
+        <td><input type="text" id="addPassword" /></td>
+        <td>
+          <select name="userType" id="userType">
+            <option value="Student">Student</option>
+            <option value="Instrucotr">Instructor</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button id="addButton" style="margin-top: 20px">Add User</button>
+  </form>
+
+  <br /><br />
+
+
+  <h2>Edit/Delete Users</h2>
   <table>
     <thead>
       <th>First Name</th>
@@ -24,7 +59,7 @@
         <td>Darth</td>
         <td>Vader</td>
         <td>Vader1</td>
-        <td>vader@vader.com</td>
+        <td>vader1@vader.com</td>
         <td></td>
         <td>Student</td>
         <td><button id="editButton1">Edit</button></td>
@@ -34,7 +69,7 @@
         <td>Darth</td>
         <td>Vader</td>
         <td>Vader2</td>
-        <td>vader@vader.com</td>
+        <td>vader2@vader.com</td>
         <td></td>
         <td>Student</td>
         <td><button id="editButton2">Edit</button></td>
@@ -44,7 +79,7 @@
         <td>Darth</td>
         <td>Vader</td>
         <td>Vader3</td>
-        <td>vader@vader.com</td>
+        <td>vader3@vader.com</td>
         <td></td>
         <td>Student</td>
         <td><button id="editButton3">Edit</button></td>
