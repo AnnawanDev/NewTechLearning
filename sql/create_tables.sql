@@ -1,4 +1,4 @@
-USE cs340_wiede; -- customize to local environment
+USE Jan20DB; -- customize to local environment
 
 CREATE TABLE Users (
 	userId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -27,39 +27,49 @@ CREATE TABLE UsersCourses (
   CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
 ) ENGINE=InnoDB;
 
--- CourseModules: learning modules within a course that provides information to students
--- courseModuleId: INT, AUTO_INCREMENT, UNIQUE, NOT NULL, PK
--- courseFk: INT, NOT NULL, FK
--- courseModuleHTML: MEDIUMTEXT
--- courseModuleOrder: INT, NOT NULL
--- Developer responsible: Nora
 
--- Categories: Types of category types that a course could be tagged or searched
--- categoryId: INT, AUTO_INCREMENT, UNIQUE, NOT NULL, PK
--- categoryName: VARCHAR(255), NOT NULL
--- Developer: Nora
+CREATE TABLE CourseModules (
+  courseModuleId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  courseFk INT NOT NULL,
+  courseModuleHTML MEDIUMTEXT,
+  courseModuleOrder INT NOT NULL,
+  CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
+) ENGINE=InnoDB;
 
--- CoursesCategories: an intersection between Courses and Categories
--- courseCategoryId: INT, AUTO_INCREMENT, UNIQUE, NOT NULL, PK
--- courseFk: INT, NOT NULL, FK
--- categoryFk: INT, NOT NULL, FK
--- Developer: Nora
 
--- Languages: Different languages that a course is available in
--- languageId: INT, AUTO_INCREMENT, UNIQUE, NOT NULL, PK
--- languageName: VARCHAR(255), NOT NULL
--- Developer: Nora
+CREATE TABLE Categories (
+  categoryId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  categoryName VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+
+CREATE TABLE CoursesCategories(
+  courseCategoryId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  courseFk INT NOT NULL,
+  categoryFk INT NOT NULL,
+  CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`),
+  CONSTRAINT FOREIGN KEY(`categoryFk`) REFERENCES `Categories`(`categoryId`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE Languages (
+  languageId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  languageName VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
 
 CREATE TABLE LanguagesCourses (
 	userCourseId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    userFk INT NOT NULL,
-    courseFk INT NOT NULL,
-    CONSTRAINT FOREIGN KEY(`userFk`) REFERENCES `Users`(`userId`),
-    CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
+  userFk INT NOT NULL,
+  courseFk INT NOT NULL,
+  CONSTRAINT FOREIGN KEY(`userFk`) REFERENCES `Users`(`userId`),
+  CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
 ) ENGINE=InnoDB;
 
--- LanguagesModules: an intersection between Languages and CourseModules
--- languageModuleId: INT, AUTO_INCREMENT, UNIQUE, NOT NULL, PK
--- languageFk: INT, NOT NULL, FK
--- moduleFk: INT, NOT NULL, FK
--- Developer: Nora
+
+CREATE TABLE LanguagesModules (
+  languageModuleId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  languageFk INT NOT NULL,
+  moduleFk INT NOT NULL,
+  CONSTRAINT FOREIGN KEY(`languageFk`) REFERENCES `Languages`(`languageId`),
+  CONSTRAINT FOREIGN KEY(`moduleFk`) REFERENCES `CourseModules`(`courseModuleId`)
+) ENGINE=InnoDB;

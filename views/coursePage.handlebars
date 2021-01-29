@@ -1,12 +1,12 @@
 <div id="mainContent">
+<h3>{{{courseTitle}}} - Module {{{moduleNo}}}</h3>
+
+<h3> Go to module: 
+  {{#each moduleLinks}}
+   <a href={{{this}}}>{{{@key}}}</a>
+  {{/each}}
+</h3>
+
 {{{htmlContent}}}
-
-
-<br /><br />
-TODO:
-<ul>
-  <li>listing of modules?</li>
-  <li>video placeholder and lorem ipsum text</li>
-</ul>
 
 </div>
