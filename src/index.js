@@ -372,6 +372,25 @@ app.get('/api/UserListing', requireLogin, async (req,res,next) => {
   }
 });
 
+app.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `courseId`, `courseName` FROM Courses ORDER BY `dateWentLive` DESC LIMIT 3;", (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
+  }
+});
+
 // serve 404 on anything else ------------------------------------------
 app.get('*', (req, res) => {
   res.render('404', {
