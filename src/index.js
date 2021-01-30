@@ -21,6 +21,7 @@ const port = 14567;
 const publicDirectory = path.join(__dirname, '../public');
 const partialsPath = path.join(__dirname, '../views/partials');
 const useLogging = true;
+const useSecurity = false;
 
 // handlebars setup ---------------------------------------------------
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
@@ -56,7 +57,7 @@ app.get('/Login', (req, res) => {
   });
 });
 
-app.get('/Logout', (req, res) => {
+app.get('/Logout', requireLogin, (req, res) => {
   req.session.reset();
   res.render('logout', {
     title: 'New Tech Learning | Logout'
@@ -165,66 +166,66 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
 });
 
 // admin page navigation ---------------------------------------------------
-app.get('/Admin/', (req, res) => {
+app.get('/Admin/', requireLogin, (req, res) => {
   res.render('adminHome', {
     title: 'New Tech Learning | Admin Home'
   });
 });
 
-app.get('/Admin/Users/', (req, res) => {
+app.get('/Admin/Users/', requireLogin, (req, res) => {
   res.render('adminUsers', {
     title: 'New Tech Learning | Admin Users'
   });
 });
 
-app.get('/Admin/Languages/', (req, res) => {
+app.get('/Admin/Languages/', requireLogin, (req, res) => {
   res.render('adminLanguages', {
     title: 'New Tech Learning | Admin Languages'
   });
 });
 
-app.get('/Admin/Categories/', (req, res) => {
+app.get('/Admin/Categories/', requireLogin, (req, res) => {
   res.render('adminCategories', {
     title: 'New Tech Learning | Admin Categories'
   });
 });
 
-app.get('/Admin/Courses/', (req, res) => {
+app.get('/Admin/Courses/', requireLogin, (req, res) => {
   res.render('adminCourses', {
     title: 'New Tech Learning | Admin Courses'
   });
 });
 
-app.get('/Admin/CourseModules/', (req, res) => {
+app.get('/Admin/CourseModules/', requireLogin, (req, res) => {
   res.render('adminCourseModules', {
     title: 'New Tech Learning | Admin CourseModules'
   });
 });
 
-app.get('/Admin/AddUsersCourses/', (req, res) => {
+app.get('/Admin/AddUsersCourses/', requireLogin, (req, res) => {
   res.render('adminAddUsersCourses', {
     title: 'New Tech Learning | Admin Add Users to Courses'
   });
 });
 
-app.get('/Admin/DropUsersCourses/', (req, res) => {
+app.get('/Admin/DropUsersCourses/', requireLogin, (req, res) => {
   res.render('adminDropUsersCourses', {
     title: 'New Tech Learning | Admin Drop Users from Courses'
   });
 });
 
-app.get('/Admin/AddDropCoursesCategories/', (req, res) => {
+app.get('/Admin/AddDropCoursesCategories/', requireLogin, (req, res) => {
   res.render('adminAddDropCoursesCategories', {
     title: 'New Tech Learning | Admin Add/Drop Categories to/from Courses'
   });
 });
 
-app.get('/Admin/AddDropLanguagesCourses/', (req, res) => {
+app.get('/Admin/AddDropLanguagesCourses/', requireLogin, (req, res) => {
   res.render('adminAddDropLanguagesCourses', {
     title: 'New Tech Learning | Admin Add/Drop Languages to/from Courses'
   });
 });
-app.get('/Admin/AddDropLanguagesModules/', (req, res) => {
+app.get('/Admin/AddDropLanguagesModules/', requireLogin, (req, res) => {
   res.render('adminAddDropLanguagesModules', {
     title: 'New Tech Learning | Admin Add/Drop Languages to/from Course Modules'
   });
@@ -233,7 +234,7 @@ app.get('/Admin/AddDropLanguagesModules/', (req, res) => {
 // APIs ----------------------------------------------------------------
 
 //TODO: Add security eventually, but leave alone for now to create test users via Postman
-app.post('/api/createUser', async (req,res,next) => {
+app.post('/api/createUser', requireLogin, async (req,res,next) => {
   let context = {};
 
   //verify user posted name, email, password
@@ -353,8 +354,7 @@ app.post('/api/login', async (req, res, next) => {
 });
 
 
-//THIS IS JUST A TEST API TO TEST SECURITY
-app.get('/api/UserListing', auth, async (req,res,next) => {
+app.get('/api/UserListing', requireLogin, async (req,res,next) => {
   try {
     let context = {};
     mysql.pool.query("SELECT * FROM Users", (err, rows, fields) => {
@@ -504,10 +504,14 @@ async function doesUserExist(someEmail, somePassword) {
 
 
 function requireLogin (req, res, next) {
-  if (!req.session.user) {
-    res.redirect('/login');
+  if (useSecurity) {
+    if (!req.session.user) {
+      res.redirect('/login');
+    } else {
+      //verify session cookie
+      next();
+    }
   } else {
-    //verify session cookie
     next();
   }
 };
