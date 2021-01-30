@@ -6,7 +6,8 @@
 */
 
 const useLogging = true;
-const baseURL = "http://localhost:3000";
+const baseURL = "http://localhost:14567";
+//const baseURL = "http://flip3.engr.oregonstate.edu:14567";
 const loginAPI = "/api/login";
 let feedbackResponse = document.getElementById('feedback');
 

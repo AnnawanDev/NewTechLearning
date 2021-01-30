@@ -1,5 +1,3 @@
-USE Jan20DB; -- customize to local environment
-
 CREATE TABLE Users (
 	userId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   userType ENUM('STUDENT', 'INSTRUCTOR', 'ADMIN') NOT NULL,
@@ -29,7 +27,7 @@ CREATE TABLE UsersCourses (
 
 
 CREATE TABLE CourseModules (
-  courseModuleId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  courseModuleId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   courseFk INT NOT NULL,
   courseModuleHTML MEDIUMTEXT,
   courseModuleOrder INT NOT NULL,
@@ -38,13 +36,13 @@ CREATE TABLE CourseModules (
 
 
 CREATE TABLE Categories (
-  categoryId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  categoryId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   categoryName VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE CoursesCategories(
-  courseCategoryId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  courseCategoryId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   courseFk INT NOT NULL,
   categoryFk INT NOT NULL,
   CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`),
@@ -53,7 +51,7 @@ CREATE TABLE CoursesCategories(
 
 
 CREATE TABLE Languages (
-  languageId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  languageId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   languageName VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
@@ -67,7 +65,7 @@ CREATE TABLE LanguagesCourses (
 
 
 CREATE TABLE LanguagesModules (
-  languageModuleId INT AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY,
+  languageModuleId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   languageFk INT NOT NULL,
   moduleFk INT NOT NULL,
   CONSTRAINT FOREIGN KEY(`languageFk`) REFERENCES `Languages`(`languageId`),
