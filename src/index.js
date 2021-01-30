@@ -10,7 +10,6 @@ const express = require('express');
 const exphbs  = require('express-handlebars');
 const path = require('path');
 const bodyParser = require('body-parser');
-const auth = require('./auth')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 var session = require('client-sessions');
