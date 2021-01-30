@@ -107,7 +107,20 @@ app.get('/Courses/:id/:courseName/overview', (req, res) => {
     });
 });
 
-
+    // //do sql query to see what course corresponds to req.params.courseName
+    // //pretending here that we did a query and it resulted in "assembly-language"
+    // //otherwise query resulted in either (1) error (so we say, "oops - sorry") or (2) course not found
+    // let courseName = "{ UPDATE WITH COURSE NAME }";  //would get nonHTML name to show from db query
+    // let htmlContent; //html dump from db query
+    //
+    // //would have to  update this with actual sql query
+    // if (req.params.courseModule == 1) {
+    //   htmlContent = "<h1>Welcome to the class</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
+    // } else if (req.params.courseModule == 2){
+    //   htmlContent = "<h1>Module 2</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
+    // } else {
+    //   htmlContent = "<h1>Sorry, that's module can't be found</h1>"; //pretending can't find that module
+    // }
 //removed login but I think in reality we'd want to make sure that someone has enrolled in class or is the instructor
 app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
   //if courseModule parameter is missing assume it's equal to 1
@@ -115,30 +128,41 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
     req.params.courseModule = 1;
   }
 
-  // //do sql query to see what course corresponds to req.params.courseName
-  // //pretending here that we did a query and it resulted in "assembly-language"
-  // //otherwise query resulted in either (1) error (so we say, "oops - sorry") or (2) course not found
-  // let courseName = "{ UPDATE WITH COURSE NAME }";  //would get nonHTML name to show from db query
-  // let htmlContent; //html dump from db query
-  //
-  // //would have to  update this with actual sql query
-  // if (req.params.courseModule == 1) {
-  //   htmlContent = "<h1>Welcome to the class</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
-  // } else if (req.params.courseModule == 2){
-  //   htmlContent = "<h1>Module 2</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
-  // } else {
-  //   htmlContent = "<h1>Sorry, that's module can't be found</h1>"; //pretending can't find that module
-  // }
+  let context = {};
+  let query1= 'SELECT COUNT(*) as moduleCount FROM `CourseModules` WHERE `courseFk` = ?' 
+  let query2 = 'SELECT `courseModuleHTML` FROM `CourseModules` WHERE `courseFk`= ? and `courseModuleOrder` = ?';
+  let filter= [req.params.id, req.params.courseModule]
+  
+  //query for number of course modules
+  mysql.pool.query(query1, req.params.id, (err,rows1,fields)=> {
+    if (err) {
+      logIt("ERROR FROM /module/:courseModule : " + err);
+      return;
+    }
+    //query for course module HTML given course and order 
+    mysql.pool.query(query2, filter, (err, rows2, fields) => {
+      //error handling
+      if (err) {
+        logIt("ERROR FROM /module/:courseModule : " + err);
+        return;
+      }
 
-  let courseName = "TEMP PLACEHOLDER TEXT";
-  let htmlContent = "TEMP PLACEHOLDER TEXT FOR MODULE # " + req.params.courseModule;
+      let moduleLinks ={}
+      //set up links for the other modules 
+      for (let i =1; i<= rows1[0].moduleCount; i++){
+        moduleLinks[i] = '/courses/' + req.params.id + '/' + req.params.courseName + '/module/'+ i 
+      }
+      
+      //add objects to context
+      context.moduleLinks = moduleLinks
+      context.courseTitle = req.params.courseName;
+      context.moduleNo = req.params.courseModule
+      context.htmlContent = rows2[0].courseModuleHTML
+      res.render('coursePage', context);
+    });
 
-  res.render('coursePage', {
-    title: courseName,
-    htmlContent: htmlContent
   });
 });
-
 
 // admin page navigation ---------------------------------------------------
 app.get('/Admin/', (req, res) => {
@@ -285,6 +309,8 @@ app.get('/api/getCourseOverview/:courseName', async (req,res,next) => {
 
     return context;
 });
+
+
 
 app.post('/api/login', async (req, res, next) => {
     //TODO: reject if email or password not sent in POST

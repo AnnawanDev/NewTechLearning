@@ -1,4 +1,4 @@
-USE CS340_wiede;
+USE Jan20DB;
 
 INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `password`) VALUES
  ("ADMIN", "Ed", "Wied", "wiede", "wiede@oregonstate.edu", "wiede"),
@@ -29,3 +29,6 @@ INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
 (3, 3),
 (4, 4),
 (4, 5);
+
+
+
