@@ -5,14 +5,17 @@
    January 25, 2021
 */
 
-const baseURL = "http://localhost:14567";
+define (['domReady', 'module'],function (domReady, module){
+
+const baseURL = module.config().baseURL;
 //const baseURL = "http://flip3.engr.oregonstate.edu:14567";
-const createAccountAPI = "/api/createUser"
+const createAccountAPI = module.config().createAccountAPI;
 
 //make sure page elements have loaded
-document.addEventListener('DOMContentLoaded', () => {
+
+domReady(function(){
   bindSubmitButton();
-});
+})
 
 function bindSubmitButton() {
   document.getElementById("createAccountSubmit").addEventListener("click", addNewUser);
@@ -138,3 +141,5 @@ function setUpPayLoad() {
 
   return payload;
 }
+
+});

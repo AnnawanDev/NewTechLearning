@@ -5,18 +5,19 @@
    January 25, 2021
 */
 
-const useLogging = true;
-const baseURL = "http://localhost:14567";
-//const baseURL = "http://flip3.engr.oregonstate.edu:14567";
-const logoutAPI = "/api/logout";
+define (['domReady', 'module'],function (domReady, module){ 
+
+const useLogging = module.config().useLogging;
+const baseURL = module.config().baseURL;
+const logoutAPI = module.config().logoutAPI;
 let feedbackResponse = document.getElementById('feedback');
 
 // set up event listeners -------------------------------------
-document.addEventListener("DOMContentLoaded", function(event) {
+domReady(function(){
   let token = localStorage.getItem("token");
   logUserOut(token);
   localStorage.setItem('token', null);
-});
+})
 
 // main functions -------------------------------------
 function logUserOut(token) {
@@ -55,3 +56,5 @@ function logIt(someMessage) {
     console.log(someMessage);
   }
 }
+
+});
