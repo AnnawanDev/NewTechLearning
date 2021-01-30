@@ -17,7 +17,7 @@ var session = require('client-sessions');
 
 // set up variables ---------------------------------------------------
 const app = express();
-const port = 3000;
+const port = 14567;
 const publicDirectory = path.join(__dirname, '../public');
 const partialsPath = path.join(__dirname, '../views/partials');
 const useLogging = true;
@@ -129,17 +129,17 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
   }
 
   let context = {};
-  let query1= 'SELECT COUNT(*) as moduleCount FROM `CourseModules` WHERE `courseFk` = ?' 
+  let query1= 'SELECT COUNT(*) as moduleCount FROM `CourseModules` WHERE `courseFk` = ?'
   let query2 = 'SELECT `courseModuleHTML` FROM `CourseModules` WHERE `courseFk`= ? and `courseModuleOrder` = ?';
   let filter= [req.params.id, req.params.courseModule]
-  
+
   //query for number of course modules
   mysql.pool.query(query1, req.params.id, (err,rows1,fields)=> {
     if (err) {
       logIt("ERROR FROM /module/:courseModule : " + err);
       return;
     }
-    //query for course module HTML given course and order 
+    //query for course module HTML given course and order
     mysql.pool.query(query2, filter, (err, rows2, fields) => {
       //error handling
       if (err) {
@@ -148,11 +148,11 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
       }
 
       let moduleLinks ={}
-      //set up links for the other modules 
+      //set up links for the other modules
       for (let i =1; i<= rows1[0].moduleCount; i++){
-        moduleLinks[i] = '/courses/' + req.params.id + '/' + req.params.courseName + '/module/'+ i 
+        moduleLinks[i] = '/courses/' + req.params.id + '/' + req.params.courseName + '/module/'+ i
       }
-      
+
       //add objects to context
       context.moduleLinks = moduleLinks
       context.courseTitle = req.params.courseName;

@@ -3,10 +3,11 @@
    Nora Marji
    Ed Wied
    January 25, 2021
-*/ 
+*/
 
 const useLogging = true;
-const baseURL = "http://localhost:3000";
+const baseURL = "http://localhost:14567";
+//const baseURL = "http://flip3.engr.oregonstate.edu:14567";
 const getCoursesAPI = "/api/getCourses";
 const coursesURLString = "/courses";
 const courseOverviewLandingpage = "/overview";

@@ -5,7 +5,8 @@
    January 25, 2021
 */
 
-const baseURL = "http://localhost:3000";
+const baseURL = "http://localhost:14567";
+//const baseURL = "http://flip3.engr.oregonstate.edu:14567";
 const createAccountAPI = "/api/createUser"
 
 //make sure page elements have loaded
@@ -72,6 +73,15 @@ function addNewUser() {
       if (response.result == "DUPLICATE") {
         feedbackToUser = "Sorry, that user name is already taken.  Please choose another.";
         statusUpdate(feedbackToUser, true);
+
+        //clear form fields
+        document.getElementById('firstName').value = '';
+        document.getElementById("lastName").value = '';
+        document.getElementById("userName").value = '';
+        document.getElementById("email").value = '';
+        document.getElementById("password1").value = '';
+        document.getElementById("password2").value = '';
+
       } else {
         feedbackToUser = "Sorry, there was an error. Try again";
         statusUpdate(feedbackToUser, true);
