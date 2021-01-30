@@ -38,89 +38,67 @@ app.use(session({
 }));
 
 // public / student page navigation ---------------------------------------------------
-app.get('/', (req, res) => {
-  res.render('home', {
-    title: 'New Tech Learning | Home'
-  });
+app.get('/', async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Home';
+  context = await getLoginContext(context, req);
+  res.render('home', context);
 });
 
-app.get('/About', (req, res) => {
-  res.render('about', {
-    title: 'New Tech Learning | About'
-  });
+app.get('/About', async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | About';
+  context = await getLoginContext(context, req);
+  res.render('about', context);
 });
 
-app.get('/Login', (req, res) => {
-  res.render('login', {
-    title: 'New Tech Learning | Login'
-  });
+app.get('/Login', async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Login';
+  context = await getLoginContext(context, req);
+  res.render('login',context);
 });
 
-app.get('/Logout', requireLogin, (req, res) => {
+app.get('/Logout', requireLogin, async (req, res) => {
   req.session.reset();
-  res.render('logout', {
-    title: 'New Tech Learning | Logout'
-  });
+  let context = {};
+  context.title = 'New Tech Learning | Logout';
+  context = await getLoginContext(context, req);
+  res.render('logout', context);
 });
 
-app.get('/CreateAccount', (req, res) => {
-  res.render('createAccount', {
-    title: 'New Tech Learning | Create Account'
-  });
+app.get('/CreateAccount', async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Create Account';
+  context = await getLoginContext(context, req);
+  res.render('createAccount', context);
 });
 
-app.get('/Courses', (req, res) => {
-  res.render('courses', {
-    title: 'New Tech Learning | Courses'
-  });
+app.get('/Courses', async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Courses';
+  context = await getLoginContext(context, req);
+  res.render('courses', context);
 });
 
-app.get('/Courses/:id/:courseName/overview', (req, res) => {
-  //I mentioned before that courseName could be unique and we could grab the course details
-  //using courseName, but I think we should use ID as we may have 2 or more "intro to java"
-  //for example.  Still, I like having the courseName as part of the URL because  it gives
-  //it a semantic feel and  helps express  what the url does rather than just courses?id=2  or courses/3/overview
-  //I'm open if we want to do this differently
-
-
-  //TODO: get real course details from query
-  // let courseName = "Java";  //TODO- replace with real API
-  // let htmlContent = "<h1>Java</h1><p>Welcome to an Introduction to Java</p>"; //TODO - get real HTML dump from course overview
-
+app.get('/Courses/:id/:courseName/overview', async (req, res) => {
   let context = {};
   context.results = "";
-  logIt("ID: " + req.params.id)
+  context = await getLoginContext(context, req);
 
   mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, (err, rows, fields) => {
       if (err) {
         logIt("ERROR FROM /Courses/:id/:courseName/overview: " + err);
         return;
       }
+      context.title = rows[0].courseName;
+      context.htmlContent = rows[0].courseDescription;
+      context.moduleLink = '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1';
 
-      logIt("/Courses/:id/:courseName/overview query result: " + JSON.stringify(rows[0].courseDescription));
-
-      res.render('courseOverview', {
-        title: rows[0].courseName,
-        htmlContent: rows[0].courseDescription,
-        moduleLink: '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1'
-      });
+      res.render('courseOverview', context);
     });
 });
 
-    // //do sql query to see what course corresponds to req.params.courseName
-    // //pretending here that we did a query and it resulted in "assembly-language"
-    // //otherwise query resulted in either (1) error (so we say, "oops - sorry") or (2) course not found
-    // let courseName = "{ UPDATE WITH COURSE NAME }";  //would get nonHTML name to show from db query
-    // let htmlContent; //html dump from db query
-    //
-    // //would have to  update this with actual sql query
-    // if (req.params.courseModule == 1) {
-    //   htmlContent = "<h1>Welcome to the class</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
-    // } else if (req.params.courseModule == 2){
-    //   htmlContent = "<h1>Module 2</h1><p>blah.... blah...</p>";  //mocked response from db query based on courseModule == 1
-    // } else {
-    //   htmlContent = "<h1>Sorry, that's module can't be found</h1>"; //pretending can't find that module
-    // }
 //removed login but I think in reality we'd want to make sure that someone has enrolled in class or is the instructor
 app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
   //if courseModule parameter is missing assume it's equal to 1
@@ -140,7 +118,7 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
       return;
     }
     //query for course module HTML given course and order
-    mysql.pool.query(query2, filter, (err, rows2, fields) => {
+    mysql.pool.query(query2, filter, async (err, rows2, fields) => {
       //error handling
       if (err) {
         logIt("ERROR FROM /module/:courseModule : " + err);
@@ -158,6 +136,7 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
       context.courseTitle = req.params.courseName;
       context.moduleNo = req.params.courseModule
       context.htmlContent = rows2[0].courseModuleHTML
+      context = await getLoginContext(context, req);
       res.render('coursePage', context);
     });
 
@@ -165,69 +144,80 @@ app.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
 });
 
 // admin page navigation ---------------------------------------------------
-app.get('/Admin/', requireLogin, (req, res) => {
-  res.render('adminHome', {
-    title: 'New Tech Learning | Admin Home'
-  });
+app.get('/Admin/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Home';
+  context = await getLoginContext(context, req);
+  res.render('adminHome', context);
 });
 
-app.get('/Admin/Users/', requireLogin, (req, res) => {
-  res.render('adminUsers', {
-    title: 'New Tech Learning | Admin Users'
-  });
+app.get('/Admin/Users/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Users';
+  context = await getLoginContext(context, req);
+  res.render('adminUsers', context);
 });
 
-app.get('/Admin/Languages/', requireLogin, (req, res) => {
-  res.render('adminLanguages', {
-    title: 'New Tech Learning | Admin Languages'
-  });
+app.get('/Admin/Languages/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Languages';
+  context = await getLoginContext(context, req);
+  res.render('adminLanguages', context);
 });
 
-app.get('/Admin/Categories/', requireLogin, (req, res) => {
-  res.render('adminCategories', {
-    title: 'New Tech Learning | Admin Categories'
-  });
+app.get('/Admin/Categories/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Categories';
+  context = await getLoginContext(context, req);
+  res.render('adminCategories', context);
 });
 
-app.get('/Admin/Courses/', requireLogin, (req, res) => {
-  res.render('adminCourses', {
-    title: 'New Tech Learning | Admin Courses'
-  });
+app.get('/Admin/Courses/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Courses';
+  context = await getLoginContext(context, req);
+  res.render('adminCourses', context);
 });
 
-app.get('/Admin/CourseModules/', requireLogin, (req, res) => {
-  res.render('adminCourseModules', {
-    title: 'New Tech Learning | Admin CourseModules'
-  });
+app.get('/Admin/CourseModules/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin CourseModules';
+  context = await getLoginContext(context, req);
+  res.render('adminCourseModules', context);
 });
 
-app.get('/Admin/AddUsersCourses/', requireLogin, (req, res) => {
-  res.render('adminAddUsersCourses', {
-    title: 'New Tech Learning | Admin Add Users to Courses'
-  });
+app.get('/Admin/AddUsersCourses/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Add Users to Courses';
+  context = await getLoginContext(context, req);
+  res.render('adminAddUsersCourses', context);
 });
 
-app.get('/Admin/DropUsersCourses/', requireLogin, (req, res) => {
-  res.render('adminDropUsersCourses', {
-    title: 'New Tech Learning | Admin Drop Users from Courses'
-  });
+app.get('/Admin/DropUsersCourses/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Drop Users from Courses';
+  context = await getLoginContext(context, req);
+  res.render('adminDropUsersCourses', context);
 });
 
-app.get('/Admin/AddDropCoursesCategories/', requireLogin, (req, res) => {
-  res.render('adminAddDropCoursesCategories', {
-    title: 'New Tech Learning | Admin Add/Drop Categories to/from Courses'
-  });
+app.get('/Admin/AddDropCoursesCategories/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Add/Drop Categories to/from Courses';
+  context = await getLoginContext(context, req);
+  res.render('adminAddDropCoursesCategories', context);
 });
 
-app.get('/Admin/AddDropLanguagesCourses/', requireLogin, (req, res) => {
-  res.render('adminAddDropLanguagesCourses', {
-    title: 'New Tech Learning | Admin Add/Drop Languages to/from Courses'
-  });
+app.get('/Admin/AddDropLanguagesCourses/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Add/Drop Languages to/from Courses';
+  context = await getLoginContext(context, req);
+  res.render('adminAddDropLanguagesCourses',context);
 });
-app.get('/Admin/AddDropLanguagesModules/', requireLogin, (req, res) => {
-  res.render('adminAddDropLanguagesModules', {
-    title: 'New Tech Learning | Admin Add/Drop Languages to/from Course Modules'
-  });
+app.get('/Admin/AddDropLanguagesModules/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Add/Drop Languages to/from Course Modules';
+  context = await getLoginContext(context, req);
+  res.render('adminAddDropLanguagesModules', context);
 });
 
 // APIs ----------------------------------------------------------------
@@ -320,12 +310,12 @@ app.post('/api/login', async (req, res, next) => {
     //   return;
     // }
 
-    let email = req.body['email'];
+    let username = req.body['username'];
     let password = req.body['password'];
 
     try {
       // see if there exists a user with email and if password passed equals hashed password
-      let user = await doesUserExist(email, password);
+      let user = await doesUserExist(username, password);
 
       if (!user) {
         logIt('ERROR! bad email and/or password');
@@ -343,7 +333,7 @@ app.post('/api/login', async (req, res, next) => {
       req.session.user = user;
 
       //send back Bearer token and user email to user
-      await res.send({email, firstName})
+      await res.send({username, firstName})
 
 
     } catch(e) {
@@ -466,22 +456,22 @@ async function updateUserToken(token, userId) {
   });
 }
 
-async function getUserId(someEmail) {
+async function getUserId(userName) {
   return new Promise(function(resolve, reject) {
     let context = {};
 
-    mysql.pool.query("SELECT userId FROM Users WHERE email = ?", [someEmail], (err, rows, fields) => {
+    mysql.pool.query("SELECT userId FROM Users WHERE userName = ?", [userName], (err, rows, fields) => {
         if (err) {
           //next(err);
-          logIt("EMAIL: " + someEmail)
+          logIt("userName: " + userName)
           logIt("SELECT ERROR FROM getUserId: " + err);
           reject(new Error("Bad query"))
         }
 
         if (rows[0] != undefined) {
           logIt("getUserId ROWS: " + JSON.stringify(rows))
-          logIt("GET USER ID: ROWS RESULT: " + rows[0].studentId);
-          resolve(rows[0].studentId);
+          logIt("GET USER ID: ROWS RESULT: " + rows[0].userId);
+          resolve(rows[0].userId);
         } else {
           reject(new Error("User ID not found"));
         }
@@ -490,16 +480,16 @@ async function getUserId(someEmail) {
 }
 
 //maybe change to getUser since we're now returning user object
-async function doesUserExist(someEmail, somePassword) {
+async function doesUserExist(someUserName, somePassword) {
   return new Promise(function(resolve, reject) {
     // let context = {};
     let user = {};
-    mysql.pool.query("SELECT * FROM Users WHERE email = ? ", [someEmail], (err, rows, fields) => {
+    mysql.pool.query("SELECT * FROM Users WHERE userName = ? ", [someUserName], (err, rows, fields) => {
         if (err) {
           logIt("doesUserExist ERROR: " + err);
           return -1;
         }
-        console.log(someEmail);
+        logIt("TRYING TO LOGIN WITH USERNAME: " + someUserName);
         if (rows[0] == undefined) {
           reject(new Error("User ID not found"));
           return;
@@ -511,7 +501,7 @@ async function doesUserExist(someEmail, somePassword) {
           user.firstName = rows[0].firstName;
           user.lastName = rows[0].lastName;
           user.email = rows[0].email;
-          user.userId = rows[0].studentId;
+          user.userId = rows[0].userId;
           resolve(user);
         } else {
           reject(new Error("User password not correct"));
@@ -520,7 +510,7 @@ async function doesUserExist(someEmail, somePassword) {
   });
 }
 
-
+// Authorization ------------------------------------------------------
 function requireLogin (req, res, next) {
   if (useSecurity) {
     if (!req.session.user) {
@@ -533,3 +523,62 @@ function requireLogin (req, res, next) {
     next();
   }
 };
+
+function checkIfLoggedIn(req) {
+  if (!req.session.user) {
+    return true;
+  }
+  return false;
+}
+
+async function isLoggedInAsStudent(req) {
+  if (!req.session.user) {
+    return false;
+  }
+  let userType = await getUserType(req.session.user.userId);
+  if (userType == "STUDENT") {
+    return true;
+  }
+  return false;
+}
+
+async function isLoggedInAsInstructorOrStudent(req) {
+  if (!req.session.user) {
+    return false;
+  }
+  let userType = await getUserType(req.session.user.userId); console.log("isLoggedInAsInstructorOrStudent: " + userType);
+  if (userType == "INSTRUCTOR" || userType == "ADMIN") { console.log("returning true")
+    return true;
+  }
+  return false;
+}
+
+async function getUserType(someUserId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {
+        if (err) {
+          logIt("isUserAStudent ERROR: " + err);
+          reject(new Error("Bad query"))
+        }
+
+        if (rows[0].userType == "INSTRUCTOR") {
+          resolve("INSTRUCTOR");
+        } else if (rows[0].userType == "ADMIN") {
+          resolve("ADMIN");
+        } else if (rows[0].userType == "STUDENT") {
+          resolve("STUDENT");
+        } else {
+          reject(new Error("ERROR: isUserAStudent"));
+        }
+      });
+    })
+}
+
+async function getLoginContext(someContextObject, req) {
+  let student = await isLoggedInAsStudent(req);
+  let instructorOrAdmin = await isLoggedInAsInstructorOrStudent(req);
+  someContextObject.isNotLoggedIn = req.session.user ? false : true;
+  someContextObject.isLoggedInAsStudent = student;
+  someContextObject.isInstructorOrAdmin = instructorOrAdmin;
+  return someContextObject;
+}

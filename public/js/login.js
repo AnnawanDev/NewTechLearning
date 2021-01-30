@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 // main functions -------------------------------------
 function logUserIn() {
-  const email = document.getElementById('email').value;
+  const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
   const userFeedback = document.getElementById("feedback");
 
-  if (email === '' || password === '') {
+  if (username === '' || password === '') {
     userFeedback .innerHTML = "<span style=\"color: #ff0000\">Please make sure you enter a value for the email and password</span>";
     event.preventDefault();
     return;
@@ -30,7 +30,7 @@ function logUserIn() {
 
   //set-up POST payload
   let payload = {};
-  payload.email = email;
+  payload.username = username;
   payload.password = password;
 
   let feedbackToUser = "";
@@ -46,7 +46,7 @@ function logUserIn() {
       //localStorage.setItem('token', data.token);
       userFeedback.innerHTML = "<h2>Welcome back " + data.firstName + "</h2>";
     } else {
-      feedbackToUser = "<span style=\"color: #ff0000\">Sorry, we couldn't log you in. Please try again</span>";
+      userFeedback.innerHTML = "<span style=\"color: #ff0000\">Sorry, we couldn't log you in. Please try again</span>";
     }
   });
   req.send(JSON.stringify(payload));
