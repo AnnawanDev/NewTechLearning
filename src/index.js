@@ -20,7 +20,7 @@ const port = 14567;
 const publicDirectory = path.join(__dirname, '../public');
 const partialsPath = path.join(__dirname, '../views/partials');
 const useLogging = true;
-const useSecurity = true;
+const useSecurity = false;
 
 // handlebars setup ---------------------------------------------------
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
