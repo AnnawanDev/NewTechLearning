@@ -5,8 +5,7 @@ CREATE TABLE Users (
   lastName VARCHAR(255) NOT NULL,
   userName VARCHAR(255) NOT NULL UNIQUE,
   email VARCHAR(255) NOT NULL,
-  password VARCHAR(255) not null,
-  passwordToken VARCHAR(255)
+  password VARCHAR(255) not null
 ) ENGINE=InnoDB;
 
 CREATE TABLE Courses (

@@ -44,9 +44,8 @@ function logUserIn() {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      console.log("DATA ---" + JSON.stringify(data))
-      //localStorage.setItem('token', data.token);
-      userFeedback.innerHTML = "<h2>Welcome back " + data.firstName + "</h2>";
+      //console.log("DATA ---" + JSON.stringify(data))
+      location.reload();  //reloading so we can get login/logout context nav reloaded 
     } else {
       userFeedback.innerHTML = "<span style=\"color: #ff0000\">Sorry, we couldn't log you in. Please try again</span>";
     }
