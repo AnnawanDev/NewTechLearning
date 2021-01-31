@@ -5,18 +5,21 @@
    January 30, 2021
 */
 
-const useLogging = true;
-const baseURL = "http://localhost:14567";
+define (['domReady', 'module'],function (domReady, module){
+
+const useLogging = module.config().useLogging;
+const baseURL = module.config().baseURL;
 //const baseURL = "http://flip3.engr.oregonstate.edu:14567";
-const getRecentlyAddedCoursesAPI = "/api/selectMostRecentAddedClasses";
-const coursesURLString = "/courses";
-const courseOverviewLandingpage = "/overview";
+const getRecentlyAddedCoursesAPI = module.config().getRecentlyAddedCoursesAPI;
+const coursesURLString = module.config().coursesURLString;
+const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
 let feedbackResponse = document.getElementById('recentlyAddedClasses');
 
 // set up event listeners -------------------------------------
-document.addEventListener("DOMContentLoaded", function(event) {
+
+domReady(function(){
   getRecentlyAddedClasses();
-});
+})
 
 // main functions -------------------------------------
 function getRecentlyAddedClasses() {
@@ -57,3 +60,5 @@ function logIt(someMessage) {
     console.log(someMessage);
   }
 }
+
+});
