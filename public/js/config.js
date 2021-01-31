@@ -27,10 +27,10 @@ requirejs.config({
     },
     baseUrl: '/js',
     paths: {
+        domReady: "//cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady",
         courses: 'courses.js',
         createAccount: 'createAccount.js',
         login: 'login.js',
-        logout: 'logout.js',
-        domReady: "//cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady"
+        logout: 'logout.js'
     }
 })
