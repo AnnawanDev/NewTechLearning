@@ -295,7 +295,7 @@ app.get('/api/getCourses', async (req,res,next) => {
         return;
       }
 
-      logIt("/api/getCourses query result: " + JSON.stringify(rows));
+      //logIt("/api/getCourses query result: " + JSON.stringify(rows));
       context.results = rows;
       res.send(context);
     });
