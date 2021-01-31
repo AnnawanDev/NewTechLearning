@@ -4,19 +4,19 @@
    Ed Wied
    January 25, 2021
 */
+define (['domReady', 'module'],function (domReady, module){
 
-const useLogging = true;
-const baseURL = "http://localhost:14567";
-//const baseURL = "http://flip3.engr.oregonstate.edu:14567";
-const getCoursesAPI = "/api/getCourses";
+const useLogging = module.config().useLogging;
+const baseURL = module.config().baseURL;
+const getCoursesAPI= module.config().getCoursesAPI;
 const coursesURLString = "/courses";
 const courseOverviewLandingpage = "/overview";
 let feedbackResponse = document.getElementById('feedback');
 
-// set up event listeners -------------------------------------
-document.addEventListener("DOMContentLoaded", function(event) {
+// set up event listeners with domReady
+domReady(function(){
   getAvailableClasses();
-});
+})
 
 // main functions -------------------------------------
 function getAvailableClasses() {
@@ -63,3 +63,5 @@ function logIt(someMessage) {
     console.log(someMessage);
   }
 }
+
+});
