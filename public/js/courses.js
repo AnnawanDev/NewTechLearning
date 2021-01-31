@@ -10,7 +10,7 @@ const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const getCoursesAPI= module.config().getCoursesAPI;
 const coursesURLString = module.config().coursesURLString;
-const courseOverviewLandingpage = module.config().courseOverviewLandingpage; console.log(module.config.courseOverviewLandingpage)
+const courseOverviewLandingpage = module.config().courseOverviewLandingpage; 
 let feedbackResponse = document.getElementById('feedback');
 
 // set up event listeners with domReady
