@@ -8,8 +8,33 @@
     <div style="float: left; width: 500px;">
       <img src="/images/temp_placeholder.jpg" width="500" height="281" />
       <div style="margin: 25px 0px 0px 0px; text-align: right;">
-        <a href="#">Sign up for class</a> ✅<br /><br />
-        <a href="{{{moduleLink}}}">Go to first module</a> ✅ <!-- will show link if enrolled -->
+        <div id="signedUpConfirmation"></div>
+        {{#if notLoggedIn}}
+          <a href="/Login/">Login</a> first so you can enroll.<br /><a href="/CreateAccount/">Create an account</a> if you don't already have one.
+        {{/if}}
+
+        {{#if isStudent}}
+          {{#if isEnrolled}}
+              <a href="{{{moduleLink}}}">Go to first module</a>
+            {{else}}
+              <form>
+                <button id="signUpForClassButton">Sign up for class</button>
+              </form>
+            {{/if}}
+        {{/if}}
+
+        {{#if isInstructor}}
+          {{#if isEnrolled}}
+            <a href="{{{moduleLink}}}">Go to first module</a>
+          {{else}}
+            <!-- nothing is shown because instructors can't sign up for classes -->
+          {{/if}}
+        {{/if}}
+
+        {{#if isAdmin}}
+          <a href="{{{moduleLink}}}">Go to first module</a>
+        {{/if}}
+
       </div>
     </div>
     <div style="clear: both;"></div>

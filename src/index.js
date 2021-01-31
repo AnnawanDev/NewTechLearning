@@ -20,7 +20,7 @@ const port = 14567;
 const publicDirectory = path.join(__dirname, '../public');
 const partialsPath = path.join(__dirname, '../views/partials');
 const useLogging = true;
-const useSecurity = false;
+const useSecurity = true;
 
 // handlebars setup ---------------------------------------------------
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
   cookieName: 'session',
-  secret: 'random_string_goes_here',
+  secret: process.env['JWOT_SIGNING'],
   duration: 30 * 60 * 1000,
   activeDuration: 5 * 60 * 1000,
 }));
@@ -54,6 +54,12 @@ app.get('/About', async (req, res) => {
 
 app.get('/Login', async (req, res) => {
   let context = {};
+
+  //is user already logged in?
+  if (req.session && req.session.user) {
+    context.message = "<h1>Welcome back " + req.session.user.firstName + "</h1><br /><br />";
+  }
+
   context.title = 'New Tech Learning | Login';
   context = await getLoginContext(context, req);
   res.render('login',context);
@@ -86,7 +92,7 @@ app.get('/Courses/:id/:courseName/overview', async (req, res) => {
   context.results = "";
   context = await getLoginContext(context, req);
 
-  mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, (err, rows, fields) => {
+  mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
       if (err) {
         logIt("ERROR FROM /Courses/:id/:courseName/overview: " + err);
         return;
@@ -94,6 +100,26 @@ app.get('/Courses/:id/:courseName/overview', async (req, res) => {
       context.title = rows[0].courseName;
       context.htmlContent = rows[0].courseDescription;
       context.moduleLink = '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1';
+
+      //if admin then show link to go to class module
+      //if instructor then see if instructor is teaching that class.  If teaching, then show link. If not, then don't show anything
+      //if student, then see if enrolled.  if enrolled, then show link to course module.  if not enrolled, then show link to sign up
+      //if not logged in, then show prompt to login in order to enroll
+      if (!req.session || !req.session.user) {
+        context.notLoggedIn = true;
+      } else if (req.session.user.userType == "STUDENT") {
+        let isUserEnrolled = await isInstructorOrStudentInClass(context, req);
+        context.isEnrolled = isUserEnrolled.enrolled;
+        context.isStudent = true;
+      } else if (req.session.user.userType == "INSTRUCTOR") {
+        let isUserEnrolled = await isInstructorOrStudentInClass(context, req);
+        context.isEnrolled = isUserEnrolled.enrolled;
+        context.isInstructor = true;
+      } else if (req.session.user.userType == "ADMIN") {
+        context.isAdmin = true;
+      } else {
+        logIt ("ERROR - SHOULD NOT GET HERE in /Courses/:id/:courseName/overview")
+      }
 
       res.render('courseOverview', context);
     });
@@ -303,12 +329,11 @@ app.get('/api/getCourseOverview/:courseName', async (req,res,next) => {
 
 
 app.post('/api/login', async (req, res, next) => {
-    //TODO: reject if email or password not sent in POST
-    // if (!req.body['email'] || !req.body['password']) {
-    //   logIt('ERROR! Name or email not in POST body');
-    //   res.status(401).send();
-    //   return;
-    // }
+    if (!req.body['username'] || !req.body['password']) {
+      logIt('ERROR! username and/or password not in POST body');
+      res.status(401).send();
+      return;
+    }
 
     let username = req.body['username'];
     let password = req.body['password'];
@@ -323,25 +348,17 @@ app.post('/api/login', async (req, res, next) => {
       }
 
       // must be good user, generate auth token for user
-      const userId = user.userId; //await getUserId(email);
-      const firstName = user.firstName
-      const token = await generateAuthToken(userId);
-      user.token = token;
-      await updateUserToken(token, userId);
-
       //store user object in session
       req.session.user = user;
 
-      //send back Bearer token and user email to user
-      await res.send({username, firstName})
-
+      //send back object to greet user
+      res.send({"userName": user.userName, "firstName": user.firstName});
 
     } catch(e) {
-      logIt("ERROR: " + e)
+      logIt("/api/login ERROR: " + e)
       res.status(401).send()
     }
 });
-
 
 app.get('/api/UserListing', requireLogin, async (req,res,next) => {
   try {
@@ -419,43 +436,6 @@ function logIt(someMessage) {
   }
 }
 
-
-//generate Bearer token
-async function generateAuthToken(userId) {
-  return new Promise(function(resolve, reject) {
-    const token = jwt.sign({ _id: userId }, process.env['JWOT_SIGNING'])
-    logIt("TOKEN GENERATED: " + token)
-    if (token) {
-      resolve(token);
-    } else {
-      reject(new Error("Unable to generate token"));
-    }
-  });
-}
-
-async function updateUserToken(token, userId) {
-  return new Promise(function(resolve, reject) {
-    let context = {};
-    logIt("TOKEN PASSED TO updateUserToken: " + token);
-    logIt("USERID PASSED TO updateUserToken: " + userId);
-    mysql.pool.query('UPDATE `Users` SET passwordToken = ? WHERE userId = ?', [[token], [userId]], (err, result) => {
-      if (err) {
-        next(err);
-        return;
-      }
-
-        if (result != undefined) {
-          logIt("updateUserToken result: " + JSON.stringify(result));
-          context.results = "Affected rows " + result.affectedRows;
-          logIt("Affected rows " + result.affectedRows);
-          resolve(context.results);
-        } else {
-          reject(new Error("Unable to update token"));
-        }
-      });
-  });
-}
-
 async function getUserId(userName) {
   return new Promise(function(resolve, reject) {
     let context = {};
@@ -489,7 +469,7 @@ async function doesUserExist(someUserName, somePassword) {
           logIt("doesUserExist ERROR: " + err);
           return -1;
         }
-        logIt("TRYING TO LOGIN WITH USERNAME: " + someUserName);
+        //logIt("TRYING TO LOGIN WITH USERNAME: " + someUserName);
         if (rows[0] == undefined) {
           reject(new Error("User ID not found"));
           return;
@@ -502,6 +482,7 @@ async function doesUserExist(someUserName, somePassword) {
           user.lastName = rows[0].lastName;
           user.email = rows[0].email;
           user.userId = rows[0].userId;
+          user.userType = rows[0].userType;
           resolve(user);
         } else {
           reject(new Error("User password not correct"));
@@ -516,7 +497,6 @@ function requireLogin (req, res, next) {
     if (!req.session.user) {
       res.redirect('/login');
     } else {
-      //verify session cookie
       next();
     }
   } else {
@@ -532,7 +512,7 @@ function checkIfLoggedIn(req) {
 }
 
 async function isLoggedInAsStudent(req) {
-  if (!req.session.user) {
+  if (!req.session || !req.session.user) {
     return false;
   }
   let userType = await getUserType(req.session.user.userId);
@@ -543,11 +523,18 @@ async function isLoggedInAsStudent(req) {
 }
 
 async function isLoggedInAsInstructorOrStudent(req) {
-  if (!req.session.user) {
+  if (!req.session || !req.session.user) {
     return false;
   }
-  let userType = await getUserType(req.session.user.userId); console.log("isLoggedInAsInstructorOrStudent: " + userType);
-  if (userType == "INSTRUCTOR" || userType == "ADMIN") { console.log("returning true")
+  let userType = await getUserType(req.session.user.userId);
+  if (userType == "INSTRUCTOR" || userType == "ADMIN") {
+    return true;
+  }
+  return false;
+}
+
+async function isNotLoggedIn(req) {
+  if (!req.session || !req.session.user) {
     return true;
   }
   return false;
@@ -571,14 +558,38 @@ async function getUserType(someUserId) {
           reject(new Error("ERROR: isUserAStudent"));
         }
       });
-    })
-}
+    });
+};
 
 async function getLoginContext(someContextObject, req) {
   let student = await isLoggedInAsStudent(req);
   let instructorOrAdmin = await isLoggedInAsInstructorOrStudent(req);
-  someContextObject.isNotLoggedIn = req.session.user ? false : true;
+  someContextObject.isNotLoggedIn = await isNotLoggedIn(req);
   someContextObject.isLoggedInAsStudent = student;
   someContextObject.isInstructorOrAdmin = instructorOrAdmin;
   return someContextObject;
+}
+
+async function isInstructorOrStudentInClass(someContextObject, req) {
+  return new Promise(function(resolve, reject) {
+    if (!req.session || !req.session.user || req.params.id == "") {
+      resolve({"enrolled": false });
+    }
+
+    const queryParams = [req.session.user.userId, req.params.id];
+    mysql.pool.query("SELECT COUNT(*) AS count FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", queryParams, (err, rows, fields) => {
+        if (err) {
+          logIt("isUserAStudent ERROR: " + err);
+          resolve({"enrolled": false });
+        }
+
+        if (rows[0].count == undefined) {
+          resolve({"enrolled": false });
+        } else if (rows[0].count == 1) {
+          resolve({"enrolled": true });
+        } else {
+          resolve({"enrolled": false });
+        }
+      });
+    })
 }
