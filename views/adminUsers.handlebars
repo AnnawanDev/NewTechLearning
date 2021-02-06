@@ -87,4 +87,57 @@
       </tr>
     </tbody>
   </table>
+  <br /> <br />
+  <h1>Add/Drop Users from Courses</h1>
+
+    <form>
+      <label for="course">Select Course:</label>
+      <select name="course" id="course">
+        <option value="1">Intro to Java</option>
+        <option value="2">C++</option>
+        <option value="3">Advanced SQL</option>
+        <option value="4">Python Boot Camp</option>
+      </select>
+    </form>
+
+  <h4>Add User Based on Email</h4>
+    <form>
+      <label for="email">Student email:</label>
+      <input type="text" id="email"></input>
+      <button id="addUser">Submit</button>
+
+  </form>
+
+  <br />
+
+    <h4>Drop Users from Selected Course</h4>
+
+  <table>
+    <thead>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>User Type</th>
+      <th colspan="2"></th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Yoda</td>
+        <td>Yoda</td>
+        <td>Yoda1</td>
+        <td>Yoda@yoda.com</td>
+        <td>Instructor</td>
+        <td><button id="drop1">Drop from class</button></td>
+      </tr>
+      <tr>
+        <td>Darth</td>
+        <td>Vader</td>
+        <td>Vader2</td>
+        <td>vader@vader.com</td>
+        <td>Student</td>
+        <td><button id="drop2">Drop from class</button></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
