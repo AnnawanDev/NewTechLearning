@@ -97,7 +97,7 @@ function addNewUser() {
 
 
 function checkField(element, message) {
-  console.log(element)
+  //console.log(element)
   if (element == "") {
     statusUpdate(message, true);
     return false;
