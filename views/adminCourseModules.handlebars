@@ -21,6 +21,7 @@
 
     <br /><br />
 
+    <h1>Current Course Modules</h1>
     <table>
     <thead>
         <th>Module #</th>
@@ -48,6 +49,49 @@
     <form action="">
         <input type="text" name = "moduleOrder" placeholder = "module order">
         <textarea rows="4" cols="50" type="textarea" name ="languageCountry" placeholder = "HTML" ></textarea>
+        <input type="submit">
+    </form>
+
+    <br /><br />
+    <h1>Add/Drop Languages to/from Course Modules</h1>
+
+    <br>
+    <form>
+      <label for="module">Select Module #:</label>
+      <select name="module">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </form>
+    <br />
+    <h4>Drop a language from this module</h4>
+    <table>
+        <thead>
+            <th>Language</th>
+            <th>Country</th>
+            <th colspan="2"></th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>English</td>
+            <td>USA</td>
+            <td><button id="drop1">Drop from Module</button></td>
+        </tr>
+        <tr>
+            <td>Spanish</td>
+            <td>Spain</td>
+            <td><button id="drop2">Drop from Module</button></td>
+        </tr>
+        </tbody>
+    </table>
+    
+    <h4>Add New Language to this Module</h4>
+    <form>
+        <label for="language">Enter language:</label>
+        <input type="text" name="languageName" placeholder="language name">
+        <input type="text" name="languageCountry" placeholder="language country">
         <input type="submit">
     </form>
   
