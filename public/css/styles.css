@@ -93,37 +93,6 @@ textarea, input {
   display: block;
 }
 
-/*  -------------------------------------------- ADMIN NAVIGATION */
-/****************************************************/
-/*
-   Citation for the following classes: .dropdown, .dropdown-content, .dropdown:hover .dropdown-content
-   Date: 1/25/2021
-   Copied from:
-   Source URL: https://www.w3schools.com/css/css_dropdowns.asp
-/*
-/****************************************************/
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  padding: 12px 16px;
-  z-index: 1;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/****************************************************/
-/* END citation 
-/****************************************************/
 .adminNavContainer {
   padding: 15px 0px 0px 0px;
   margin: 0px 0px 0px 85px;
