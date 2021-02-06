@@ -1,9 +1,9 @@
-# Citation for the following function:
+# Citation for the following .gitignore configuration:
 # Date: 2/06/2021
 # Almost exclusively based on:
 # Source URL: https://github.com/github/gitignore/blob/master/Node.gitignore
 
-# Specific Shell Scripts That Contain DB passwords
+# Ignore specific shell script that contain DB passwords
 resetDatabaseTables.sh
 
 # Logs
