@@ -95,8 +95,12 @@ textarea, input {
 
 /*  -------------------------------------------- ADMIN NAVIGATION */
 /****************************************************/
-/* FOLLOWING CSS classes taken from
-/* https://www.w3schools.com/css/css_dropdowns.asp
+/*
+   Citation for the following classes: .dropdown, .dropdown-content, .dropdown:hover .dropdown-content
+   Date: 1/25/2021
+   Copied from:
+   Source URL: https://www.w3schools.com/css/css_dropdowns.asp
+/*
 /****************************************************/
 .dropdown {
   position: relative;
@@ -118,7 +122,7 @@ textarea, input {
 }
 
 /****************************************************/
-/* END from https://www.w3schools.com/css/css_dropdowns.asp
+/* END citation 
 /****************************************************/
 .adminNavContainer {
   padding: 15px 0px 0px 0px;

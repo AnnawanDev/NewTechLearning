@@ -10,7 +10,7 @@ const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const getCoursesAPI= module.config().getCoursesAPI;
 const coursesURLString = module.config().coursesURLString;
-const courseOverviewLandingpage = module.config().courseOverviewLandingpage; 
+const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
 let feedbackResponse = document.getElementById('feedback');
 
 // set up event listeners with domReady
@@ -29,7 +29,7 @@ function getAvailableClasses() {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      console.log("DATA ---" + JSON.stringify(data))
+      //console.log("DATA ---" + JSON.stringify(data))
 
 
       if (data.results.length == 0) {

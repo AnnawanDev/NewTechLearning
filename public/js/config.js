@@ -5,6 +5,7 @@ requirejs.config({
         'home':{
             useLogging: true,
             baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             coursesURLString: "/courses",
             courseOverviewLandingpage: "/overview",
             getRecentlyAddedCoursesAPI: "/api/selectMostRecentAddedClasses"
@@ -20,18 +21,21 @@ requirejs.config({
         },
         'createAccount':{
             baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             createAccountAPI: "/api/createUser"
         },
 
         'login': {
             useLogging: true,
             baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             loginAPI: "/api/login"
         },
-        
+
         'logout': {
             useLogging: true,
             baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             logoutAPI: "/api/logout"
         }
     },
