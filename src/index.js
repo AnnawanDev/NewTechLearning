@@ -20,7 +20,7 @@ const port = 14567;
 const publicDirectory = path.join(__dirname, '../public');
 const partialsPath = path.join(__dirname, '../views/partials');
 const useLogging = true;
-const useSecurity = false;
+const useSecurity = true;
 
 // handlebars setup ---------------------------------------------------
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
@@ -511,23 +511,12 @@ function checkIfLoggedIn(req) {
   return false;
 }
 
-async function isLoggedInAsStudent(req) {
+async function isLoggedInAs(req, someType) {
   if (!req.session || !req.session.user) {
     return false;
   }
   let userType = await getUserType(req.session.user.userId);
-  if (userType == "STUDENT") {
-    return true;
-  }
-  return false;
-}
-
-async function isLoggedInAsInstructorOrStudent(req) {
-  if (!req.session || !req.session.user) {
-    return false;
-  }
-  let userType = await getUserType(req.session.user.userId);
-  if (userType == "INSTRUCTOR" || userType == "ADMIN") {
+  if (userType == someType) {
     return true;
   }
   return false;
@@ -562,11 +551,17 @@ async function getUserType(someUserId) {
 };
 
 async function getLoginContext(someContextObject, req) {
-  let student = await isLoggedInAsStudent(req);
-  let instructorOrAdmin = await isLoggedInAsInstructorOrStudent(req);
   someContextObject.isNotLoggedIn = await isNotLoggedIn(req);
-  someContextObject.isLoggedInAsStudent = student;
-  someContextObject.isInstructorOrAdmin = instructorOrAdmin;
+  someContextObject.isLoggedInAsStudent = await isLoggedInAs(req, "STUDENT");
+  someContextObject.isLoggedInAsInstructor = await isLoggedInAs(req, "INSTRUCTOR");
+  someContextObject.isLoggedInAsAdmin = await isLoggedInAs(req, "ADMIN");
+
+  if (someContextObject.isLoggedInAsInstructor || someContextObject.isLoggedInAsAdmin) {
+    someContextObject.isInstructorOrAdmin = true;
+  } else {
+    someContextObject.isInstructorOrAdmin = false;
+  }
+
   return someContextObject;
 }
 
