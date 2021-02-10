@@ -2,11 +2,18 @@
   <div class="navigation" style ="">
     <ul>
       <li><a href="/Admin/">Admin Home</a></li>
-      <li><a href="/Admin/Users/">Admin Users</a></li>
+
+      {{#if isLoggedInAsAdmin}}
+        <li><a href="/Admin/Users/">Admin Users</a></li>
+      {{/if}}
+
       <li><a href="/Admin/Courses/">Admin Courses</a></li>
       <li><a href="/Admin/CourseModules/">Admin Course Modules</a></li>
-      <li><a href="/Admin/Categories/">Admin Categories</a></li>
-      <li><a href="/Admin/Languages/">Admin Languages</a></li>
+
+      {{#if isLoggedInAsAdmin}}
+        <li><a href="/Admin/Categories/">Admin Categories</a></li>
+        <li><a href="/Admin/Languages/">Admin Languages</a></li>
+      {{/if}}
     </ul>
   </div>
 </div>
