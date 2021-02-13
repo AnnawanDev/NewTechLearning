@@ -17,7 +17,7 @@ CREATE TABLE Courses (
 	courseId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   courseName VARCHAR(255) NOT NULL,
   courseDescription MEDIUMTEXT,
-	isLive BOOLEAN NOT NULL,
+	isLive BOOLEAN NOT NULL DEFAULT 0,
 	dateWentLive DATE,
 	categoryFk INT NULL,
 	CONSTRAINT FOREIGN KEY(`categoryFk`) REFERENCES `Categories`(`categoryId`)

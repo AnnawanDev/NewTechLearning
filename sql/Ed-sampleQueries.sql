@@ -1,12 +1,11 @@
 -- CS 340
 -- Group 20 Final Project: New Tech Learning
 -- Nora Marji, Ed Wied
--- February 10, 2021
+-- February 13, 2021
 
--- SAMPLE FROM CANVAS JUST TO REFER TO BEFORE WE TURN IN
--- Query for add a new character functionality with colon : character being used to
--- denote the variables that will have data from the backend programming language
--- INSERT INTO bsg_people (fname, lname, homeworld, age) VALUES (:fnameInput, :lnameInput, :homeworld_id_from_dropdown_Input, :ageInput);
+-- NOTE REGARDING ALL QUERIES
+-- colon : character being used to denote the variables that will have data from NodeJS
+
 
 -- Table: Users (Ed)
 -- +-----------+--------------------------------------+------+-----+---------+----------------+
@@ -22,7 +21,6 @@
 -- +-----------+--------------------------------------+------+-----+---------+----------------+
 
 -- Query to get user id
--- colon : character being used to denote the variables that will have data from NodeJS
 SELECT userId FROM Users WHERE userName = :someUserName;
 
 -- Query to see if user exists
@@ -32,13 +30,12 @@ SELECT userName FROM Users WHERE userName = :someUserName;
 SELECT `userType` FROM `Users` WHERE `userId` = :someUserId;
 
 -- Query to insert a new user
--- colon : character being used to denote the variables that will have data from NodeJS
-INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`)
-VALUES (:firstName, :lastName, :userName, :email, :password);
+INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `password`)
+VALUES (:userType, :firstName, :lastName, :userName, :email, :password);
 
--- Query to update a use
+-- Query to update a user
 UPDATE `Users`
-SET `firstName` = :firstName, `lastName` = :lastName, `userName` = :userName, `email` = :email, `password` = :password
+SET `userType` = :userType, `firstName` = :firstName, `lastName` = :lastName, `userName` = :userName, `email` = :email, `password` = :password
 WHERE `userId` = :userId;
 
 -- Query to update password
@@ -61,7 +58,7 @@ DELETE FROM `Users` WHERE `userId` = :userId;
 -- +-------------------+--------------+------+-----+---------+----------------+
 
 -- Query to get most recently added classes
-SELECT `courseId`, `courseName` FROM Courses ORDER BY `dateWentLive` DESC LIMIT 3;
+SELECT `courseId`, `courseName` FROM Courses WHERE `isLive`=1 ORDER BY `dateWentLive` DESC LIMIT 3;
 
 -- Query to get course name and description for the overview of a particular course
 SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?;
@@ -71,6 +68,14 @@ SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive`=1;
 
 -- Query to insert a new course
 INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (:someCourse, :someCourseDescription);
+
+-- Set of queries to both insert a new course as well as associate a userId as an instructor
+-- takes the last auto incremented id and use that to insert into UserCourses
+-- This is all wrapped in a transaction so they either all pass or all fail
+START TRANSACTION;
+INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (:someCourse, :someCourseDescription);
+INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (:someUserId, (SELECT LAST_INSERT_ID()));
+COMMIT;
 
 -- Query to update a course as being live
 UPDATE `Courses` SET `isLive` = 1, dateWentLive = :date WHERE `courseId` = :someCourseId;
@@ -94,13 +99,13 @@ DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
 -- | courseFk     | int(11) | NO   | MUL | NULL    |                |
 -- +--------------+---------+------+-----+---------+----------------+
 
--- Query to see if user is either a student or instructor in a particular class
+-- Query to see if user has access to a particular class.  If count > 0, then must be a user must be either a student or instructor with access to a course
 SELECT COUNT(*) AS count FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?
 
 -- Query to add a user to a class
 INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (:someUserFk, :someCourseFk);
 
--- Query to delete a user from a class
+-- Query to delete (drop) a user from a class
 DELETE FROM `UsersCourses` WHERE `userFk` = :someUserFk AND `courseFk` = :someCourseFk;
 
 

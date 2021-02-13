@@ -45,6 +45,9 @@ INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
 (4, 4),
 (5, 5);
 
+-- Table: CourseModules
+
+
+-- Table: Languages
+
 -- Table: LanguagesCourses
--- TO-DO: need to match up langauge to course
--- INSERT INTO `LanguagesCourses` (`languageFk`, `courseFk`) VALUES ();
