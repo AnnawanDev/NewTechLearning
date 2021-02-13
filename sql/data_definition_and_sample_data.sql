@@ -139,7 +139,8 @@ INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
 (4, 2),
 (4, 3),
 (4, 4),
-(5, 5);
+(5, 5),
+(6, 1);
 
 -- Table: Languages
 INSERT INTO `Languages` (`languageName`,`languageCountry`) VALUES
