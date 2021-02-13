@@ -227,6 +227,3 @@ DELETE FROM `UsersCourses` WHERE `userFk` = :someUserFk AND `courseFk` = :someCo
 
 
 
-
-
-

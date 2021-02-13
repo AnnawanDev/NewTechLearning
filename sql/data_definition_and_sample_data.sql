@@ -19,6 +19,12 @@ CREATE TABLE Users (
   password VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
+-- creates Categories Table
+CREATE TABLE `Categories` (
+  `categoryId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `categoryName` VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
 --creates Courses Table
 CREATE TABLE Courses (
 	courseId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -31,6 +37,7 @@ CREATE TABLE Courses (
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
 
 --creates UsersCourses Table
 CREATE TABLE UsersCourses (
@@ -52,9 +59,10 @@ CREATE TABLE `CourseModules` (
   `courseModuleHTML` MEDIUMTEXT NULL,
   `courseModuleOrder` INT NOT NULL,
   CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
-  	ON DELETE CASCADE --we want to delete all courseModules when a course is deleted
+  	ON DELETE CASCADE 
   	ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+--we want to delete all courseModules when a course is deleted
 
 --creates Languages Table
 CREATE TABLE `Languages` (
@@ -63,20 +71,16 @@ CREATE TABLE `Languages` (
 	`languageCountry` VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
--- creates Categories Table
-CREATE TABLE `Categories` (
-  `categoryId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-  `categoryName` VARCHAR(255) NOT NULL
-) ENGINE=InnoDB;
+
 
 --creates LanguagesCourses Table
 CREATE TABLE `LanguagesCourses` (
 	`languageCourseId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	`languageFk` INT NOT NULL,
 	`courseFk` INT NOT NULL,
-	CONSTRAINT FOREIGN KEY(`languageFk`) REFERENCES `Languages`(`languageId`),
+	CONSTRAINT FOREIGN KEY(`languageFk`) REFERENCES `Languages`(`languageId`)
   		ON DELETE CASCADE
-  		ON UPDATE CASCADE
+  		ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
   		ON DELETE CASCADE
       ON UPDATE CASCADE
@@ -139,7 +143,7 @@ INSERT INTO `Languages` (`languageName`,`languageCountry`) VALUES
 --Table:  Categories
 INSERT INTO `Categories` (`categoryName`) VALUES 
 ('Web Development'),
-('Mobile App Development')
+('Mobile App Development'),
 ('mySQL'),
 ('AssemblyLanguage'),
 ('C/C++');
