@@ -1,11 +1,11 @@
-<div style="float: right; margin: 30px 20px 0px 0px">
+<div style="float: right; margin: 30px 20px 0px 0px; text-align: right;">
   {{#if isNotLoggedIn}}
-    <a href="/CreateAccount/">Create Account</a>
+    <a href="/CreateAccount/">Create Account</a><br />
     <a href="/Login/">Login</a>
   {{else if isLoggedInAsStudent}}
-    <a href="/Logout/">Logout</a>
+    <a href="/Logout/">Logout {{firstName}}</a>
   {{else if isInstructorOrAdmin}}
-    <a href="/Logout/">Logout</a>
+    <a href="/Logout/">Logout {{firstName}}</a><br />
     <a href="/Admin/">Admin</a>
   {{/if}}
 </div>

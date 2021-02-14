@@ -80,6 +80,39 @@ app.get('/CreateAccount', async (req, res) => {
   res.render('createAccount', context);
 });
 
+app.post('/CreateAccount', async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Create Account';
+
+  //verify that all needed values were posted
+  if (!req.body['firstName'] || !req.body['lastName'] || !req.body['userName'] || !req.body['email'] || !req.body['password1']) {
+    context.feedback = "<div class='formError'>Sorry, required fields not presented when form submitted.  Try again.</div>";
+    context = await getLoginContext(context, req);
+    res.render('createAccount', context);
+  }
+
+  let hashedPassword = await bcrypt.hash(req.body['password1'], 8);
+  const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword]];
+
+  try {
+    let result = await addNewUser(inserts);
+    context.feedback = "<div class='formSuccess'>Welcome to New Tech Learning!</div>";
+  } catch(e) {
+    context.feedback = "<div class='formError'>" + e + "</div>";
+    context.firstName = req.body['firstName'];
+    context.lastName = req.body['lastName'];
+    context.userName = req.body['userName'];
+    context.email = req.body['email'];
+  }
+
+  let user = await doesUserExist(req.body['userName'], req.body['password1']);
+  user.token = await generateAuthToken(user.userId); //log user in with credentials supplied to create account
+  await updateUserToken(user.token, user.userId); // update db with user token
+  req.session.user = user; //store user object in session
+  context = await getLoginContext(context, req); //get user context and save in session
+  res.render('createAccount', context);
+});
+
 app.get('/Courses', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Courses';
@@ -239,6 +272,7 @@ app.get('/Admin/AddDropLanguagesCourses/', requireLogin, async (req, res) => {
   context = await getLoginContext(context, req);
   res.render('adminAddDropLanguagesCourses',context);
 });
+
 app.get('/Admin/AddDropLanguagesModules/', requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin Add/Drop Languages to/from Course Modules';
@@ -249,6 +283,7 @@ app.get('/Admin/AddDropLanguagesModules/', requireLogin, async (req, res) => {
 // APIs ----------------------------------------------------------------
 
 //TODO: Add security eventually, but leave alone for now to create test users via Postman
+//this create user is used publicly to create
 app.post('/api/createUser', requireLogin, async (req,res,next) => {
   let context = {};
 
@@ -278,13 +313,50 @@ app.post('/api/createUser', requireLogin, async (req,res,next) => {
         res.status(400).send()
         return;
       }
-
     }
 
-      context.results = "Inserted ID " + result.insertId;
-      res.send(context);
+    context.results = "Inserted ID " + result.insertId;
+    res.send(context);
     });
 });
+
+
+// app.post('/api/adminCreateUser', requireLogin, async (req,res,next) => {
+//   let context = {};
+//
+//   //verify user posted name, email, password
+//   if (!req.body['firstName'] || !req.body['lastName'] || !req.body['userName'] || !req.body['email'] || !req.body['password']) {
+//     logIt('ERROR! Required values not in POST body');
+//     res.status(400).send();
+//     return;
+//   }
+//
+//   //TODO: ideally make sure email is valid, use some kind of validation on first and last name
+//
+//   let hashedPassword = await bcrypt.hash(req.body['password'], 8);  //hash password sent in with bcrypt
+//   const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword]];  //set up variables to insert into db
+//
+//   mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`) VALUES (?, ?, ?, ?, ?);', inserts, (err, result) => {
+//     if (err) {
+//       // next(err);
+//       console.log("/api/createUser ERROR: " + err)
+//
+//
+//       if (err.toString().includes("ER_DUP_ENTRY")) {
+//         context.result = "DUPLICATE"
+//         res.status(400).send(context);
+//         return;
+//       } else {
+//         res.status(400).send()
+//         return;
+//       }
+//
+//     }
+//
+//       context.results = "Inserted ID " + result.insertId;
+//       res.send(context);
+//     });
+// });
 
 app.get('/api/getCourses', async (req,res,next) => {
   let context = {};
@@ -462,7 +534,6 @@ async function getUserId(userName) {
 //maybe change to getUser since we're now returning user object
 async function doesUserExist(someUserName, somePassword) {
   return new Promise(function(resolve, reject) {
-    // let context = {};
     let user = {};
     mysql.pool.query("SELECT * FROM Users WHERE userName = ? ", [someUserName], (err, rows, fields) => {
         if (err) {
@@ -550,6 +621,7 @@ async function getUserType(someUserId) {
     });
 };
 
+//adds to context object whether or not user is logged in; and if so, what kind of userType they are
 async function getLoginContext(someContextObject, req) {
   someContextObject.isNotLoggedIn = await isNotLoggedIn(req);
   someContextObject.isLoggedInAsStudent = await isLoggedInAs(req, "STUDENT");
@@ -560,6 +632,10 @@ async function getLoginContext(someContextObject, req) {
     someContextObject.isInstructorOrAdmin = true;
   } else {
     someContextObject.isInstructorOrAdmin = false;
+  }
+
+  if (!someContextObject.isNotLoggedIn) {
+    someContextObject.firstName = req.session.user.firstName;
   }
 
   return someContextObject;
@@ -587,4 +663,57 @@ async function isInstructorOrStudentInClass(someContextObject, req) {
         }
       });
     })
+}
+
+//generate Bearer token
+async function generateAuthToken(userId) {
+  return new Promise(function(resolve, reject) {
+    const token = jwt.sign({ _id: userId }, process.env['JWOT_SIGNING'])
+    logIt("TOKEN GENERATED: " + token)
+    if (token) {
+      resolve(token);
+    } else {
+      reject(new Error("Unable to generate token"));
+    }
+  });
+}
+
+async function updateUserToken(token, userId) {
+  return new Promise(function(resolve, reject) {
+    let context = {};
+    logIt("TOKEN PASSED TO updateUserToken: " + token);
+    logIt("USERID PASSED TO updateUserToken: " + userId);
+    mysql.pool.query('UPDATE `Users` SET passwordToken = ? WHERE userId = ?', [[token], [userId]], (err, result) => {
+      if (err) {
+        next(err);
+        return;
+      }
+
+        if (result != undefined) {
+          logIt("updateUserToken result: " + JSON.stringify(result));
+          context.results = "Affected rows " + result.affectedRows;
+          logIt("Affected rows " + result.affectedRows);
+          resolve(context.results);
+        } else {
+          reject(new Error("Unable to update token"));
+        }
+      });
+  });
+}
+
+async function addNewUser(inserts) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`) VALUES (?, ?, ?, ?, ?);', inserts, (err, result) => {
+      if (err) {
+        logIt("/api/createUser ERROR: " + err)
+        if (err.toString().includes("ER_DUP_ENTRY")) {
+          reject("Sorry - that user name is already taken.  Please try another one");
+        } else {
+          reject("Sorry - there was some kind of error.  Please try again.");
+        }
+      } else {
+        resolve("Welcome to New Tech Learning!");
+      }
+    });
+  });
 }

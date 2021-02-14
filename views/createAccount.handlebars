@@ -1,30 +1,30 @@
 <div id="mainContent">
   <h1>Create Account</h1>
-  <div id="feedback"></div>
-  <form id="createAccount">
+  <div id="feedback">{{{feedback}}}</div>
+
+  <form id="createAccount" method="post" action="/CreateAccount/">
     First Name: <br />
-    <input type="text" id="firstName" /><br /><br />
+    <input type="text" id="firstName" name="firstName" value="{{firstName}}" /><br /><br />
 
     Last Name: <br />
-    <input type="text" id="lastName" /><br /><br />
+    <input type="text" id="lastName" name="lastName" value="{{lastName}}" /><br /><br />
 
     User Name: <br />
-    <input type="text" id="userName" /><br /><br />
+    <input type="text" id="userName" name="userName" value="{{userName}}" /><br /><br />
 
     Email: <br />
-    <input type="email" id="email" /><br /><br />
+    <input type="email" id="email" name="email" value="{{email}}" /><br /><br />
 
     Password: <br />
-    <input type="password" id="password1" /><br /><br />
+    <input type="password" id="password1" name="password1" /><br /><br />
 
     Re-enter password: <br />
-    <input type="password" id="password2" /><br /><br />
+    <input type="password" id="password2" name="password2" /><br /><br />
 
     <button id="createAccountSubmit">Submit</button>
   </form>
 </div>
 
 <script> requirejs(['createAccount'], function (){
-  }); 
+  });
 </script>
- 
