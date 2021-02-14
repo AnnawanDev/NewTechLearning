@@ -10,7 +10,9 @@
 <div id="mainContent">
   <h1>Admin Users</h1>
   <h2>Add User</h2>
-  <form>
+  <form method="post" action="/Admin/Users/">
+    <input type="hidden" id="addUserForm" name="addUserForm" value="yes" />
+  {{{ addUserFeedback }}}
   <table>
     <thead>
       <th>First Name</th>
@@ -18,31 +20,34 @@
       <th>User Name</th>
       <th>Email</th>
       <th>Password</th>
+      <th>Confirm Password</th>
       <th>User Type</th>
     </thead>
     <tbody>
       <tr>
-        <td><input type="text" id="addFirstName" /></td>
-        <td><input type="text" id="addLastName" /></td>
-        <td><input type="text" id="addUserName" /></td>
-        <td><input type="text" id="addEmail" /></td>
-        <td><input type="text" id="addPassword" /></td>
+        <td><input type="text" id="addFirstName" name="addFirstName"  /></td>
+        <td><input type="text" id="addLastName" name="addLastName" /></td>
+        <td><input type="text" id="addUserName" name="addUserName" /></td>
+        <td><input type="email" id="addEmail" name="addEmail" /></td>
+        <td><input type="password" id="addPassword1" name="addPassword1" /></td>
+        <td><input type="password" id="addPassword2" name="addPassword2" /></td>
         <td>
-          <select name="userType" id="userType">
+          <select name="addUserType" id="addUserType">
             <option value="Student">Student</option>
-            <option value="Instrucotr">Instructor</option>
+            <option value="Instructor">Instructor</option>
             <option value="Admin">Admin</option>
           </select>
         </td>
       </tr>
     </tbody>
   </table>
-  <button id="addButton" style="margin-top: 20px">Add User</button>
+  <button id="addUserButton" style="margin-top: 20px">Add User</button>
   </form>
 
   <br /><br />
 
-
+  <form method="post" action="/Admin/Users/">
+    <input type="hidden" id="editDeleteUserForm" name="editDeleteUserForm" value="yes" />
   <h2>Edit/Delete Users</h2>
   <table>
     <thead>
@@ -55,63 +60,56 @@
       <th colspan="2"></th>
     </thead>
     <tbody>
-      <tr>
-        <td>Darth</td>
-        <td>Vader</td>
-        <td>Vader1</td>
-        <td>vader1@vader.com</td>
-        <td></td>
-        <td>Student</td>
-        <td><button id="editButton1">Edit</button></td>
-        <td><button id="deleteButton1">Delete</button></td>
-      </tr>
-      <tr>
-        <td>Darth</td>
-        <td>Vader</td>
-        <td>Vader2</td>
-        <td>vader2@vader.com</td>
-        <td></td>
-        <td>Student</td>
-        <td><button id="editButton2">Edit</button></td>
-        <td><button id="deleteButton2">Delete</button></td>
-      </tr>
-      <tr>
-        <td>Darth</td>
-        <td>Vader</td>
-        <td>Vader3</td>
-        <td>vader3@vader.com</td>
-        <td></td>
-        <td>Student</td>
-        <td><button id="editButton3">Edit</button></td>
-        <td><button id="deleteButton3">Delete</button></td>
-      </tr>
+      {{#each userListing}}
+        <tr>
+          <td><input type="text" name="editFirstName{{userId}}" id="editFirstName{{userId}}" value={{firstName}} /></td>
+          <td><input type="text" name="editLastName{{userId}}" id="editLastName{{userId}}" value={{lastName}} /></td>
+          <td><input type="text" name="editUserName{{userId}}" id="editUserName{{userId}}" value={{userName}} /></td>
+          <td><input type="text" name="editEmail{{userId}}" id="editEmail{{userId}}" value={{email}} /></td>
+          <td><input type="text" name="editPassword{{userId}}" id="editPassword{{userId}}" value={{firstName}} /></td>
+          <td>
+            <select name="editUserType" id="editUserType">
+              <option value="Student"{{#if STUDENT}} selected {{/if}}>Student</option>
+              <option value="Instructor" {{#if INSTRUCTOR}} selected {{/if}}>Instructor</option>
+              <option value="Admin" {{#if ADMIN}} selected {{/if}}>Admin</option>
+            </select>
+          </td>
+          <td><button id="editButton{{userId}}">Edit</button></td>
+          <td><button id="deleteButton{{userId}}">Delete</button></td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
+</form>
+
   <br /> <br />
-  <h1>Add/Drop Users from Courses</h1>
+
+  <h1>Add User to Course</h1>
 
     <form>
       <label for="course">Select Course:</label>
-      <select name="course" id="course">
-        <option value="1">Intro to Java</option>
-        <option value="2">C++</option>
-        <option value="3">Advanced SQL</option>
-        <option value="4">Python Boot Camp</option>
+      <select name="courseToAdd" id="courseToAdd">
+        {{#each courses}}
+          <option value="{{courseId}}">{{courseName}}</option>
+        {{/each}}
       </select>
-    </form>
-
-  <h4>Add User Based on Username</h4>
-    <form>
-      <label for="email">Student username:</label>
-      <input type="text" id="username"></input>
+      <br />
+      <label for="AddingUserNameToCourse">Student username:</label>
+      <input type="text" id="AddingUserNameToCourse"></input><br />
       <button id="addUser">Submit</button>
 
   </form>
 
-  <br />
+  <br /><br /><br />
+
 
     <h4>Drop Users from Selected Course</h4>
-
+    <label for="course">Select Course:</label>
+    <select name="courseToDropUserFrom" id="courseToDropUserFrom">
+      {{#each courses}}
+        <option value="{{courseId}}">{{courseName}}</option>
+      {{/each}}
+    </select>
   <table>
     <thead>
       <th>First Name</th>

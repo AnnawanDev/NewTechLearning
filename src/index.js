@@ -92,7 +92,7 @@ app.post('/CreateAccount', async (req, res) => {
   }
 
   let hashedPassword = await bcrypt.hash(req.body['password1'], 8);
-  const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword]];
+  const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword], 'STUDENT'];  // Since call is being made from /CreateAccount, must be a student account
 
   try {
     let result = await addNewUser(inserts);
@@ -106,8 +106,11 @@ app.post('/CreateAccount', async (req, res) => {
   }
 
   let user = await doesUserExist(req.body['userName'], req.body['password1']);
-  user.token = await generateAuthToken(user.userId); //log user in with credentials supplied to create account
-  await updateUserToken(user.token, user.userId); // update db with user token
+
+  //NOTE: Not sure if we'll need this.  Keeping for now
+  //user.token = await generateAuthToken(user.userId); //log user in with credentials supplied to create account
+  //await updateUserToken(user.token, user.userId); // update db with user token
+
   req.session.user = user; //store user object in session
   context = await getLoginContext(context, req); //get user context and save in session
   res.render('createAccount', context);
@@ -117,6 +120,8 @@ app.get('/Courses', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Courses';
   context = await getLoginContext(context, req);
+  context.categories = await getListOfCategories();
+  context.languages = await getListOfLanguages();
   res.render('courses', context);
 });
 
@@ -214,6 +219,37 @@ app.get('/Admin/Users/', requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin Users';
   context = await getLoginContext(context, req);
+  context.courses = await getListOfLiveCourses();
+  context.userListing = await getListOfUsersWithUserTypes();
+  res.render('adminUsers', context);
+});
+
+app.post('/Admin/Users/', requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Users';
+  context.courses = await getListOfLiveCourses();
+  context = await getLoginContext(context, req);
+
+  if (req.body['addUserForm']) {  //user is trying to add a new user
+
+    //TODO: add form validation!
+
+    let hashedPassword = await bcrypt.hash(req.body['addPassword1'], 8);
+    const inserts = [req.body['addFirstName'], req.body['addLastName'], req.body['addUserName'], req.body['addEmail'], [hashedPassword], req.body['addUserType']];
+
+    try {
+      let result = await addNewUser(inserts);
+      context.addUserFeedback = "<div class='formSuccess'>User added!</div>";
+    } catch(e) {
+      logIt("ERROR: " + e);
+      context.addUserFeedback = "<div class='formError'>" + e + "</div>";
+      context.addFirstName = req.body['addFirstName'];
+      context.addLastName = req.body['addLastName'];
+      context.addUserName = req.body['addUserName'];
+      context.addEmail = req.body['addEmail'];
+    }
+  }
+
   res.render('adminUsers', context);
 });
 
@@ -284,41 +320,41 @@ app.get('/Admin/AddDropLanguagesModules/', requireLogin, async (req, res) => {
 
 //TODO: Add security eventually, but leave alone for now to create test users via Postman
 //this create user is used publicly to create
-app.post('/api/createUser', requireLogin, async (req,res,next) => {
-  let context = {};
-
-  //verify user posted name, email, password
-  if (!req.body['firstName'] || !req.body['lastName'] || !req.body['userName'] || !req.body['email'] || !req.body['password']) {
-    logIt('ERROR! Required values not in POST body');
-    res.status(400).send();
-    return;
-  }
-
-  //TODO: ideally make sure email is valid, use some kind of validation on first and last name
-
-  let hashedPassword = await bcrypt.hash(req.body['password'], 8);  //hash password sent in with bcrypt
-  const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword]];  //set up variables to insert into db
-
-  mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`) VALUES (?, ?, ?, ?, ?);', inserts, (err, result) => {
-    if (err) {
-      // next(err);
-      console.log("/api/createUser ERROR: " + err)
-
-
-      if (err.toString().includes("ER_DUP_ENTRY")) {
-        context.result = "DUPLICATE"
-        res.status(400).send(context);
-        return;
-      } else {
-        res.status(400).send()
-        return;
-      }
-    }
-
-    context.results = "Inserted ID " + result.insertId;
-    res.send(context);
-    });
-});
+// app.post('/api/createUser', requireLogin, async (req,res,next) => {
+//   let context = {};
+//
+//   //verify user posted name, email, password
+//   if (!req.body['firstName'] || !req.body['lastName'] || !req.body['userName'] || !req.body['email'] || !req.body['password']) {
+//     logIt('ERROR! Required values not in POST body');
+//     res.status(400).send();
+//     return;
+//   }
+//
+//   //TODO: ideally make sure email is valid, use some kind of validation on first and last name
+//
+//   let hashedPassword = await bcrypt.hash(req.body['password'], 8);  //hash password sent in with bcrypt
+//   const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword]];  //set up variables to insert into db
+//
+//   mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`) VALUES (?, ?, ?, ?, ?);', inserts, (err, result) => {
+//     if (err) {
+//       // next(err);
+//       console.log("/api/createUser ERROR: " + err)
+//
+//
+//       if (err.toString().includes("ER_DUP_ENTRY")) {
+//         context.result = "DUPLICATE"
+//         res.status(400).send(context);
+//         return;
+//       } else {
+//         res.status(400).send()
+//         return;
+//       }
+//     }
+//
+//     context.results = "Inserted ID " + result.insertId;
+//     res.send(context);
+//     });
+// });
 
 
 // app.post('/api/adminCreateUser', requireLogin, async (req,res,next) => {
@@ -432,24 +468,24 @@ app.post('/api/login', async (req, res, next) => {
     }
 });
 
-app.get('/api/UserListing', requireLogin, async (req,res,next) => {
-  try {
-    let context = {};
-    mysql.pool.query("SELECT * FROM Users", (err, rows, fields) => {
-      if (err) {
-        next(err);
-        res.status(500).send();
-      }
-
-      context.results = rows;
-      res.send(context);
-    });
-
-  } catch(e) {
-    logIt("ERROR: " + e)
-    res.status(401).send()
-  }
-});
+// app.get('/api/UserListing', requireLogin, async (req,res,next) => {
+//   try {
+//     let context = {};
+//     mysql.pool.query("SELECT * FROM Users", (err, rows, fields) => {
+//       if (err) {
+//         next(err);
+//         res.status(500).send();
+//       }
+//
+//       context.results = rows;
+//       res.send(context);
+//     });
+//
+//   } catch(e) {
+//     logIt("ERROR: " + e)
+//     res.status(401).send()
+//   }
+// });
 
 app.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
   try {
@@ -600,71 +636,6 @@ async function isNotLoggedIn(req) {
   return false;
 }
 
-async function getUserType(someUserId) {
-  return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {
-        if (err) {
-          logIt("isUserAStudent ERROR: " + err);
-          reject(new Error("Bad query"))
-        }
-
-        if (rows[0].userType == "INSTRUCTOR") {
-          resolve("INSTRUCTOR");
-        } else if (rows[0].userType == "ADMIN") {
-          resolve("ADMIN");
-        } else if (rows[0].userType == "STUDENT") {
-          resolve("STUDENT");
-        } else {
-          reject(new Error("ERROR: isUserAStudent"));
-        }
-      });
-    });
-};
-
-//adds to context object whether or not user is logged in; and if so, what kind of userType they are
-async function getLoginContext(someContextObject, req) {
-  someContextObject.isNotLoggedIn = await isNotLoggedIn(req);
-  someContextObject.isLoggedInAsStudent = await isLoggedInAs(req, "STUDENT");
-  someContextObject.isLoggedInAsInstructor = await isLoggedInAs(req, "INSTRUCTOR");
-  someContextObject.isLoggedInAsAdmin = await isLoggedInAs(req, "ADMIN");
-
-  if (someContextObject.isLoggedInAsInstructor || someContextObject.isLoggedInAsAdmin) {
-    someContextObject.isInstructorOrAdmin = true;
-  } else {
-    someContextObject.isInstructorOrAdmin = false;
-  }
-
-  if (!someContextObject.isNotLoggedIn) {
-    someContextObject.firstName = req.session.user.firstName;
-  }
-
-  return someContextObject;
-}
-
-async function isInstructorOrStudentInClass(someContextObject, req) {
-  return new Promise(function(resolve, reject) {
-    if (!req.session || !req.session.user || req.params.id == "") {
-      resolve({"enrolled": false });
-    }
-
-    const queryParams = [req.session.user.userId, req.params.id];
-    mysql.pool.query("SELECT COUNT(*) AS count FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", queryParams, (err, rows, fields) => {
-        if (err) {
-          logIt("isUserAStudent ERROR: " + err);
-          resolve({"enrolled": false });
-        }
-
-        if (rows[0].count == undefined) {
-          resolve({"enrolled": false });
-        } else if (rows[0].count == 1) {
-          resolve({"enrolled": true });
-        } else {
-          resolve({"enrolled": false });
-        }
-      });
-    })
-}
-
 //generate Bearer token
 async function generateAuthToken(userId) {
   return new Promise(function(resolve, reject) {
@@ -701,9 +672,76 @@ async function updateUserToken(token, userId) {
   });
 }
 
+//adds to context object whether or not user is logged in; and if so, what kind of userType they are
+async function getLoginContext(someContextObject, req) {
+  someContextObject.isNotLoggedIn = await isNotLoggedIn(req);
+  someContextObject.isLoggedInAsStudent = await isLoggedInAs(req, "STUDENT");
+  someContextObject.isLoggedInAsInstructor = await isLoggedInAs(req, "INSTRUCTOR");
+  someContextObject.isLoggedInAsAdmin = await isLoggedInAs(req, "ADMIN");
+
+  if (someContextObject.isLoggedInAsInstructor || someContextObject.isLoggedInAsAdmin) {
+    someContextObject.isInstructorOrAdmin = true;
+  } else {
+    someContextObject.isInstructorOrAdmin = false;
+  }
+
+  if (!someContextObject.isNotLoggedIn) {
+    someContextObject.firstName = req.session.user.firstName;
+  }
+
+  return someContextObject;
+}
+
+
+// DB Functions ------------------------------------------------------
+async function getUserType(someUserId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {
+        if (err) {
+          logIt("isUserAStudent ERROR: " + err);
+          reject(new Error("Bad query"))
+        }
+
+        if (rows[0].userType == "INSTRUCTOR") {
+          resolve("INSTRUCTOR");
+        } else if (rows[0].userType == "ADMIN") {
+          resolve("ADMIN");
+        } else if (rows[0].userType == "STUDENT") {
+          resolve("STUDENT");
+        } else {
+          reject(new Error("ERROR: isUserAStudent"));
+        }
+      });
+    });
+};
+
+async function isInstructorOrStudentInClass(someContextObject, req) {
+  return new Promise(function(resolve, reject) {
+    if (!req.session || !req.session.user || req.params.id == "") {
+      resolve({"enrolled": false });
+    }
+
+    const queryParams = [req.session.user.userId, req.params.id];
+    mysql.pool.query("SELECT COUNT(*) AS count FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", queryParams, (err, rows, fields) => {
+        if (err) {
+          logIt("isUserAStudent ERROR: " + err);
+          resolve({"enrolled": false });
+        }
+
+        if (rows[0].count == undefined) {
+          resolve({"enrolled": false });
+        } else if (rows[0].count == 1) {
+          resolve({"enrolled": true });
+        } else {
+          resolve({"enrolled": false });
+        }
+      });
+    })
+}
+
 async function addNewUser(inserts) {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`) VALUES (?, ?, ?, ?, ?);', inserts, (err, result) => {
+    mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`, `userType`) VALUES (?, ?, ?, ?, ?, ?);', inserts, (err, result) => {
       if (err) {
         logIt("/api/createUser ERROR: " + err)
         if (err.toString().includes("ER_DUP_ENTRY")) {
@@ -716,4 +754,58 @@ async function addNewUser(inserts) {
       }
     });
   });
+}
+
+async function getListOfLiveCourses() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfLiveCourses() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
+//get list of categories that are linked to live classes
+async function getListOfCategories() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfCategories() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
+//get list of distinct languages that are linked to live classes
+async function getListOfLanguages() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT DISTINCT `languageId`, `languageName` FROM `Languages` INNER JOIN `LanguagesCourses` ON `languageId` = `languageFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `isLive` = 1 ORDER BY `languageName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfLanguages() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
+async function getListOfUsersWithUserTypes() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT userId, firstName, lastName, userName, email, IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT, IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR, IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN FROM USERS ORDER BY lastName ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfUsers() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
 }
