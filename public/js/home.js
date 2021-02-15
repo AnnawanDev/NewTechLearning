@@ -9,7 +9,6 @@ define (['domReady', 'module'],function (domReady, module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
-//const baseURL = "http://flip3.engr.oregonstate.edu:14567";
 const getRecentlyAddedCoursesAPI = module.config().getRecentlyAddedCoursesAPI;
 const coursesURLString = module.config().coursesURLString;
 const courseOverviewLandingpage = module.config().courseOverviewLandingpage;

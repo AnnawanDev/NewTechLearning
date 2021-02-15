@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   January 25, 2021
+   February 14, 2021
 */
 
 /*  -------------------------------------------- GENERAL */
@@ -129,8 +129,18 @@ textarea, input {
   color: #000000;
 }
 
+/*  -------------------------------------------- CREATE ACCOUNT */
+.formError {
+  margin: 0px 0px 25px 0px;
+  padding: 0px;
+  color: #ff0000;
+}
 
-
+.formSuccess {
+  margin: 0px 0px 25px 0px;
+  padding: 0px;
+  color: #006400;
+}
 
 
 /*  -------------------------------------------- 404 */
