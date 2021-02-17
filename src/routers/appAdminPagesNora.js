@@ -5,19 +5,19 @@
    February 17, 2021
 */
 
-// const express = require('express');
-// const router = new express.Router();
-// const auth = require('../middleware/auth');
-// const dbQueries = require('../dbQueries');
-// const bcrypt = require('bcrypt');
-// const logIt = require('../helperFunctions');
+const express = require('express');
+const router = new express.Router();
+const auth = require('../middleware/auth');
+const dbQueries = require('../dbQueries');
+const bcrypt = require('bcrypt');
+const logIt = require('../helperFunctions');
 
-// router.get('/Admin/', auth.requireLogin, async (req, res) => {
-//   let context = {};
-//   context.title = 'New Tech Learning | Admin Home';
-//   context = await auth.getLoginContext(context, req);
-//   res.render('adminHome', context);
-// });
+router.get('/Admin/', auth.requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Home';
+  context = await auth.getLoginContext(context, req);
+  res.render('adminHome', context);
+});
 
 // router.get('/Admin/Users/', auth.requireLogin, async (req, res) => {
 //   let context = {};
@@ -57,19 +57,19 @@
 //   res.render('adminUsers', context);
 // });
 
-// router.get('/Admin/Languages/', auth.requireLogin, async (req, res) => {
-//   let context = {};
-//   context.title = 'New Tech Learning | Admin Languages';
-//   context = await auth.getLoginContext(context, req);
-//   res.render('adminLanguages', context);
-// });
-//
-// router.get('/Admin/Categories/', auth.requireLogin, async (req, res) => {
-//   let context = {};
-//   context.title = 'New Tech Learning | Admin Categories';
-//   context = await auth.getLoginContext(context, req);
-//   res.render('adminCategories', context);
-// });
+router.get('/Admin/Languages/', auth.requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Languages';
+  context = await auth.getLoginContext(context, req);
+  res.render('adminLanguages', context);
+});
+
+router.get('/Admin/Categories/', auth.requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin Categories';
+  context = await auth.getLoginContext(context, req);
+  res.render('adminCategories', context);
+});
 
 // router.get('/Admin/Courses/', auth.requireLogin, async (req, res) => {
 //   let context = {};
@@ -78,12 +78,12 @@
 //   res.render('adminCourses', context);
 // });
 
-// router.get('/Admin/CourseModules/', auth.requireLogin, async (req, res) => {
-//   let context = {};
-//   context.title = 'New Tech Learning | Admin CourseModules';
-//   context = await auth.getLoginContext(context, req);
-//   res.render('adminCourseModules', context);
-// });
+router.get('/Admin/CourseModules/', auth.requireLogin, async (req, res) => {
+  let context = {};
+  context.title = 'New Tech Learning | Admin CourseModules';
+  context = await auth.getLoginContext(context, req);
+  res.render('adminCourseModules', context);
+});
 
 
-// module.exports = router;
+module.exports = router;

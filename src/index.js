@@ -36,10 +36,14 @@ app.use(session({
 
 // Set up & register routers -----------------------------------------------
 const appPublicPages = require('./routers/appPublicPages');
-const appAdminPages = require('./routers/appAdminPages');
+//const appAdminPages = require('./routers/appAdminPages');
+const appAdminPagesEd = require('./routers/appAdminPagesEd');
+const appAdminPagesNora = require('./routers/appAdminPagesNora');
 const apiEndpoints = require('./routers/apiEndpoints');
 app.use(appPublicPages);
-app.use(appAdminPages);
+//app.use(appAdminPages);
+app.use(appAdminPagesEd);
+app.use(appAdminPagesNora);
 app.use(apiEndpoints);
 
 // serve 404 on anything else ------------------------------------------
