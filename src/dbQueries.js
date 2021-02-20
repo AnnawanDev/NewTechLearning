@@ -150,7 +150,7 @@ async function getUserId(userName) {
 //maybe change to getUser since we're now returning user object
 async function doesUserExist(someUserName, somePassword) {
   return new Promise(function(resolve, reject) {
-    let user = {}; 
+    let user = {};
     mysql.pool.query("SELECT * FROM Users WHERE userName = ? ", [someUserName], (err, rows, fields) => {
         if (err) {
           logIt("doesUserExist ERROR: " + err);
@@ -178,12 +178,28 @@ async function doesUserExist(someUserName, somePassword) {
   });
 }
 
-module.exports.getUserType = getUserType;
-module.exports.isInstructorOrStudentInClass = isInstructorOrStudentInClass;
-module.exports.addNewUser = addNewUser;
-module.exports.getListOfLiveCourses = getListOfLiveCourses;
-module.exports.getListOfCategories = getListOfCategories;
-module.exports.getListOfLanguages = getListOfLanguages;
-module.exports.getListOfUsersWithUserTypes = getListOfUsersWithUserTypes;
-module.exports.getUserId = getUserId;
-module.exports.doesUserExist = doesUserExist;
+async function addUserToClass(inserts) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (?, ?);', inserts, (err, result) => {
+      if (err) {
+        logIt("addUserToClass ERROR: " + err)
+        reject("Sorry - there was some kind of error.  Please try again.");
+      } else {
+        resolve("Congratulations! You've been added to the class.");
+      }
+    });
+  });
+}
+
+module.exports = {
+  getUserType,
+  isInstructorOrStudentInClass,
+  addNewUser,
+  getListOfLiveCourses,
+  getListOfCategories,
+  getListOfLanguages,
+  getListOfUsersWithUserTypes,
+  getUserId,
+  doesUserExist,
+  addUserToClass
+}

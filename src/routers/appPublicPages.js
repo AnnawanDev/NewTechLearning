@@ -7,9 +7,9 @@
 
 const express = require('express');
 const router = new express.Router();
-const auth = require('../middleware/auth');
+const {getLoginContext, requireLogin} = require('../middleware/auth');
 const helper = require ('../helperFunctions');
-const dbQueries = require('../dbQueries');
+const {doesUserExist, addNewUser, getListOfCategories, getListOfLanguages, isInstructorOrStudentInClass, addUserToClass} = require('../dbQueries');
 const mysql = require('../databaseConnection');
 const bcrypt = require('bcrypt');
 const useLogging = true;
@@ -17,14 +17,14 @@ const useLogging = true;
 router.get('/', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Home';
-  context = await auth.getLoginContext(context, req);
+  context = await getLoginContext(context, req);
   res.render('home', context);
 });
 
 router.get('/About', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | About';
-  context = await auth.getLoginContext(context, req);
+  context = await getLoginContext(context, req);
   res.render('about', context);
 });
 
@@ -37,22 +37,22 @@ router.get('/Login', async (req, res) => {
   }
 
   context.title = 'New Tech Learning | Login';
-  context = await auth.getLoginContext(context, req);
+  context = await getLoginContext(context, req);
   res.render('login',context);
 });
 
-router.get('/Logout', auth.requireLogin, async (req, res) => {
+router.get('/Logout', requireLogin, async (req, res) => {
   req.session.reset();
   let context = {};
   context.title = 'New Tech Learning | Logout';
-  context = await auth.getLoginContext(context, req);
+  context = await getLoginContext(context, req);
   res.render('logout', context);
 });
 
 router.get('/CreateAccount', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Create Account';
-  context = await auth.getLoginContext(context, req);
+  context = await getLoginContext(context, req);
   res.render('createAccount', context);
 });
 
@@ -63,7 +63,7 @@ router.post('/CreateAccount', async (req, res) => {
   //verify that all needed values were posted
   if (!req.body['firstName'] || !req.body['lastName'] || !req.body['userName'] || !req.body['email'] || !req.body['password1']) {
     context.feedback = "<div class='formError'>Sorry, required fields not presented when form submitted.  Try again.</div>";
-    context = await auth.getLoginContext(context, req);
+    context = await getLoginContext(context, req);
     res.render('createAccount', context);
   }
 
@@ -71,7 +71,7 @@ router.post('/CreateAccount', async (req, res) => {
   const inserts = [req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], [hashedPassword], 'STUDENT'];  // Since call is being made from /CreateAccount, must be a student account
 
   try {
-    let result = await dbQueries.addNewUser(inserts);
+    let result = await addNewUser(inserts);
     context.feedback = "<div class='formSuccess'>Welcome to New Tech Learning!</div>";
   } catch(e) {
     context.feedback = "<div class='formError'>" + e + "</div>";
@@ -81,30 +81,30 @@ router.post('/CreateAccount', async (req, res) => {
     context.email = req.body['email'];
   }
 
-  let user = await dbQueries.doesUserExist(req.body['userName'], req.body['password1']);
+  let user = await doesUserExist(req.body['userName'], req.body['password1']);
 
   //NOTE: Not sure if we'll need this.  Keeping for now
   //user.token = await generateAuthToken(user.userId); //log user in with credentials supplied to create account
   //await updateUserToken(user.token, user.userId); // update db with user token
 
   req.session.user = user; //store user object in session
-  context = await auth.getLoginContext(context, req); //get user context and save in session
+  context = await getLoginContext(context, req); //get user context and save in session
   res.render('createAccount', context);
 });
 
 router.get('/Courses', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Courses';
-  context = await auth.getLoginContext(context, req);
-  context.categories = await dbQueries.getListOfCategories();
-  context.languages = await dbQueries.getListOfLanguages();
+  context = await getLoginContext(context, req);
+  context.categories = await getListOfCategories();
+  context.languages = await getListOfLanguages();
   res.render('courses', context);
 });
 
 router.get('/Courses/:id/:courseName/overview', async (req, res) => {
   let context = {};
   context.results = "";
-  context = await auth.getLoginContext(context, req);
+  context = await getLoginContext(context, req);
 
   mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
       if (err) {
@@ -122,11 +122,59 @@ router.get('/Courses/:id/:courseName/overview', async (req, res) => {
       if (!req.session || !req.session.user) {
         context.notLoggedIn = true;
       } else if (req.session.user.userType == "STUDENT") {
-        let isUserEnrolled = await dbQueries.isInstructorOrStudentInClass(context, req);
+        let isUserEnrolled = await isInstructorOrStudentInClass(context, req);
         context.isEnrolled = isUserEnrolled.enrolled;
         context.isStudent = true;
       } else if (req.session.user.userType == "INSTRUCTOR") {
-        let isUserEnrolled = await dbQueries.isInstructorOrStudentInClass(context, req);
+        let isUserEnrolled = await isInstructorOrStudentInClass(context, req);
+        context.isEnrolled = isUserEnrolled.enrolled;
+        context.isInstructor = true;
+      } else if (req.session.user.userType == "ADMIN") {
+        context.isAdmin = true;
+      } else {
+        logIt ("ERROR - SHOULD NOT GET HERE in /Courses/:id/:courseName/overview")
+      }
+
+      res.render('courseOverview', context);
+    });
+});
+
+router.post('/Courses/:id/:courseName/overview', async (req, res) => {
+  //if user is not logged in then reroute to GET version of page
+  if (!req.session || !req.session.user) {
+    const returnURL = '/Courses/' + req.params.id + "/" + req.params.courseName + "/overview";
+    return res.redirect(returnURL);
+  }
+
+  let context = {};
+  context.results = "";
+  context = await getLoginContext(context, req);
+
+  //add user to class
+  const inserts = [req.session.user.userId, req.params.id];
+  context.addingClass = await addUserToClass(inserts);
+
+  mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /Courses/:id/:courseName/overview: " + err);
+        return;
+      }
+      context.title = rows[0].courseName;
+      context.htmlContent = rows[0].courseDescription;
+      context.moduleLink = '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1';
+
+      //if admin then show link to go to class module
+      //if instructor then see if instructor is teaching that class.  If teaching, then show link. If not, then don't show anything
+      //if student, then see if enrolled.  if enrolled, then show link to course module.  if not enrolled, then show link to sign up
+      //if not logged in, then show prompt to login in order to enroll
+      if (!req.session || !req.session.user) {
+        context.notLoggedIn = true;
+      } else if (req.session.user.userType == "STUDENT") {
+        let isUserEnrolled = await isInstructorOrStudentInClass(context, req);
+        context.isEnrolled = isUserEnrolled.enrolled;
+        context.isStudent = true;
+      } else if (req.session.user.userType == "INSTRUCTOR") {
+        let isUserEnrolled = await isInstructorOrStudentInClass(context, req);
         context.isEnrolled = isUserEnrolled.enrolled;
         context.isInstructor = true;
       } else if (req.session.user.userType == "ADMIN") {
@@ -176,7 +224,7 @@ router.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
       context.courseTitle = req.params.courseName;
       context.moduleNo = req.params.courseModule
       context.htmlContent = rows2[0].courseModuleHTML
-      context = await auth.getLoginContext(context, req);
+      context = await getLoginContext(context, req);
       res.render('coursePage', context);
     });
 
