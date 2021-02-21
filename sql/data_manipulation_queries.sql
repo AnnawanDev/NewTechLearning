@@ -23,14 +23,14 @@
 -- Query to get user id
 SELECT userId FROM Users WHERE userName = :someUserName;
 
--- Query to see if user exists
-SELECT userName FROM Users WHERE userName = :someUserName;
+-- Query to see if user exists - if so, details are used to populate session
+SELECT `userId`, `firstName`, `lastName`, `email`, `userType` FROM `Users` WHERE `userName` = :someUserName;
 
 -- Query to get a user's type
 SELECT `userType` FROM `Users` WHERE `userId` = :someUserId;
 
 -- Query to insert a new user
-INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `password`)
+INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`, `userType`)
 VALUES (:userType, :firstName, :lastName, :userName, :email, :password);
 
 -- Query to update a user
@@ -43,6 +43,16 @@ UPDATE `Users` SET `password` = :password WHERE `userId` = :userId;
 
 -- Query to delete a user
 DELETE FROM `Users` WHERE `userId` = :userId;
+
+-- Query to get list of users, but break out userType into true/false pairs.  This allows us to pass true/false arguments to handlebars to easily categorize users
+SELECT userId, firstName, lastName, userName, email,
+IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT,
+IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR,
+IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN
+FROM USERS ORDER BY lastName ASC;
+
+-- query to see if there's a matching user; and if so, grab details to verify credentials
+SELECT `userId`, `firstName`, `lastName`, `email`, `userType`, `password` FROM `Users` WHERE `userName` = :someUserName;
 
 
 -- Table: Courses
@@ -64,7 +74,7 @@ SELECT `courseId`, `courseName` FROM Courses WHERE `isLive`=1 ORDER BY `dateWent
 SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?;
 
 -- Query to get all courses that are currently live
-SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive`=1;
+SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC;
 
 -- Query to insert a new course
 INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (:someCourse, :someCourseDescription);
@@ -108,6 +118,21 @@ INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (:someUserFk, :someCour
 -- Query to delete (drop) a user from a class
 DELETE FROM `UsersCourses` WHERE `userFk` = :someUserFk AND `courseFk` = :someCourseFk;
 
+-- Query to get list of students and instructors associated with a particular class
+SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType`
+FROM `Users`
+INNER JOIN `UsersCourses` ON `userId` = `userFk`
+INNER JOIN `Courses` on `courseFk` = `courseId`
+WHERE `courseId` = :someClassId
+ORDER BY `userType` DESC, `userName` ASC;
+
+-- Query to get all students and instructors who are not associated with a particular class
+SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userId` NOT IN
+	(SELECT `userId` FROM `USERS`
+	INNER JOIN `UsersCourses` ON `userId` = `userFk`
+	INNER JOIN `Courses` ON `courseFk` = `courseId`
+	WHERE `courseId` = :someCourseId)
+AND `userType` != 'ADMIN';
 
 -- Table Languages
 -- +-----------------+--------------+------+-----+---------+----------------+
@@ -133,6 +158,11 @@ DELETE FROM `UsersCourses` WHERE `userFk` = :someUserFk AND `courseFk` = :someCo
 	--Admin: insert a language
 	INSERT INTO `Languages` (`languageName`, `languageCountry`) VALUES (:languageNameInput, :languageCountryInput)
 
+	-- get list of distinct languages that are linked to live classes
+SELECT DISTINCT `languageId`, `languageName` FROM `Languages`
+INNER JOIN `LanguagesCourses` ON `languageId` = `languageFk`
+INNER JOIN `Courses` ON `courseFk` = `courseId`
+WHERE `isLive` = 1 ORDER BY `languageName` ASC;
 
 -- Table CourseModules
 -- +-------------------+------------+------+-----+---------+----------------+
@@ -187,11 +217,17 @@ DELETE FROM `UsersCourses` WHERE `userFk` = :someUserFk AND `courseFk` = :someCo
 	-- Admin: insert category based on values input in the "add category" form on Categories Admin age
 	INSERT INTO `Categories` (`categoryName`) VALUES (:categoryNameInput)
 
-	--Courses overview page: Query to select courses based on categoryId
+	-- Courses overview page: Query to select courses based on categoryId
 	SELECT `courseName`, `categoryName`
 	FROM `Courses`
 	INNER JOIN `Categories` ON `Courses`.`categoryFk` = `Categories`.`categoryId`
 	WHERE `categoryId` = :someCategoryId;
+
+	-- Query to get list of categories that are linked to live classes
+	SELECT `categoryId`, `categoryName` FROM `Categories`
+	INNER JOIN `Courses` ON `categoryId` = `categoryFk`
+	WHERE `isLive` = 1 ORDER BY `categoryName` ASC;
+
 
 -- Table LanguagesCourses
 -- +------------------+---------+------+-----+---------+----------------+

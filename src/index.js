@@ -36,13 +36,17 @@ app.use(session({
 
 // Set up & register routers -----------------------------------------------
 const appPublicPages = require('./routers/appPublicPages');
-//const appAdminPages = require('./routers/appAdminPages');
-const appAdminPagesEd = require('./routers/appAdminPagesEd');
+const appAdmin = require('./routers/appAdmin');
+const appAdminUsers = require('./routers/appAdminUsers');
+const appAdminCourses = require('./routers/appAdminCourses');
+const appAdminCourseEnrollment = require('./routers/appAdminCourseEnrollment');
 const appAdminPagesNora = require('./routers/appAdminPagesNora');
 const apiEndpoints = require('./routers/apiEndpoints');
 app.use(appPublicPages);
-//app.use(appAdminPages);
-app.use(appAdminPagesEd);
+app.use(appAdmin);
+app.use(appAdminUsers);
+app.use(appAdminCourses);
+app.use(appAdminCourseEnrollment);
 app.use(appAdminPagesNora);
 app.use(apiEndpoints);
 
