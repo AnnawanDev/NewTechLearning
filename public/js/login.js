@@ -5,18 +5,24 @@
    January 25, 2021
 */
 
-define (['domReady', 'module'],function (domReady, module){ 
+define (['module'],function(module){ 
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const loginAPI = module.config().loginAPI;
 let feedbackResponse = document.getElementById('feedback');
 
-// set up event listeners with domReady -------------------------------------
+// set up event listeners  -------------------------------------
 
-domReady(function(){
+if(document.readyState !== 'loading' ) {
   document.getElementById('submit').addEventListener('click', logUserIn);
-})
+} else {
+  document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('submit').addEventListener('click', logUserIn);
+
+  });
+}
+
 
 // main functions -------------------------------------
 function logUserIn() {

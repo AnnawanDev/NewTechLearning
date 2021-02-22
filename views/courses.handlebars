@@ -25,5 +25,6 @@
   <div id="availableClasses"></div>
 </div>
 
-<script> requirejs(['courses'], function (){
-  }); </script>
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/courses.js"]);
+    }); </script>

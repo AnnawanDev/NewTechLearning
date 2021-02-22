@@ -20,6 +20,7 @@
 </form>
 </div>
 
-<script> requirejs(['login'], function (){
-  }); 
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/login.js"]);
+    });
 </script>

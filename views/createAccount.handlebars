@@ -25,6 +25,8 @@
   </form>
 </div>
 
-<script> requirejs(['createAccount'], function (){
-  });
+<script> 
+  requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/createAccount.js"]);
+    });
 </script>
