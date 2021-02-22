@@ -1,0 +1,53 @@
+<!-- bad place for this -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
+<div style="background-color: #ff0000; height: 50px;">
+  {{>adminNavigation}}
+</div>
+
+<div id="mainContent">
+  <h1>Add User to Course</h1>
+
+  <form method="post" action="/Admin/Users/">
+    <input type="hidden" id="addUserToCourse" name="addUserToCourse" value="yes" />
+    <label for="course">Select Course:</label>
+    <select name="courseToAddSelectElement" id="courseToAddSelectElement">
+      {{#each courses}}
+        <option value="{{courseId}}">{{courseName}}</option>
+      {{/each}}
+    </select>
+    <br />
+    <label for="AddingUserNameToCourse">User: </label>
+    <span id="addUserToCourseSelectElement"></span>
+    <button id="addUserToCourseButton">Submit</button>
+  </form>
+
+  <br /><br /><br />
+
+  <form method="post" action="/Admin/Users/">
+    <input type="hidden" id="dropUserFromCourse" name="dropUserFromCourse" value="yes" />
+    <h4>Drop Users from Selected Course</h4>
+    <label for="course">Select Course:</label>
+    <select name="courseToDropUserFrom" id="courseToDropUserFrom">
+      {{#each courses}}
+        <option value="{{courseId}}">{{courseName}}</option>
+      {{/each}}
+    </select>
+
+    <table style="margin-top: 10px;">
+      <thead>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>User Name</th>
+        <th>Email</th>
+        <th>User Type</th>
+        <th></th>
+      </thead>
+      <tbody id="userListingTbody"></tbody>
+    </table>
+  </form>
+</div>
+
+<script> requirejs(['courseEnrollment'], function (){ }); </script>

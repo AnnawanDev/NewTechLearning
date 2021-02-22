@@ -5,18 +5,22 @@
    February 17, 2021
 */
 
-
 const express = require('express');
 const router = new express.Router();
 const auth = require('../middleware/auth');
 const mysql = require('../databaseConnection');
-const dbQueries = require('../dbQueries');
-const useLogging = true;
+const {doesUserExist} = require('../dbQueries');
+const {logIt} = require('../helperFunctions');
 
 router.get('/api/getCourses', async (req,res,next) => {
   let context = {};
 
-  mysql.pool.query('SELECT `courseId`, `courseName` FROM `Courses`;', (err, rows, fields) => {
+  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM COURSES INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
+  if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
+    sqlQuery += "AND categoryId = " + req.query.categoryFilter;
+  }
+
+  mysql.pool.query(sqlQuery, (err, rows, fields) => {
       if (err) {
         logIt("ERROR FROM /api/getCourses: " + err);
         return;
@@ -67,7 +71,7 @@ router.post('/api/login', async (req, res, next) => {
 
     try {
       // see if there exists a user with email and if password passed equals hashed password
-      let user = await dbQueries.doesUserExist(username, password);
+      let user = await doesUserExist(username, password);
 
       if (!user) {
         logIt('ERROR! bad email and/or password');
@@ -106,10 +110,63 @@ router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
   }
 });
 
-function logIt(someMessage) {
-  if (useLogging) {
-    console.log(someMessage);
+//TODO: add security
+router.get('/api/getStudentsInClasses/:someClassId', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? ORDER BY `userType` DESC, `userName` ASC", req.params.someClassId, (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
   }
-}
+});
+
+//TODO: add security
+router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `USERS` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` != 'ADMIN'", req.params.someClassId, (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
+  }
+});
+
+router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
+  }
+});
 
 module.exports = router;

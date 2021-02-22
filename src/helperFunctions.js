@@ -15,4 +15,6 @@ function logIt(someMessage) {
   }
 }
 
-module.exports = logIt;
+module.exports = {
+  logIt
+}

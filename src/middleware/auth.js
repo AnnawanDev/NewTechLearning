@@ -65,5 +65,7 @@ function checkIfLoggedIn(req) {
   return false;
 }
 
-module.exports.requireLogin = requireLogin;
-module.exports.getLoginContext = getLoginContext;
+module.exports = {
+  requireLogin,
+  getLoginContext
+}
