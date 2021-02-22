@@ -159,7 +159,7 @@ AND `userType` != 'ADMIN';
 	INSERT INTO `Languages` (`languageName`, `languageCountry`) VALUES (:languageNameInput, :languageCountryInput)
 
 	-- get list of distinct languages that are linked to live classes
-SELECT DISTINCT `languageId`, `languageName` FROM `Languages`
+SELECT DISTINCT `languageId`, `languageName`, `languageCountry` FROM `Languages`
 INNER JOIN `LanguagesCourses` ON `languageId` = `languageFk`
 INNER JOIN `Courses` ON `courseFk` = `courseId`
 WHERE `isLive` = 1 ORDER BY `languageName` ASC;

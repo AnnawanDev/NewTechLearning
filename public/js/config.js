@@ -18,6 +18,7 @@ requirejs.config({
             getCoursesAPI: "/api/getCourses",
             coursesURLString: "/courses",
             courseOverviewLandingpage: "/overview",
+            getCategoriesAPI: "/api/getListOfAvailableCategories"
         },
         'createAccount':{
             baseURL: "http://localhost:14567",

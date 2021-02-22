@@ -4,27 +4,45 @@
    Ed Wied
    January 25, 2021
 */
+
 define (['domReady', 'module'],function (domReady, module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const getCoursesAPI= module.config().getCoursesAPI;
+const getCategoriesAPI = module.config().getCategoriesAPI;
+const getLanguagesAPI = module.config().getLanguagesAPI;
 const coursesURLString = module.config().coursesURLString;
 const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
 let feedbackResponse = document.getElementById('feedback');
+let categoriesDropDownList = document.getElementById('categoriesDropDownList');
 
 // set up event listeners with domReady
 domReady(function(){
+  getCategoriesList();
   getAvailableClasses();
 })
+
+document.getElementById('categoriesDropDownList').addEventListener('change',function(){
+    //clear all classes
+    document.getElementById('availableClasses').innerHTML = "";
+
+    //re-populate classes based on category selection
+    getAvailableClasses();
+});
 
 // main functions -------------------------------------
 function getAvailableClasses() {
   let feedbackToUser = "";
+  let queryURL = baseURL + getCoursesAPI;
+
+  if (document.getElementById('categoriesList') ) {
+    queryURL += "?categoryFilter=" + document.getElementById('categoriesList').value;
+  }
 
   //make ajax request
   let req = new XMLHttpRequest();
-  req.open("GET", baseURL + getCoursesAPI, true);
+  req.open("GET", queryURL, true);
   req.setRequestHeader("Content-type", "application/json");
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
@@ -55,6 +73,50 @@ function getAvailableClasses() {
   req.send(JSON.stringify(null));
   event.preventDefault();
 }
+
+function getCategoriesList() {
+  //let populateCategoriesList = "<select name=\"categoriesList\" id=\"categoriesList\"><option value=\"all\">All</option>";
+
+  let populateCategoriesList = document.createElement("select");
+  populateCategoriesList.setAttribute("name", "categoriesList");
+  populateCategoriesList.setAttribute("id", "categoriesList");
+
+  let allOptionForDropDown = document.createElement("option");
+  allOptionForDropDown.setAttribute("value", "ALL");
+  allOptionForDropDown.text = "ALL";
+  populateCategoriesList.appendChild(allOptionForDropDown);
+
+  //make ajax request
+  let req = new XMLHttpRequest();
+  req.open("GET", baseURL + getCategoriesAPI, true);
+  req.setRequestHeader("Content-type", "application/json");
+  req.addEventListener("load", function () {
+    if (req.status >=200 && req.status < 400) {
+      let data = JSON.parse(req.response);
+      //console.log("DATA ---" + JSON.stringify(data))
+
+      if (data.results.length == 0) {
+        //populateCategoriesList += "</select>";
+      } else {
+        for (let someCategory of data.results) {
+          //populateCategoriesList += "<option value=\"" + someCategory.categoryId + "\">" + someCategory.categoryName + "</option>"
+          let option = document.createElement("option");
+          option.setAttribute("value", someCategory.categoryId);
+          option.text = someCategory.categoryName;
+          populateCategoriesList.appendChild(option);
+        }
+      }
+
+    } else {
+      //populateCategoriesList += "</select>";
+    }
+    categoriesDropDownList.appendChild(populateCategoriesList);
+    //categoriesDropDownList.innerHTML = populateCategoriesList;
+  });
+  req.send(JSON.stringify(null));
+  event.preventDefault();
+}
+
 
 
 // utility -------------------------------------
