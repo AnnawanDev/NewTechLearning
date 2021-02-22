@@ -66,9 +66,9 @@
           <td><input type="text" name="editLastName{{userId}}" id="editLastName{{userId}}" value={{lastName}} /></td>
           <td><input type="text" name="editUserName{{userId}}" id="editUserName{{userId}}" value={{userName}} /></td>
           <td><input type="text" name="editEmail{{userId}}" id="editEmail{{userId}}" value={{email}} /></td>
-          <td><input type="text" name="editPassword{{userId}}" id="editPassword{{userId}}" value={{firstName}} /></td>
+          <td><input type="text" name="editPassword{{userId}}" id="editPassword{{userId}}" value="" /></td>
           <td>
-            <select name="editUserType" id="editUserType">
+            <select name="editUserType" id="editUserType{{userId}}">
               <option value="Student"{{#if STUDENT}} selected {{/if}}>Student</option>
               <option value="Instructor" {{#if INSTRUCTOR}} selected {{/if}}>Instructor</option>
               <option value="Admin" {{#if ADMIN}} selected {{/if}}>Admin</option>
@@ -81,61 +81,4 @@
     </tbody>
   </table>
 </form>
-
-  <br /> <br />
-
-  <h1>Add User to Course</h1>
-
-    <form>
-      <label for="course">Select Course:</label>
-      <select name="courseToAdd" id="courseToAdd">
-        {{#each courses}}
-          <option value="{{courseId}}">{{courseName}}</option>
-        {{/each}}
-      </select>
-      <br />
-      <label for="AddingUserNameToCourse">Student username:</label>
-      <input type="text" id="AddingUserNameToCourse"></input><br />
-      <button id="addUser">Submit</button>
-
-  </form>
-
-  <br /><br /><br />
-
-
-    <h4>Drop Users from Selected Course</h4>
-    <label for="course">Select Course:</label>
-    <select name="courseToDropUserFrom" id="courseToDropUserFrom">
-      {{#each courses}}
-        <option value="{{courseId}}">{{courseName}}</option>
-      {{/each}}
-    </select>
-  <table>
-    <thead>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>User Name</th>
-      <th>Email</th>
-      <th>User Type</th>
-      <th colspan="2"></th>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Yoda</td>
-        <td>Yoda</td>
-        <td>Yoda1</td>
-        <td>Yoda@yoda.com</td>
-        <td>Instructor</td>
-        <td><button id="drop1">Drop from class</button></td>
-      </tr>
-      <tr>
-        <td>Darth</td>
-        <td>Vader</td>
-        <td>Vader2</td>
-        <td>vader@vader.com</td>
-        <td>Student</td>
-        <td><button id="drop2">Drop from class</button></td>
-      </tr>
-    </tbody>
-  </table>
 </div>

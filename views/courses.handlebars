@@ -1,16 +1,12 @@
 <div id="mainContent">
   <h1>Courses</h1>
-  <form id="categoryForm" style="margin: 0px 25px 25px 0px; padding: 0px; float: left;">
+  <div style="margin: 0px 25px 25px 0px; padding: 0px; float: left;">
     Categories:
-    <select name="categoriesList" id="categoriesList">
-      {{#each categories}}
-        <option value="{{categoryId}}">{{categoryName}}</option>
-      {{/each}}
-    </select>
+    <span id="categoriesDropDownList"></span>
+  </div>
 
-    <button id="categoryButton">Submit</button>
-  </form>
-  <form id="languagesForm" style="float: left;">
+  <form>
+  <div style="margin: 0px 25px 25px 0px; padding: 0px; float: left;">
     Languages:
     <select name="languagesList" id="languagesList">
       {{#each languages}}
@@ -19,10 +15,11 @@
     </select>
 
     <button id="languageButton">Submit</button>
-  </form>
-  <div style="clear: both;"></div>
+  </div>
 
+  <div style="clear: both;"></div>
   <div id="availableClasses"></div>
+  </form>
 </div>
 
 <script> requirejs(["/js/config.js"], function (config){

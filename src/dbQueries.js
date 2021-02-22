@@ -7,6 +7,7 @@
 
 const mysql = require('./databaseConnection');
 const bcrypt = require('bcrypt');
+const {logIt} = require('./helperFunctions');
 
 async function getUserType(someUserId) {
   return new Promise(function(resolve, reject) {
@@ -124,6 +125,24 @@ async function getListOfUsersWithUserTypes() {
   })
 }
 
+async function getListOfUsersAssociatedWithAClass(someClassId) {
+  return new Promise(function(resolve, reject) {
+
+    if (!Number.isInteger(someClassId)) {
+      reject("Passed class id argument that is not a number")
+    }
+
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? ORDER BY `userType`, `userName` ASC;", someClassId, (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfUsersAssociatedWithAClass() ERROR: " + err);
+        reject("ERROR in selecting users associatd with a course");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
 async function getUserId(userName) {
   return new Promise(function(resolve, reject) {
     let context = {};
@@ -151,12 +170,12 @@ async function getUserId(userName) {
 async function doesUserExist(someUserName, somePassword) {
   return new Promise(function(resolve, reject) {
     let user = {};
-    mysql.pool.query("SELECT * FROM Users WHERE userName = ? ", [someUserName], (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `email`, `userType`, `password` FROM `Users` WHERE `userName` = ?", [someUserName], (err, rows, fields) => {
         if (err) {
           logIt("doesUserExist ERROR: " + err);
           return -1;
         }
-        //logIt("TRYING TO LOGIN WITH USERNAME: " + someUserName);
+
         if (rows[0] == undefined) {
           reject(new Error("User ID not found"));
           return;
@@ -192,14 +211,15 @@ async function addUserToClass(inserts) {
 }
 
 module.exports = {
-  getUserType,
-  isInstructorOrStudentInClass,
   addNewUser,
-  getListOfLiveCourses,
+  addUserToClass,
+  doesUserExist,
+  getUserType,
   getListOfCategories,
   getListOfLanguages,
+  getListOfLiveCourses,
+  getListOfUsersAssociatedWithAClass,
   getListOfUsersWithUserTypes,
   getUserId,
-  doesUserExist,
-  addUserToClass
+  isInstructorOrStudentInClass
 }

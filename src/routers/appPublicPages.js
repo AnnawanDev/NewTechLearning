@@ -96,7 +96,6 @@ router.get('/Courses', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Courses';
   context = await getLoginContext(context, req);
-  context.categories = await getListOfCategories();
   context.languages = await getListOfLanguages();
   res.render('courses', context);
 });

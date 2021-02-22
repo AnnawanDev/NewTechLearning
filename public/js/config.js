@@ -18,6 +18,7 @@ requirejs.config({
             getCoursesAPI: "/api/getCourses",
             coursesURLString: "/courses",
             courseOverviewLandingpage: "/overview",
+            getCategoriesAPI: "/api/getListOfAvailableCategories"
         },
         '/js/createAccount.js':{
             baseURL: "http://localhost:14567",
@@ -37,6 +38,14 @@ requirejs.config({
             baseURL: "http://localhost:14567",
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             logoutAPI: "/api/logout"
+        },
+
+        'courseEnrollment': {
+            useLogging: true,
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            getStudentsEnrolledAPI: "/api/getStudentsInClasses/",
+            getStudentsNotEnrolledAPI: "/api/getStudentsNotInClass/"
         }
     },
     baseUrl: '/js',
