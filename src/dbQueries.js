@@ -84,6 +84,19 @@ async function getListOfLiveCourses() {
   })
 }
 
+async function getListOfAllCourses() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,150), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId ORDER BY `courseName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfAllCourses() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
 //get list of categories that are linked to live classes
 async function getListOfCategories() {
   return new Promise(function(resolve, reject) {
@@ -210,11 +223,31 @@ async function addUserToClass(inserts) {
   });
 }
 
+async function getAllInstructorsOrAdmins() {
+  return new Promise(function(resolve, reject) {
+    let context = {};
+
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN';", (err, rows, fields) => {
+        if (err) {
+          reject(new Error("getAllInstructorsOrAdmins Bad query: " + err))
+        }
+
+        if (rows) {
+          resolve(rows);
+        } else {
+          reject(new Error("User ID not found"));
+        }
+      });
+  });
+}
+
 module.exports = {
   addNewUser,
   addUserToClass,
   doesUserExist,
+  getAllInstructorsOrAdmins,
   getUserType,
+  getListOfAllCourses,
   getListOfCategories,
   getListOfLanguages,
   getListOfLiveCourses,

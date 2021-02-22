@@ -16,13 +16,19 @@
     <thead>
       <th>Course Name</th>
       <th>Course Description</th>
-      <th>Instructor username</th>
+      <th>Instructor</th>
     </thead>
     <tbody>
       <tr>
         <td><input type="text" id="courseName" /></td>
-        <td><input type="text" id="courseDescription" /></td>
-        <td><input type="text" id="instructorUserName" /></td>
+        <td><textarea id="courseDescription" name="courseDescription" rows="4" cols="50"></textarea></td>
+        <td>
+            <select id="selectForClassInstructor">
+              {{#each instructorsOrAdmins}}
+                <option value="{{userId}}">{{lastName}}, {{firstName}} ({{userName}})</option>
+              {{/each}}
+            </select>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -36,28 +42,24 @@
   <table>
     <thead>
       <th>Course Name</th>
-      <th>Course Description</th>
-      <th>Course Start Date</th>
+      <th width="200px">Course Description</th>
+      <th width="200px">Course Start Date</th>
+      <th>Is Live?</th>
       <th>Instructor</th>
       <th colspan="2"></th>
     </thead>
     <tbody>
-      <tr>
-        <td>Intro to Java</td>
-        <td>{ some content }</td>
-        <td>2021-01-03</td>
-        <td>NULL</td>
-        <td><button id="editButton1">Edit</button></td>
-        <td><button id="deleteButton1">Delete</button></td>
-      </tr>
-      <tr>
-        <td>C++</td>
-        <td>{ some content }</td>
-        <td>2021-01-10</td>
-        <td>NULL</td>
-        <td><button id="editButton2">Edit</button></td>
-        <td><button id="deleteButton2">Delete</button></td>
-      </tr>
+      {{#each courses}}
+        <tr>
+          <td>{{courseName}}</td>
+          <td>{{{description}}}</td>
+          <td>{{dateWentLive}}</td>
+          <td>{{isLive}}</td>
+          <td>{{lastName}}, {{firstName}} ({{userName}})</td>
+          <td><button id="editButton{{courseId}}">Edit</button></td>
+          <td><button id="deleteButton{{courseId}}">Delete</button></td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
 
