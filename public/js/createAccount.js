@@ -5,13 +5,18 @@
    February 14, 2021
 */
 
-define (['domReady', 'module'],function (domReady, module){
+define (['module'],function (module){
   const baseURL = module.config().baseURL;
   const createAccountAPI = module.config().createAccountAPI;
 
-  domReady(function(){
-    bindSubmitButton();
-  })
+// set up event listeners -------------------------------------
+if(document.readyState !== 'loading' ) {
+  bindSubmitButton();
+} else {
+  document.addEventListener('DOMContentLoaded', function () {
+  bindSubmitButton();
+  });
+}
 
   function bindSubmitButton() {
     document.getElementById("createAccountSubmit").addEventListener("click", addNewUser);
