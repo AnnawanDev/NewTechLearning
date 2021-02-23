@@ -66,16 +66,16 @@
 
   <br /><br />
 
-  <h1>Edit Languages and Category Associated with Courses</h1>
-  <form>
-      <label for="course">Select Course:</label>
-      <select name="course">
-        <option value="1">Intro to Java</option>
-        <option value="2">C++</option>
-        <option value="3">Advanced SQL</option>
-        <option value="4">Python Boot Camp</option>
+  <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
+  <h1>Edit Languages Associated with Courses</h1>
+
+      <label for="selectCourseLanguage">Select Course:</label>
+      <select name="selectCourseLanguage">
+        {{#each courses}}
+        <option value="{{courseId}}">{{courseName}}</option>
+        {{/each}}
       </select>
-    </form>
+
 
     <br />
     <h4>Current Languages</h4>
@@ -108,8 +108,17 @@
       </select>
       <input type="submit">
     </form>
+  </div>
 
-    <br />
+    <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
+      <h1>Edit Category Associated with a Course</h1>
+
+          <label for="selectCourseCategory">Select Course:</label>
+          <select name="selectCourseCategory">
+            {{#each courses}}
+            <option value="{{courseId}}">{{courseName}}</option>
+            {{/each}}
+          </select>
     <h4>Current Category </h4>
     <table>
         <thead>
@@ -127,12 +136,12 @@
     <form>
       <label for="category">Select Category:</label>
       <select name="category" id="course">
-        <option value="1">Assembly Language</option>
-        <option value="2">Mobile App Development</option>
-        <option value="3">Web Development</option>
-        <option value="4">C/C++ </option>
+        {{#each categories}}
+        <option value="{{categoryId}}">{{categoryName}}</option>
+        {{/each}}
       </select>
       <input type="submit">
     </form>
-
+  </div>
+  <div style="clear: both;"></div>
 </div>

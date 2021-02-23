@@ -87,28 +87,32 @@ CREATE TABLE `LanguagesCourses` (
 --INSERT SAMPLE DATA --
 
 -- SAMPLE USER NAMES AND PASSWORDS --
--- The values you see that are being inserted are encrypted with bcrypt.  Any new user likewise has their password encrypted by application.
--- ADMINS --
--- user/pass ed
--- user/pass nora
+-- The values you see that are being inserted are encrypted with bcrypt.
+-- Any new user likewise has their password encrypted by application.
+
+-- ADMIN USER NAMES:
+-- User/pass: ed/ed
+-- User/pass: nora/nora
+-- User/pass: admin/abc
 
 -- INSTRUCTORS --
--- user/pass teacherA
--- user/pass teacherB
--- user/pass teacherC
+-- user/pass darth/abc
+-- user/pass leia/abc
+-- user/pass luke/abc
 
 -- STUDENTS --
--- user/pass student1
+-- user/pass r2/abc
 
 
 -- Table: Users
 INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `password`) VALUES
- ("ADMIN", "Ed", "Wied", "ed", "wied@wied.com", "$2b$08$PDVw3i.IkTnf5tR.zlueTuwCyYDwlUWzOSr6e901dCrB39jZcOc1y"),
- ("ADMIN", "Nora", "Marji", "nora", "nora@nora.com", "$2b$08$yQ9cnErp8mcB.EA8gtLDpufos3JXSYEGbLyUc2kdh4UKo7gwSMIEO"),
- ("INSTRUCTOR", "teacher", "A", "teacherA", "teacherA@teacher.com", "$2b$08$NwZbIlbwBLBX2oQossTJaO5I7axMPjbxPFuIU.1YEJgDgg4tkhbOO"),
- ("INSTRUCTOR", "teacher", "B", "teacherB", "teacherB@teacher.com", "$2b$08$8lYw7lxdxrHbwkhw8KkYS.s3/ylLm2fk0p7NvD5YlFw0kTEYjzXNm"),
- ("INSTRUCTOR", "teacher", "C", "teacherC", "teacherC@teacher.com", "$2b$08$Vw4UZZiukXrGJq.iuf54muYCny5/HKFIglrjLsLEHN2LhmXhJQObe"),
- ("STUDENT", "student", "1", "student1", "student1@student.com", "$2b$08$GdCEICyppmlGH16hD15CPuLc1ULe0QaTjeRWcS7l5lh1cAHOOouZW");
+("ADMIN", "Ed", "Wied", "ed", "ed@oregonstate.edu", "$2b$08$ql53fvqiCbtywsY6dbL8V.4CsISAYGpTErQAkbcDJND1ndrWHNzrK"),
+("ADMIN", "Nora", "Marji", "nora", "nora@oregonstate.edu", "$2b$08$VQh0G7Biue9v9LMy9rI26.V28CVz.Az3FI7BymAhrhgueP9M8uyu6"),
+("ADMIN", "admin", "admin", "admin", "admin@oregonstate.edu", "$2b$08$SUuLqNkB/5wcVaHni3GOMepS73haczmf1ij5Ohm0QMLCo9xRCGVu."),
+("INSTRUCTOR", "Darth", "Vader", "darth", "darth@oregonstate.edu", "$2b$08$1ANevIZD2eJ8G/TgfiAw5u0nskwYNXQSv0Avioevro4xQo.h/nHYC"),
+("INSTRUCTOR", "Leia", "Organa", "leia", "leia@oregonstate.edu", "$2b$08$lKmFk2UiXZBrT1e1nMAK6upVs/fV.pv0Ta2WdiPh31ge4Al3C.Zly"),
+("INSTRUCTOR", "Luke", "Skywalker", "luke", "luke@oregonstate.edu", "$2b$08$j1afmx4V4V.S25Rj5O3yceAXTzodKjZfpT/1lNMyPGAHNA78k1Spe"),
+("STUDENT", "R2", "D2", "r2d2", "r2d2@oregonstate.edu", "$2b$08$Vs7uwIfYrkRKZwg8K.WWteZ.5oLxhJupYlbHSkP7ejOjzBJ/vvsie");
 
 
  -- Table:  Categories

@@ -111,6 +111,19 @@ async function getListOfCategories() {
   })
 }
 
+async function getListOfAllCategories() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfCategories() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
 //get list of distinct languages that are linked to live classes
 async function getListOfLanguages() {
   return new Promise(function(resolve, reject) {
@@ -158,7 +171,6 @@ async function getListOfUsersAssociatedWithAClass(someClassId) {
 
 async function getUserId(userName) {
   return new Promise(function(resolve, reject) {
-    let context = {};
 
     mysql.pool.query("SELECT userId FROM Users WHERE userName = ?", [userName], (err, rows, fields) => {
         if (err) {
@@ -225,7 +237,6 @@ async function addUserToClass(inserts) {
 
 async function getAllInstructorsOrAdmins() {
   return new Promise(function(resolve, reject) {
-    let context = {};
 
     mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN';", (err, rows, fields) => {
         if (err) {
@@ -248,6 +259,7 @@ module.exports = {
   getAllInstructorsOrAdmins,
   getUserType,
   getListOfAllCoursesAndWhoIsTeaching,
+  getListOfAllCategories,
   getListOfCategories,
   getListOfLanguages,
   getListOfLiveCourses,

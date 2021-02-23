@@ -10,7 +10,7 @@ const router = new express.Router();
 const {getLoginContext, requireLogin} = require('../middleware/auth');
 const {getListOfLiveCourses, addNewUser, getListOfUsersWithUserTypes, getListOfUsersAssociatedWithAClass} = require('../dbQueries');
 const bcrypt = require('bcrypt');
-const logIt = require('../helperFunctions');
+const {logIt} = require('../helperFunctions');
 
 
 router.get('/Admin/Users/', requireLogin, async (req, res) => {
@@ -38,7 +38,7 @@ router.post('/Admin/Users/', requireLogin, async (req, res) => {
 
     try {
       let result = await addNewUser(inserts);
-      context.addUserFeedback = "<div class='formSuccess'>User added!</div>";
+      context.addEditUserFeedback = "<div class='formSuccess'>User added!</div>";
     } catch(e) {
       logIt("ERROR: " + e);
       context.addUserFeedback = "<div class='formError'>" + e + "</div>";

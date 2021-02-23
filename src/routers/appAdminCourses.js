@@ -8,7 +8,7 @@
 const express = require('express');
 const router = new express.Router();
 const {getLoginContext, requireLogin} = require('../middleware/auth');
-const {getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching} = require('../dbQueries');
+const {getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories} = require('../dbQueries');
 const bcrypt = require('bcrypt');
 const logIt = require('../helperFunctions');
 
@@ -18,6 +18,7 @@ router.get('/Admin/Courses/', requireLogin, async (req, res) => {
   context = await getLoginContext(context, req);
   context.instructorsOrAdmins = await getAllInstructorsOrAdmins();
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
+  context.categories = await getListOfAllCategories();
   res.render('adminCourses', context);
 });
 
