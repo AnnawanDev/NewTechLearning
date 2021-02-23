@@ -8,11 +8,11 @@
 </div>
 
 <div id="mainContent">
+  {{{ addEditUserFeedback }}}
   <h1>Admin Users</h1>
   <h2>Add User</h2>
   <form method="post" action="/Admin/Users/">
     <input type="hidden" id="addUserForm" name="addUserForm" value="yes" />
-  {{{ addUserFeedback }}}
   <table>
     <thead>
       <th>First Name</th>
@@ -46,9 +46,8 @@
 
   <br /><br />
 
-  <form method="post" action="/Admin/Users/">
-    <input type="hidden" id="editDeleteUserForm" name="editDeleteUserForm" value="yes" />
   <h2>Edit/Delete Users</h2>
+  <div id="feedbackResponse"></div>
   <table>
     <thead>
       <th>First Name</th>
@@ -74,11 +73,21 @@
               <option value="Admin" {{#if ADMIN}} selected {{/if}}>Admin</option>
             </select>
           </td>
-          <td><button id="editButton{{userId}}">Edit</button></td>
-          <td><button id="deleteButton{{userId}}">Delete</button></td>
+          <td><button id="editButton{{userId}}" onClick="editUser({{userId}})">Edit</button></td>
+          <td><button id="deleteButton{{userId}}" onClick="deleteUser({{userId}})">Delete</button></td>
         </tr>
       {{/each}}
     </tbody>
   </table>
-</form>
 </div>
+
+<script type="text/javascript">
+//placeholders
+function editUser() {
+  
+}
+
+function deleteUser() {
+
+}
+</script>

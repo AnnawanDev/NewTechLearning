@@ -16,13 +16,19 @@
     <thead>
       <th>Course Name</th>
       <th>Course Description</th>
-      <th>Instructor username</th>
+      <th>Instructor</th>
     </thead>
     <tbody>
       <tr>
         <td><input type="text" id="courseName" /></td>
-        <td><input type="text" id="courseDescription" /></td>
-        <td><input type="text" id="instructorUserName" /></td>
+        <td><textarea id="courseDescription" name="courseDescription" rows="4" cols="50"></textarea></td>
+        <td>
+            <select id="selectForClassInstructor">
+              {{#each instructorsOrAdmins}}
+                <option value="{{userId}}">{{lastName}}, {{firstName}} ({{userName}})</option>
+              {{/each}}
+            </select>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -36,44 +42,40 @@
   <table>
     <thead>
       <th>Course Name</th>
-      <th>Course Description</th>
-      <th>Course Start Date</th>
+      <th width="200px">Course Description</th>
+      <th width="200px">Course Start Date</th>
+      <th>Is Live?</th>
       <th>Instructor</th>
       <th colspan="2"></th>
     </thead>
     <tbody>
-      <tr>
-        <td>Intro to Java</td>
-        <td>{ some content }</td>
-        <td>2021-01-03</td>
-        <td>NULL</td>
-        <td><button id="editButton1">Edit</button></td>
-        <td><button id="deleteButton1">Delete</button></td>
-      </tr>
-      <tr>
-        <td>C++</td>
-        <td>{ some content }</td>
-        <td>2021-01-10</td>
-        <td>NULL</td>
-        <td><button id="editButton2">Edit</button></td>
-        <td><button id="deleteButton2">Delete</button></td>
-      </tr>
+      {{#each courses}}
+        <tr>
+          <td>{{courseName}}</td>
+          <td>{{{description}}}</td>
+          <td>{{dateWentLive}}</td>
+          <td>{{isLive}}</td>
+          <td>{{lastName}}, {{firstName}} ({{userName}})</td>
+          <td><button id="editButton{{courseId}}">Edit</button></td>
+          <td><button id="deleteButton{{courseId}}">Delete</button></td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
 
 
   <br /><br />
 
-  <h1>Edit Languages and Category Associated with Courses</h1>
-  <form>
-      <label for="course">Select Course:</label>
-      <select name="course">
-        <option value="1">Intro to Java</option>
-        <option value="2">C++</option>
-        <option value="3">Advanced SQL</option>
-        <option value="4">Python Boot Camp</option>
+  <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
+  <h1>Edit Languages Associated with Courses</h1>
+
+      <label for="selectCourseLanguage">Select Course:</label>
+      <select name="selectCourseLanguage">
+        {{#each courses}}
+        <option value="{{courseId}}">{{courseName}}</option>
+        {{/each}}
       </select>
-    </form>
+
 
     <br />
     <h4>Current Languages</h4>
@@ -106,8 +108,17 @@
       </select>
       <input type="submit">
     </form>
+  </div>
 
-    <br />
+    <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
+      <h1>Edit Category Associated with a Course</h1>
+
+          <label for="selectCourseCategory">Select Course:</label>
+          <select name="selectCourseCategory">
+            {{#each courses}}
+            <option value="{{courseId}}">{{courseName}}</option>
+            {{/each}}
+          </select>
     <h4>Current Category </h4>
     <table>
         <thead>
@@ -125,12 +136,12 @@
     <form>
       <label for="category">Select Category:</label>
       <select name="category" id="course">
-        <option value="1">Assembly Language</option>
-        <option value="2">Mobile App Development</option>
-        <option value="3">Web Development</option>
-        <option value="4">C/C++ </option>
+        {{#each categories}}
+        <option value="{{categoryId}}">{{categoryName}}</option>
+        {{/each}}
       </select>
       <input type="submit">
     </form>
-
+  </div>
+  <div style="clear: both;"></div>
 </div>

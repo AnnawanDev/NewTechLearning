@@ -84,10 +84,36 @@ async function getListOfLiveCourses() {
   })
 }
 
+async function getListOfAllCoursesAndWhoIsTeaching() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,100), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' ORDER BY `courseName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfAllCourses() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
 //get list of categories that are linked to live classes
 async function getListOfCategories() {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfCategories() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
+async function getListOfAllCategories() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` ORDER BY `categoryName` ASC;", (err, rows, fields) => {
       if (err) {
         logIt("getListOfCategories() ERROR: " + err);
         reject("ERROR in selecting courses");
@@ -145,7 +171,6 @@ async function getListOfUsersAssociatedWithAClass(someClassId) {
 
 async function getUserId(userName) {
   return new Promise(function(resolve, reject) {
-    let context = {};
 
     mysql.pool.query("SELECT userId FROM Users WHERE userName = ?", [userName], (err, rows, fields) => {
         if (err) {
@@ -210,11 +235,31 @@ async function addUserToClass(inserts) {
   });
 }
 
+async function getAllInstructorsOrAdmins() {
+  return new Promise(function(resolve, reject) {
+
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN';", (err, rows, fields) => {
+        if (err) {
+          reject(new Error("getAllInstructorsOrAdmins Bad query: " + err))
+        }
+
+        if (rows) {
+          resolve(rows);
+        } else {
+          reject(new Error("User ID not found"));
+        }
+      });
+  });
+}
+
 module.exports = {
   addNewUser,
   addUserToClass,
   doesUserExist,
+  getAllInstructorsOrAdmins,
   getUserType,
+  getListOfAllCoursesAndWhoIsTeaching,
+  getListOfAllCategories,
   getListOfCategories,
   getListOfLanguages,
   getListOfLiveCourses,

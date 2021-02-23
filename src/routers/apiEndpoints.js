@@ -170,4 +170,37 @@ router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
   }
 });
 
+//TODO: add security
+router.delete('/api/deleteUser/:userId', async (req,res,next) => {
+  let context = {};
+  mysql.pool.query("DELETE FROM `Users` WHERE `userId` = ?", req.params.userId, (error, results, fields) => {
+    if (error) {
+      res.status(500).send();
+    };
+
+    logIt('deleted ' + results.affectedRows + ' rows');
+    let context = {};
+    context.results = results.affectedRows;
+    res.send(context);
+  })
+});
+
+//TODO: add security
+router.patch('/api/editUser/:userId', async (req,res,next) => {
+  let hashedPassword = await bcrypt.hash(password, 8);
+  const updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], hashedPassword, userId];
+
+  mysql.pool.query("UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ?, `password` = ? WHERE `userId` = ?;", updates, (err, result) => {
+      if (err) {
+        reject(new Error("editUser Bad query: " + err))
+      }
+
+      if (result.affectedRows) {
+        resolve(result.affectedRows);
+      } else {
+        reject(new Error("Could not delete"));
+      }
+    });
+});
+
 module.exports = router;

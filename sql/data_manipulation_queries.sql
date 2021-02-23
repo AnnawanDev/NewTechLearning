@@ -45,14 +45,17 @@ UPDATE `Users` SET `password` = :password WHERE `userId` = :userId;
 DELETE FROM `Users` WHERE `userId` = :userId;
 
 -- Query to get list of users, but break out userType into true/false pairs.  This allows us to pass true/false arguments to handlebars to easily categorize users
-SELECT userId, firstName, lastName, userName, email,
+SELECT `userId`, `firstName`, `lastName`, `userName`, `email`,
 IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT,
 IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR,
 IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN
-FROM USERS ORDER BY lastName ASC;
+FROM `Users` ORDER BY `lastName` ASC;
 
 -- query to see if there's a matching user; and if so, grab details to verify credentials
 SELECT `userId`, `firstName`, `lastName`, `email`, `userType`, `password` FROM `Users` WHERE `userName` = :someUserName;
+
+-- query to get all users who are instructors or admins
+SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN';
 
 
 -- Table: Courses
@@ -98,6 +101,20 @@ UPDATE `Courses` SET `courseName` = :someCourseName, `courseDescription` = :some
 
 -- Query to delete a course
 DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
+
+-- Query to get all courses, regardless of whether they are live or not
+-- Associate with who's teaching (could be userType Instrurctor or Admin)
+-- limit description string to 150 characters
+SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, 
+CONCAT(LEFT(`courseDescription`,100), '...') AS 'description',
+`dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive
+FROM `Courses`
+INNER JOIN `UsersCourses` ON courseId = courseFk
+INNER JOIN `Users` ON userFk = userId
+WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN'
+ORDER BY `courseName` ASC;
+
+
 
 
 -- Table: UsersCourses
