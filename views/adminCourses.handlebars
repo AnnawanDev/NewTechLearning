@@ -1,4 +1,4 @@
-<!-- bad place for this -->
+<!-- TODO: Move to other location? -->
 <style type="text/css">
   table, th, td { border: 1px solid #000000; padding: 10px; }
 </style>
@@ -11,7 +11,8 @@
   <h1>Admin Courses</h1>
 
   <h2>Add Course</h2>
-  <form>
+  {{addNewCourseResult}}
+  <form method="post" action="/Admin/Courses/">
   <table>
     <thead>
       <th>Course Name</th>
@@ -20,10 +21,10 @@
     </thead>
     <tbody>
       <tr>
-        <td><input type="text" id="courseName" /></td>
+        <td><input type="text" id="courseName" name="courseName" /></td>
         <td><textarea id="courseDescription" name="courseDescription" rows="4" cols="50"></textarea></td>
         <td>
-            <select id="selectForClassInstructor">
+            <select id="selectForClassInstructor" name="selectForClassInstructor">
               {{#each instructorsOrAdmins}}
                 <option value="{{userId}}">{{lastName}}, {{firstName}} ({{userName}})</option>
               {{/each}}
@@ -32,6 +33,7 @@
       </tr>
     </tbody>
   </table>
+  <input type="hidden" id="addNewCourseForm" name="addNewCourseForm" value="yes" />
   <button id="addButton" style="margin-top: 20px">Add Course</button>
 </form>
 

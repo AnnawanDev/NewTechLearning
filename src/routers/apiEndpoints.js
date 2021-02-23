@@ -135,7 +135,7 @@ router.get('/api/getStudentsInClasses/:someClassId', async (req,res,next) => {
 router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `USERS` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` != 'ADMIN'", req.params.someClassId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `userType` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `USERS` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` = 'STUDENT' ORDER BY lastName ASC", req.params.someClassId, (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();

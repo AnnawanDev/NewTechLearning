@@ -252,7 +252,22 @@ async function getAllInstructorsOrAdmins() {
   });
 }
 
+async function addNewCourse(courseName, courseDescription) {
+  let inserts = [courseName, courseDescription];
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (?, ?); ', inserts, (err, result) => {
+      if (err) {
+        logIt("addNewCourse ERROR: " + err)
+        reject("Sorry - there was some kind of error.  Please try again.");
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
 module.exports = {
+  addNewCourse,
   addNewUser,
   addUserToClass,
   doesUserExist,

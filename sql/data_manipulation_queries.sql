@@ -105,7 +105,7 @@ DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
 -- Query to get all courses, regardless of whether they are live or not
 -- Associate with who's teaching (could be userType Instrurctor or Admin)
 -- limit description string to 150 characters
-SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, 
+SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`,
 CONCAT(LEFT(`courseDescription`,100), '...') AS 'description',
 `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive
 FROM `Courses`
@@ -143,13 +143,14 @@ INNER JOIN `Courses` on `courseFk` = `courseId`
 WHERE `courseId` = :someClassId
 ORDER BY `userType` DESC, `userName` ASC;
 
--- Query to get all students and instructors who are not associated with a particular class
-SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userId` NOT IN
+-- Query to get all students who are not associated with a particular class
+SELECT `userId`, `firstName`, `lastName`, `userName`, `userType`
+FROM `Users` WHERE `userId` NOT IN
 	(SELECT `userId` FROM `USERS`
 	INNER JOIN `UsersCourses` ON `userId` = `userFk`
 	INNER JOIN `Courses` ON `courseFk` = `courseId`
 	WHERE `courseId` = :someCourseId)
-AND `userType` != 'ADMIN';
+AND `userType` = 'STUDENT' ORDER BY lastName ASC;
 
 -- Table Languages
 -- +-----------------+--------------+------+-----+---------+----------------+

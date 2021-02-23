@@ -1,4 +1,4 @@
-<!-- bad place for this -->
+<!-- TODO: Move to other location? -->
 <style type="text/css">
   table, th, td { border: 1px solid #000000; padding: 10px; }
 </style>
@@ -10,7 +10,8 @@
 <div id="mainContent">
   <h1>Add User to Course</h1>
 
-  <form method="post" action="/Admin/Users/">
+  {{addUserToClassResult}}
+  <form method="post" action="/Admin/CourseEnrollment/">
     <input type="hidden" id="addUserToCourse" name="addUserToCourse" value="yes" />
     <label for="course">Select Course:</label>
     <select name="courseToAddSelectElement" id="courseToAddSelectElement">
