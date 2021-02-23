@@ -116,7 +116,7 @@
       <h1>Edit Category Associated with a Course</h1>
 
           <label for="selectCourseCategory">Select Course:</label>
-          <select name="selectCourseCategory">
+          <select id="selectCourseCategory" name="selectCourseCategory">
             {{#each courses}}
             <option value="{{courseId}}">{{courseName}}</option>
             {{/each}}
@@ -129,7 +129,13 @@
         </thead>
         <tbody>
         <tr>
-            <td>Web Development</td>
+            <td>
+              {{#if categoryForFirstCourse}}
+                {{categoryForFirstCourse.categoryName}}
+              {{else}}
+                No category chosen
+              {{/if}}
+              </td>
             <td><button id="drop1">Drop from Course</button></td>
         </tr>
         </tbody>

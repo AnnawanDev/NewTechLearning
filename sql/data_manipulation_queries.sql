@@ -79,6 +79,11 @@ SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?;
 -- Query to get all courses that are currently live
 SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC;
 
+-- Query to get category name for a course
+SELECT categoryName FROM Categories
+INNER JOIN Courses ON categoryId = categoryFk
+WHERE courseId = :someCourseId;
+
 -- Query to insert a new course
 INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (:someCourse, :someCourseDescription);
 
