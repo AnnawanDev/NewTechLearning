@@ -103,14 +103,15 @@ UPDATE `Courses` SET `courseName` = :someCourseName, `courseDescription` = :some
 DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
 
 -- Query to get all courses, regardless of whether they are live or not
--- Associate with who's teaching
+-- Associate with who's teaching (could be userType Instrurctor or Admin)
 -- limit description string to 150 characters
-SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`,
-CONCAT(LEFT(`courseDescription`,150), '...') AS 'description',
+SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, 
+CONCAT(LEFT(`courseDescription`,100), '...') AS 'description',
 `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive
 FROM `Courses`
 INNER JOIN `UsersCourses` ON courseId = courseFk
 INNER JOIN `Users` ON userFk = userId
+WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN'
 ORDER BY `courseName` ASC;
 
 

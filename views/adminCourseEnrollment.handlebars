@@ -18,10 +18,10 @@
         <option value="{{courseId}}">{{courseName}}</option>
       {{/each}}
     </select>
-    <br />
-    <label for="AddingUserNameToCourse">User: </label>
+
+    <label for="AddingUserNameToCourse" style="margin-left: 10px;">User: </label>
     <span id="addUserToCourseSelectElement"></span>
-    <button id="addUserToCourseButton">Submit</button>
+    <button id="addUserToCourseButton" style="margin-left: 5px;">Submit</button>
   </form>
 
   <br /><br /><br />
@@ -50,4 +50,6 @@
   </form>
 </div>
 
-<script> requirejs(['courseEnrollment'], function (){ }); </script>
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/courseEnrollment.js"]);
+    }); </script>

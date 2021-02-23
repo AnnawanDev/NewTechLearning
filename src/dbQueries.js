@@ -84,9 +84,9 @@ async function getListOfLiveCourses() {
   })
 }
 
-async function getListOfAllCourses() {
+async function getListOfAllCoursesAndWhoIsTeaching() {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,150), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId ORDER BY `courseName` ASC;", (err, rows, fields) => {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,100), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' ORDER BY `courseName` ASC;", (err, rows, fields) => {
       if (err) {
         logIt("getListOfAllCourses() ERROR: " + err);
         reject("ERROR in selecting courses");
@@ -247,7 +247,7 @@ module.exports = {
   doesUserExist,
   getAllInstructorsOrAdmins,
   getUserType,
-  getListOfAllCourses,
+  getListOfAllCoursesAndWhoIsTeaching,
   getListOfCategories,
   getListOfLanguages,
   getListOfLiveCourses,

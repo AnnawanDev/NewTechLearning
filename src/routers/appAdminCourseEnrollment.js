@@ -18,7 +18,6 @@ router.get('/Admin/CourseEnrollment/', requireLogin, async (req, res) => {
   context.title = 'New Tech Learning | Admin Course Enrollment';
   context = await getLoginContext(context, req);
   context.courses = await getListOfLiveCourses();
-  //context.userListing = await getListOfUsersWithUserTypes();
   context.usersAssociatedWithAParticularClass = await getListOfUsersAssociatedWithAClass(context.courses[0].courseId);
   res.render('adminCourseEnrollment', context);
 });

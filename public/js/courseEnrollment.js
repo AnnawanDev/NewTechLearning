@@ -5,7 +5,7 @@
    February 21, 2021
 */
 
-define (['domReady', 'module'],function (domReady, module){
+define (['module'], function(module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
@@ -15,14 +15,16 @@ let feedbackResponse = document.getElementById('userListingTbody');
 let addStudentListing = document.getElementById('addUserToCourseSelectElement');
 
 // set up event listeners -------------------------------------
-
-try {
-  domReady(function(){
+if( document.readyState !== 'loading' ) {
+  // document is already ready, just execute code
+  getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
+  getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
+} else {
+  document.addEventListener('DOMContentLoaded', function () {
+    // document wasn't loaded, when it is call function
     getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
     getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
   });
-} catch(e) {
-  logIt("ERROR: " + e);
 }
 
 //dyanamically change users to add based on the class

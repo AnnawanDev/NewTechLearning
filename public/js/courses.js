@@ -5,8 +5,7 @@
    January 25, 2021
 */
 
-define (['module'],function (module){
-
+define (['module'], function (module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
@@ -21,7 +20,7 @@ let categoriesDropDownList = document.getElementById('categoriesDropDownList');
 
 // set up event listeners -------------------------------------
 if( document.readyState !== 'loading' ) {
-  // document is already ready, just execute code 
+  // document is already ready, just execute code
   getCategoriesList();
   getAvailableClasses();
 } else {

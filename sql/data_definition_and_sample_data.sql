@@ -135,12 +135,12 @@ INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `
 -- TeacherB teaches Swift, AdvancedSQL
 -- TeacherC teaches NoSQL, C++
 INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
-(3, 1),
-(4, 2),
-(4, 3),
+(4, 1),
+(5, 2),
+(6, 3),
 (4, 4),
 (5, 5),
-(6, 1);
+(7, 1);
 
 -- Table: Languages
 INSERT INTO `Languages` (`languageName`,`languageCountry`) VALUES

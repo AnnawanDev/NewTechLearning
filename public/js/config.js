@@ -40,7 +40,7 @@ requirejs.config({
             logoutAPI: "/api/logout"
         },
 
-        'courseEnrollment': {
+        '/js/courseEnrollment.js': {
             useLogging: true,
             baseURL: "http://localhost:14567",
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
@@ -55,7 +55,7 @@ requirejs.config({
         courses: 'courses.js',
         createAccount: 'createAccount.js',
         login: 'login.js',
-        logout: 'logout.js'
+        logout: 'logout.js',
+        courseEnrollment: 'courseEnrollment.js'
     }
 })
-
