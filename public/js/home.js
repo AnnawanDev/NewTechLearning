@@ -5,7 +5,7 @@
    January 30, 2021
 */
 
-define (['domReady', 'module'],function (domReady, module){
+define (['module'], function(module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
@@ -16,14 +16,20 @@ let feedbackResponse = document.getElementById('recentlyAddedClasses');
 
 // set up event listeners -------------------------------------
 
-domReady(function(){
-  getRecentlyAddedClasses();
-})
+
+if( document.readyState !== 'loading' ) {
+  // document is already ready, just execute code 
+  getRecentlyAddedClasses()
+} else {
+  document.addEventListener('DOMContentLoaded', function () {
+      // document wasn't loaded, when it is call function
+      getRecentlyAddedClasses();
+  });
+}
 
 // main functions -------------------------------------
 function getRecentlyAddedClasses() {
   let feedbackToUser = "";
-
   //make ajax request
   let req = new XMLHttpRequest();
   req.open("GET", baseURL + getRecentlyAddedCoursesAPI, true);
@@ -31,7 +37,7 @@ function getRecentlyAddedClasses() {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      //console.log("DATA ---" + JSON.stringify(data))
+      // console.log("DATA ---" + JSON.stringify(data))
       if (data.results.length == 0) {
         feedbackToUser = "<p>Sorry, we currently don't have any available classes.</p>";
       } else {

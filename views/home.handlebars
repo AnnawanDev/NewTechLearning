@@ -18,6 +18,9 @@
   </div>
 </div>
 
-<script> requirejs(['home'], function (){
-  }); 
+<script> 
+  requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/home.js"]);
+    });
+
 </script>

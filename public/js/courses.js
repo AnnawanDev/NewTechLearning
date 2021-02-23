@@ -5,7 +5,8 @@
    January 25, 2021
 */
 
-define (['domReady', 'module'],function (domReady, module){
+define (['module'],function (module){
+
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
@@ -17,11 +18,19 @@ const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
 let feedbackResponse = document.getElementById('feedback');
 let categoriesDropDownList = document.getElementById('categoriesDropDownList');
 
-// set up event listeners with domReady
-domReady(function(){
+
+// set up event listeners -------------------------------------
+if( document.readyState !== 'loading' ) {
+  // document is already ready, just execute code 
   getCategoriesList();
   getAvailableClasses();
-})
+} else {
+  document.addEventListener('DOMContentLoaded', function () {
+      // document wasn't loaded, when it is call function
+      getCategoriesList();
+      getAvailableClasses();
+  });
+}
 
 document.getElementById('categoriesDropDownList').addEventListener('change',function(){
     //clear all classes
@@ -47,9 +56,6 @@ function getAvailableClasses() {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      //console.log("DATA ---" + JSON.stringify(data))
-
-
       if (data.results.length == 0) {
         feedbackToUser = "<p>Sorry, we currently don't have any available classes.</p>";
       } else {

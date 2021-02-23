@@ -101,6 +101,7 @@ router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
       }
 
       context.results = rows;
+      // logIt("/api/selectMostRecentAddedClasses query result: " + JSON.stringify(rows));
       res.send(context);
     });
 
