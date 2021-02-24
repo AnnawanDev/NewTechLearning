@@ -203,4 +203,38 @@ router.patch('/api/editUser/:userId', async (req,res,next) => {
     });
 });
 
+router.get('/api/getListOfAllCategories', async (req,res,next) => {
+  let context = {};
+
+  mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` ORDER BY `categoryName` ASC; ", (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getListOfAllCategories: " + err);
+        return;
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+    return context;
+});
+
+router.get('/api/getCategoryNameForCourse/:courseId', async (req,res,next) => {
+  let context = {};
+
+  mysql.pool.query("SELECT categoryName FROM Categories INNER JOIN Courses ON categoryId = categoryFk WHERE courseId = ?;", req.params.courseId, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getCategoryNameForCourse/:courseId: " + err);
+        return;
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+    return context;
+});
+
+
+
 module.exports = router;

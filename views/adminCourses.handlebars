@@ -44,7 +44,7 @@
   <table>
     <thead>
       <th>Course Name</th>
-      <th width="200px">Course Description</th>
+      <th width="200px">Abbreviated Course Description</th>
       <th width="200px">Course Start Date</th>
       <th>Is Live?</th>
       <th>Instructor</th>
@@ -115,8 +115,8 @@
     <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
       <h1>Edit Category Associated with a Course</h1>
 
-          <label for="selectCourseCategory">Select Course:</label>
-          <select id="selectCourseCategory" name="selectCourseCategory">
+          <label for="selectCourseCategoryToEditSpan">Select Course:</label>
+          <select id="selectCourseCategoryToEdit" name="selectCourseCategoryToEdit">
             {{#each courses}}
             <option value="{{courseId}}">{{courseName}}</option>
             {{/each}}
@@ -130,11 +130,7 @@
         <tbody>
         <tr>
             <td>
-              {{#if categoryForFirstCourse}}
-                {{categoryForFirstCourse.categoryName}}
-              {{else}}
-                No category chosen
-              {{/if}}
+              <span id="categoryThatIsAssociatedWithClass"></span>
               </td>
             <td><button id="drop1">Drop from Course</button></td>
         </tr>
@@ -153,3 +149,6 @@
   </div>
   <div style="clear: both;"></div>
 </div>
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/adminCourses.js"]);
+    }); </script>

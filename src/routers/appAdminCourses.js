@@ -19,8 +19,8 @@ router.get('/Admin/Courses/', requireLogin, async (req, res) => {
   context.instructorsOrAdmins = await getAllInstructorsOrAdmins();
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
   context.categories = await getListOfAllCategories();
-  let categoryNameResult = await getCategoryNameForCourse(context.courses[0].courseId);
-  context.categoryForFirstCourse = categoryNameResult[0];
+  // let categoryNameResult = await getCategoryNameForCourse(context.courses[0].courseId);
+  // context.categoryForFirstCourse = categoryNameResult[0];
   res.render('adminCourses', context);
 });
 
@@ -49,9 +49,8 @@ router.post('/Admin/Courses/', requireLogin, async (req, res) => {
   context.instructorsOrAdmins = await getAllInstructorsOrAdmins();
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
   context.categories = await getListOfAllCategories();
-  let categoryNameResult = await getCategoryNameForCourse(context.courses[0].courseId);
-  context.categoryForFirstCourse = categoryNameResult[0];
-  res.render('adminCourses', context);
+  // let categoryNameResult = await getCategoryNameForCourse(context.courses[0].courseId);
+  // context.categoryForFirstCourse = categoryNameResult[0];
   res.render('adminCourses', context);
 });
 

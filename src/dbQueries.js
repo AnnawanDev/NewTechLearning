@@ -266,18 +266,7 @@ async function addNewCourse(courseName, courseDescription) {
   });
 }
 
-async function getCategoryNameForCourse(courseId) {
-  return new Promise(function(resolve, reject) {
-      mysql.pool.query("SELECT categoryName FROM Categories INNER JOIN Courses ON categoryId = categoryFk WHERE courseId = ?;", courseId, (err, rows, fields) => {
-      if (err) {
-        logIt("getCategoryNameForCourse() ERROR: " + err);
-        reject("ERROR in selecting courses");
-      }
 
-      resolve(rows);
-    });
-  })
-}
 
 module.exports = {
   addNewCourse,
@@ -285,7 +274,6 @@ module.exports = {
   addUserToClass,
   doesUserExist,
   getAllInstructorsOrAdmins,
-  getCategoryNameForCourse,
   getUserType,
   getListOfAllCoursesAndWhoIsTeaching,
   getListOfAllCategories,
