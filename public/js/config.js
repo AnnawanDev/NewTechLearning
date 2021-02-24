@@ -56,12 +56,21 @@ requirejs.config({
             addCategoryAPI: '/api/insertCategory/',
             deleteCategoryAPI: '/api/deleteCategory/'
         },
+      
         '/js/languages.js':{
             useLogging: true,
             baseURL: "http://localhost:14567",
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getLanguagesAPI: '/api/getListOfAllLanguages/',
             addLanguageAPI: '/api/insertLanguage/'
+        },
+      
+        '/js/adminCourses.js': {
+            useLogging: true,
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            getCategoryNameForCourseAPI: "/api/getListOfAllCategories/"
+
         }
     },
     baseUrl: '/js',
@@ -72,6 +81,7 @@ requirejs.config({
         createAccount: 'createAccount.js',
         login: 'login.js',
         logout: 'logout.js',
-        courseEnrollment: 'courseEnrollment.js'
+        courseEnrollment: 'courseEnrollment.js',
+        adminCourses: 'adminCourses.js'
     }
 })

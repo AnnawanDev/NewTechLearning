@@ -93,11 +93,11 @@ function getUsersNotEnrolled(someClassId) {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       if (data.results.length == 0) {
-        selectElement  = "";
+        selectElement  = "There are no students to add"; 
       } else {
         selectElement += "<select name=\"userIdToAddToCourse\" id=\"userIdToAddToCourse\">";
         for (let someUser of data.results) {
-          selectElement += "<option value=\"" + someUser.userId + "\">" + someUser.userName + " (" + someUser.firstName + " " + someUser.lastName + ")</option>";
+          selectElement += "<option value=\"" + someUser.userId + "\">" + someUser.lastName + ", " + someUser.firstName + "(" + someUser.userName + ") - " + someUser.userType + "</option>";
         }
         selectElement += "</select>";
       }
