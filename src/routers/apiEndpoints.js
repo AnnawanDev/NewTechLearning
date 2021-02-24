@@ -151,6 +151,51 @@ router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
   }
 });
 
+//--------------------------------------------------------
+//---------------------- LANGUAGES ----------------------
+//--------------------------------------------------------
+
+//gets all languages in DB
+router.get('/api/getListOfAllLanguages', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `languageId`, `languageName`, `languageCountry` FROM `Languages`", (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
+  }
+});
+
+//add a new language
+router.get('/api/insertLanguage/:languageName/:languageCountry', async (req,res,next) => {
+  let context = {};
+  let filter= [req.params.languageName, req.params.languageCountry]
+
+  mysql.pool.query("INSERT INTO `Languages` (`languageName`, `languageCountry`) VALUES (?,?)", filter, (error, results, fields) => {
+    if (error) {
+      res.status(500).send
+    };
+
+    let context= {};
+    context.results = results.affectedRows;
+    res.send(context)
+  });
+});
+
+
+
+//--------------------------------------------------------
+//---------------------- CATEGORIES ----------------------
+//--------------------------------------------------------
+
 router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
   try {
     let context = {};

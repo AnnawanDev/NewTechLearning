@@ -13,7 +13,6 @@ define(['module'], function(module){
     const getCategoriesAPI = module.config().getCategoriesAPI;
     const deleteCategoryAPI = module.config().deleteCategoryAPI;
     const addCategoryAPI = module.config().addCategoryAPI;
-    let feedbackResponse = document.getElementById('feedback');
     let categoriesTableBody = document.getElementById('catAdminTableBody');
 
 
@@ -108,6 +107,8 @@ define(['module'], function(module){
     function editCategory(){
 
     }
+
+    
 function logIt(someMessage) {
     if (useLogging) {
         console.log(someMessage);

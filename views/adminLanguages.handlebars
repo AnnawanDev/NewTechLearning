@@ -15,28 +15,21 @@
       <th>Language Name</th>
       <th>Language Country</th>
       <th colspan="2"></th>
-    </thead>
-    <tbody>
-      <tr>
-        <td>English</td>
-        <td>USA</td>
-        <td><button id="editButton1">Edit</button></td>
-        <td><button id="deleteButton1">Delete</button></td>
-      </tr>
-      <tr>
-        <td>Spanish</td>
-        <td>Spain</td>
-        <td><button id="editButton2">Edit</button></td>
-        <td><button id="deleteButton2">Delete</button></td>
-      </tr>
+    </thead> 
+    <tbody id = 'langAdminTableBody'>
+        {{!-- dynamic content here --}}
     </tbody>
 
   </table>
 
       <h2>Add Language</h2>
     <form action="">
-      <input type="text" name = "languageName" placeholder = "language">
-      <input type="text" name ="languageCountry" placeholder = "country" >
-      <input type="submit">
+      <input type="text" id = "languageNameInput" name = "languageName" placeholder = "Language">
+      <input type="text" id ="languageCountryInput" name = "languageCountry" placeholder = "Country" >
+      <input type="submit" id = "addLanguageButton">
     </form>
 </div>
+
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/languages.js"]);
+    }); </script>
