@@ -9,30 +9,24 @@
 
 <div id="mainContent">
   <h1>Admin Categories</h1>
-
-  <table>
+  <div id ="adminTable"></div>
+  <table >
     <thead>
       <th>Category Name</th>
       <th colspan="2"></th>
     </thead>
-    <tbody>
-      <tr>
-        <td>Assembly Language</td>
-        <td><button id="editButton1">Edit</button></td>
-        <td><button id="deleteButton1">Delete</button></td>
-      </tr>
-      <tr>
-        <td>mySQL </td>
-        <td><button id="editButton2">Edit</button></td>
-        <td><button id="deleteButton2">Delete</button></td>
-      </tr>
+    <tbody id= 'catAdminTableBody'>
     </tbody>
   </table>
 
   <h2>Add Category</h2>
-  <form action="">
-    <input type="text" name = "categoryName" placeholder = "category name">
-    <input type="submit">
+  <form action="" >
+    <input id = 'categoryNameInput' type="text" name = "categoryName" placeholder = "category name">
+    <input id = "addCategoryButton" type="submit">
   </form>
 
 </div>
+
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/categories.js"]);
+    }); </script>

@@ -48,11 +48,29 @@ requirejs.config({
             getStudentsNotEnrolledAPI: "/api/getStudentsNotInClass/"
         },
 
+        '/js/categories.js':{
+            useLogging: true,
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            getCategoriesAPI: '/api/getListOfAllCategories/',
+            addCategoryAPI: '/api/insertCategory/',
+            deleteCategoryAPI: '/api/deleteCategory/'
+        },
+      
+        '/js/languages.js':{
+            useLogging: true,
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            getLanguagesAPI: '/api/getListOfAllLanguages/',
+            addLanguageAPI: '/api/insertLanguage/'
+        },
+      
         '/js/adminCourses.js': {
             useLogging: true,
             baseURL: "http://localhost:14567",
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getCategoryNameForCourseAPI: "/api/getListOfAllCategories/"
+
         }
     },
     baseUrl: '/js',

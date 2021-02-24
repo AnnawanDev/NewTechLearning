@@ -151,15 +151,19 @@ router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
   }
 });
 
-router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
+//--------------------------------------------------------
+//---------------------- LANGUAGES ----------------------
+//--------------------------------------------------------
+
+//gets all languages in DB
+router.get('/api/getListOfAllLanguages', async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+    mysql.pool.query("SELECT `languageId`, `languageName`, `languageCountry` FROM `Languages`", (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
       }
-
       context.results = rows;
       res.send(context);
     });
@@ -169,6 +173,94 @@ router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
     res.status(401).send()
   }
 });
+
+//add a new language
+router.get('/api/insertLanguage/:languageName/:languageCountry', async (req,res,next) => {
+  let context = {};
+  let filter= [req.params.languageName, req.params.languageCountry]
+
+  mysql.pool.query("INSERT INTO `Languages` (`languageName`, `languageCountry`) VALUES (?,?)", filter, (error, results, fields) => {
+    if (error) {
+      res.status(500).send
+    };
+
+    let context= {};
+    context.results = results.affectedRows;
+    res.send(context)
+  });
+});
+
+
+
+//--------------------------------------------------------
+//---------------------- CATEGORIES ----------------------
+//--------------------------------------------------------
+
+router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
+  }
+});
+
+router.get('/api/getListOfAllCategories', async (req,res,next) => {
+  try {
+    let context = {};
+    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories`", (err, rows, fields) => {
+      if (err) {
+        next(err);
+        res.status(500).send();
+      }
+      context.results = rows;
+      res.send(context);
+    });
+
+  } catch(e) {
+    logIt("ERROR: " + e)
+    res.status(401).send()
+  }
+});
+
+//deletes a category from DB
+//not sure if it's working right now
+// router.delete('/api/deleteCategory:categoryId', async (req,res,next) => {
+//   let context = {};
+//   mysql.pool.query("DELETE FROM `Categories` WHERE `categoryId` = ?", req.params.categoryId, (error, results, fields) => {
+//     if (error) {
+//       res.status(500).send();
+//     };
+
+//     logIt('deleted ' + results.affectedRows + ' rows');
+//     let context = {};
+//     context.results = results.affectedRows;
+//     res.send(context);
+//   })
+// });
+
+router.get('/api/insertCategory/:categoryName', async (req,res,next) => {
+  let context = {};
+  mysql.pool.query("INSERT INTO `Categories` (`categoryName`) VALUES (?)", req.params.categoryName, (error, results, fields) => {
+    if (error) {
+      res.status(500).send
+    };
+
+    let context= {};
+    context.results = results.affectedRows;
+    res.send(context)
+  });
+});
+
 
 //TODO: add security
 router.delete('/api/deleteUser/:userId', async (req,res,next) => {
