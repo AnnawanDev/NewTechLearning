@@ -135,7 +135,7 @@ router.get('/api/getStudentsInClasses/:someClassId', async (req,res,next) => {
 router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `USERS` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` != 'ADMIN'", req.params.someClassId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `userType` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `USERS` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` = 'STUDENT' ORDER BY lastName ASC", req.params.someClassId, (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
@@ -202,5 +202,39 @@ router.patch('/api/editUser/:userId', async (req,res,next) => {
       }
     });
 });
+
+router.get('/api/getListOfAllCategories', async (req,res,next) => {
+  let context = {};
+
+  mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` ORDER BY `categoryName` ASC; ", (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getListOfAllCategories: " + err);
+        return;
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+    return context;
+});
+
+router.get('/api/getCategoryNameForCourse/:courseId', async (req,res,next) => {
+  let context = {};
+
+  mysql.pool.query("SELECT categoryName FROM Categories INNER JOIN Courses ON categoryId = categoryFk WHERE courseId = ?;", req.params.courseId, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getCategoryNameForCourse/:courseId: " + err);
+        return;
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+    return context;
+});
+
+
 
 module.exports = router;
