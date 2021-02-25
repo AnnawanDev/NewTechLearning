@@ -186,7 +186,6 @@ router.get('/api/insertLanguage/:languageName/:languageCountry', async (req,res,
 
     let context= {};
     context.results = results.affectedRows;
-    console.log(context)
     res.send(context)
   });
 });
@@ -202,7 +201,6 @@ router.get('/api/getLanguagesForCourse/:courseId', async (req,res,next) => {
         return;
       }
       context.results = rows;
-      console.log(context.results)
       res.send(context);
     });
 
@@ -369,6 +367,56 @@ router.get('/api/getCategoryNameForCourse/:courseId', async (req,res,next) => {
     return context;
 });
 
+//--------------------------------------------------------
+//---------------------- COURSE MODULES ------------------
+//--------------------------------------------------------
+
+
+router.get('/api/getModulesForCourse/:courseId', async (req,res,next) => {
+  let context = {};
+
+  mysql.pool.query("SELECT courseModuleId, courseModuleHTML, courseModuleOrder FROM `CourseModules` WHERE `courseFk` = ?", req.params.courseId, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getNumberOfModules/:courseId " + err);
+        return;
+      }
+      context.results = rows;
+      res.send(context);
+    });
+
+    return context;
+})
+
+
+router.get('/api/getModuleHTMLForCourseAndOrder/:courseId/:courseModuleId', async (req,res,next) => {
+  let context = {};
+  let filter = [req.params.courseId, req.params.courseModuleId]
+
+  mysql.pool.query('SELECT `courseModuleHTML` FROM `CourseModules` WHERE `courseFk`= ? and `courseModuleId` = ?', filter, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getModuleHTMLForCourseAndOrder/" + err);
+        return;
+      }
+      context.results = rows;
+      res.send(context);
+    });
+    return context;
+})
+
+router.post('/api/addCourseModule/', async (req,res) => {
+  let context = {};
+  let filter= [req.body.moduleOrder, req.body.moduleHTML, req.body.courseId]
+
+  mysql.pool.query("INSERT into `CourseModules` (`courseModuleOrder`, `courseModuleHTML`, `courseFk`) VALUES (?,?,?)", filter, (error, results, fields) => {
+    if (error) {
+      res.status(500).send
+    };
+
+    let context= {};
+    context.results = results.affectedRows;
+    res.send(context)
+  });
+});
 
 
 module.exports = router;
