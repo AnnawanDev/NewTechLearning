@@ -8,7 +8,7 @@
 const express = require('express');
 const router = new express.Router();
 const auth = require('../middleware/auth');
-const dbQueries = require('../dbQueries');
+const {getListOfLiveCourses} = require('../dbQueries');
 const bcrypt = require('bcrypt');
 const logIt = require('../helperFunctions');
 
@@ -81,7 +81,9 @@ router.get('/Admin/Categories/', auth.requireLogin, async (req, res) => {
 router.get('/Admin/CourseModules/', auth.requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin CourseModules';
+  context.courses = await getListOfLiveCourses();
   context = await auth.getLoginContext(context, req);
+  
   res.render('adminCourseModules', context);
 });
 

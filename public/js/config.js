@@ -67,11 +67,21 @@ requirejs.config({
 
         '/js/adminCourses.js': {
             useLogging: true,
-            //baseURL: "http://localhost:14567",
-            baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getListOfAllCategoriesAPI: "/api/getListOfAllCategories/",
             getCategoryNameForCourseAPI: "/api/getCategoryNameForCourse/"
+
+        },
+        '/js/adminCourseModules.js': {
+            useLogging: true,
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            getModulesForCourseAPI: "/api/getModulesForCourse/",
+            getModuleForCourseAndOrderAPI: "/api/getModuleHTMLForCourseAndOrder/",
+            addCourseModuleAPI: "/api/addCourseModule/"
         }
+
     },
     baseUrl: '/js',
     paths: {

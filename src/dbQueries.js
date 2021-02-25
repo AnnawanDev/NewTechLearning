@@ -9,6 +9,7 @@ const mysql = require('./databaseConnection');
 const bcrypt = require('bcrypt');
 const {logIt} = require('./helperFunctions');
 
+
 async function getUserType(someUserId) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {

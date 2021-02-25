@@ -10,27 +10,30 @@
 <div id="mainContent">
   <h1>Admin Course Modules</h1>
   <form>
-      <label for="course">Select Course:</label>
-      <select name="course" id="course">
-        <option value="1">Intro to Java</option>
-        <option value="2">C++</option>
-        <option value="3">Advanced SQL</option>
-        <option value="4">Python Boot Camp</option>
+      <label for="courseToGetModulesFrom">Select Course:</label>
+      <select name="courseToGetModulesFrom" id="courseToGetModulesFrom">
+        <option value="noSelection">--</option>
+        {{#each courses}}
+        <option value="{{courseId}}">{{courseName}}</option>
+        {{/each}}
+      </select>
+    </form>
+
+    <form id = "moduleOrderForm">
+      <label for="moduleOrderChoice">Select Module Number:</label>
+      <select name="moduleOrderChoice" id="moduleOrderChoice">
+          {{!-- insert options here --}}
       </select>
     </form>
 
     <br /><br />
 
-    <h1>Current Course Modules</h1>
-    <table>
+    <table id = "selectedModuleDisplayTable" >
     <thead>
-        <th>Module #</th>
-        <th>HTML</th>
-        <th ></th>
-        <th></th>
+        <th>HTML for Selected Module:</th>
     </thead>
-        <tbody>
-        <tr>
+        <tbody id='selectedModuleHTML'>
+        {{!-- <tr>
             <td>1</td>
             <td>{html content}</td>
             <td><button id= "edit1">Edit</button></td>
@@ -41,16 +44,20 @@
             <td>{html content}</td>
             <td><button id= "edit2">Edit</button></td>
             <td><button id="drop2">Drop from Course</button></td>
-        </tr>
+        </tr> --}}
         </tbody>
 
     </table>
     <h2>Add Module</h2>
-    <form action="">
-        <input type="text" name = "moduleOrder" placeholder = "module order">
-        <textarea rows="4" cols="50" type="textarea" name ="languageCountry" placeholder = "HTML" ></textarea>
-        <input type="submit">
+    <form action = ''>
+        <input type="text" id ="moduleOrderInput" name = "moduleOrderInput" placeholder = "module order">
+        <textarea id= "moduleHTMLInput" rows="4" cols="50" type="textarea" name ="moduleHTML" placeholder = "HTML" ></textarea>
+        <button id = 'addModuleButton'>Submit</button>
     </form>
 
     <br />
 </div>
+
+<script> requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/adminCourseModules.js"]);
+    }); </script>
