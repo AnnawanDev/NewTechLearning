@@ -79,6 +79,12 @@ SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?;
 -- Query to get all courses that are currently live
 SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC;
 
+-- Query to select Courses but this is open ended so we can append on the end extra sql from the business logic side
+-- For example, this gets all courses, but on the business logic we could append, " AND CATEGORY ='someValue'"
+SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId
+INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5
+
+
 -- Query to get category name for a course
 SELECT categoryName FROM Categories
 INNER JOIN Courses ON categoryId = categoryFk
@@ -151,7 +157,7 @@ ORDER BY `userType` DESC, `userName` ASC;
 -- Query to get all students who are not associated with a particular class
 SELECT `userId`, `firstName`, `lastName`, `userName`, `userType`
 FROM `Users` WHERE `userId` NOT IN
-	(SELECT `userId` FROM `USERS`
+	(SELECT `userId` FROM `Users`
 	INNER JOIN `UsersCourses` ON `userId` = `userFk`
 	INNER JOIN `Courses` ON `courseFk` = `courseId`
 	WHERE `courseId` = :someCourseId)

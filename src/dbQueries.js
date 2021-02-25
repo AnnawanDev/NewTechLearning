@@ -141,7 +141,7 @@ async function getListOfLanguages() {
 
 async function getListOfUsersWithUserTypes() {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT userId, firstName, lastName, userName, email, IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT, IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR, IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN FROM USERS ORDER BY lastName ASC;", (err, rows, fields) => {
+    mysql.pool.query("SELECT userId, firstName, lastName, userName, email, IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT, IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR, IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN FROM Users ORDER BY lastName ASC;", (err, rows, fields) => {
       if (err) {
         logIt("getListOfUsers() ERROR: " + err);
         reject("ERROR in selecting courses");

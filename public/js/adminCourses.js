@@ -9,19 +9,12 @@ define (['module'], function (module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
-const getCategoryNameForCourseAPI = module.config().getCategoryNameForCourseAPI;
+const getListOfAllCategoriesAPI = module.config().getListOfAllCategoriesAPI;
 const adminLangCoursesTableBody = document.getElementById('adminLangsCoursesTableBody');
-
-// const getCategoriesAPI = module.config().getCategoriesAPI;
-// const getLanguagesAPI = module.config().getLanguagesAPI;
-// const coursesURLString = module.config().coursesURLString;
-// const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
-// let feedbackResponse = document.getElementById('feedback');
-// let categoriesDropDownList = document.getElementById('categoriesDropDownList');
+const getCategoryNameForCourseAPI = module.config().getCategoryNameForCourseAPI;
 
 
 // set up event listeners -------------------------------------
-
 if(document.readyState !== 'loading' ) {
   // document is already ready, just execute code
   getCategoryForCourse(document.getElementById('selectCourseCategoryToEdit').value);
@@ -88,13 +81,13 @@ let addLangToCourseButton = document.getElementById('addLangToCourseButton');
             });
             newRow.appendChild(cell3)
           }
-          
+
         }
       }else{
         logIt('sorry, there was a problem in getting the available languages.')
       }
     })
-    
+
     req.send(null);
     event.preventDefault();
   }
@@ -123,8 +116,9 @@ function addLanguageToCourse(courseId, languageId){
 
 
 function getCategoryForCourse(courseId) {
-  let url = "http://localhost:14567/api/getCategoryNameForCourse/" + courseId; //console.log("URL: " + url);
-
+  let url = baseURL + getCategoryNameForCourseAPI + courseId;
+  //let url = "http://flip3.engr.oregonstate.edu:14567/api/getCategoryNameForCourse/" + courseId;
+  console.log("URL: " + url);
   //make ajax request
   let req = new XMLHttpRequest();
   req.open("GET", url, true);
@@ -149,8 +143,6 @@ function getCategoryForCourse(courseId) {
 
 
 function getCategoriesList() {
-  //let populateCategoriesList = "<select name=\"categoriesList\" id=\"categoriesList\"><option value=\"all\">All</option>";
-
   let editCategoriesList = document.createElement("select");
   editCategoriesList.setAttribute("name", "editCategoriesList");
   editCategoriesList.setAttribute("id", "editCategoriesList");
