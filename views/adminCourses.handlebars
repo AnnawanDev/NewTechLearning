@@ -70,14 +70,12 @@
 
   <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
   <h1>Edit Languages Associated with Courses</h1>
-
-      <label for="selectCourseLanguage">Select Course:</label>
-      <select name="selectCourseLanguage">
+      <label for="selectCourseCategoryToEdit2">Select Course:</label>
+      <select id = "selectCourseCategoryToEdit2" name="selectCourseCategoryToEdit2">
         {{#each courses}}
         <option value="{{courseId}}">{{courseName}}</option>
         {{/each}}
       </select>
-
 
     <br />
     <h4>Current Languages</h4>
@@ -87,30 +85,23 @@
             <th>Country</th>
             <th colspan="2"></th>
         </thead>
-        <tbody>
-        <tr>
-            <td>English</td>
-            <td>USA</td>
-            <td><button id="drop1">Drop from Course</button></td>
-        </tr>
-        <tr>
-            <td>Spanish</td>
-            <td>Spain</td>
-            <td><button id="drop1">Drop from Course</button></td>
-        </tr>
+        <tbody id= 'adminLangsCoursesTableBody'>
         </tbody>
     </table>
+
     <h4>Add New Language to Selected Course</h4>
     <form>
-      <label for="language">Select language:</label>
-      <select name="language" id="">
-        <option value="1">English</option>
-        <option value="2">Spanish</option>
-        <option value="3">French</option>
+      <label for="selectLanguage">Select language:</label>
+      <select name="selectLanguage" id="selectLanguage">
+        {{#each languages}}
+        <option value="{{languageId}}">{{languageName}}</option>
+        {{/each}}
       </select>
-      <input type="submit">
+      <input id = "addLangToCourseButton" type="submit">
     </form>
   </div>
+
+
 
     <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
       <h1>Edit Category Associated with a Course</h1>

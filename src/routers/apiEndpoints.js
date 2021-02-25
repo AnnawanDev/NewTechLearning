@@ -9,7 +9,7 @@ const express = require('express');
 const router = new express.Router();
 const auth = require('../middleware/auth');
 const mysql = require('../databaseConnection');
-const {doesUserExist} = require('../dbQueries');
+const {doesUserExist, getListOfUsersWithUserTypes} = require('../dbQueries');
 const {logIt} = require('../helperFunctions');
 
 router.get('/api/getCourses', async (req,res,next) => {
@@ -186,9 +186,51 @@ router.get('/api/insertLanguage/:languageName/:languageCountry', async (req,res,
 
     let context= {};
     context.results = results.affectedRows;
+    console.log(context)
     res.send(context)
   });
 });
+
+router.get('/api/getLanguagesForCourse/:courseId', async (req,res,next) => {
+  let context = {};
+  mysql.pool.query(
+    "SELECT `languageName`, `languageCountry` AS `country` FROM `Languages` INNER JOIN `LanguagesCourses` ON Languages.languageId = LanguagesCourses.languageFk INNER JOIN `Courses` ON Courses.courseId = LanguagesCourses.courseFk WHERE Courses.courseId = ? ORDER BY `languageName`, `country`",
+     req.params.courseId, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getLanguagesForCourse/:courseId" + err);
+
+        return;
+      }
+      context.results = rows;
+      console.log(context.results)
+      res.send(context);
+    });
+
+    return context;
+});
+
+//--------
+// WIP 
+//--------
+
+router.get('/api/addLanguageToCourse/:courseId/:languageId', async (req,res,next) => {
+  let context = {};
+  let filter = [req.params.courseId, req.params.languageId]
+  mysql.pool.query(
+    "INSERT INTO `LanguagesCourses` (`courseFk`, `languageFk`) VALUES (?,?)",
+     filter, (err, results, fields) => {
+      if (err) {
+        logIt("ERROR: that language is already associated with that course. " + err);
+        return
+      }
+      logIt("The addition was successful!")
+      context.results = results.affectedRows;
+      res.send(context);
+    });
+
+    return context;
+});
+
 
 
 

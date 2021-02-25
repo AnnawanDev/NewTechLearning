@@ -26,23 +26,23 @@ CREATE TABLE `Categories` (
 ) ENGINE=InnoDB;
 
 -- Creates Courses Table
-CREATE TABLE Courses (
-	courseId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-  courseName VARCHAR(255) NOT NULL,
-  courseDescription MEDIUMTEXT,
-	isLive BOOLEAN NOT NULL DEFAULT 0,
-	dateWentLive DATE,
-	categoryFk INT NULL,
+CREATE TABLE `Courses` (
+	`courseId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `courseName` VARCHAR(255) NOT NULL,
+  `courseDescription` MEDIUMTEXT,
+	`isLive` BOOLEAN NOT NULL DEFAULT 0,
+	`dateWentLive` DATE,
+	`categoryFk` INT NULL,
 	CONSTRAINT FOREIGN KEY(`categoryFk`) REFERENCES `Categories`(`categoryId`)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Creates UsersCourses Table
-CREATE TABLE UsersCourses (
-	userCourseId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-  userFk INT NOT NULL,
-  courseFk INT NOT NULL,
+CREATE TABLE `UsersCourses` (
+	`userCourseId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `userFk` INT NOT NULL,
+  `courseFk` INT NOT NULL,
   CONSTRAINT FOREIGN KEY(`userFk`) REFERENCES `Users`(`userId`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
@@ -61,6 +61,7 @@ CREATE TABLE `CourseModules` (
   	ON DELETE CASCADE
   	ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
 --we want to delete all courseModules when a course is deleted
 
 -- Creates Languages Table
@@ -80,7 +81,8 @@ CREATE TABLE `LanguagesCourses` (
   		ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY(`courseFk`) REFERENCES `Courses`(`courseId`)
   		ON DELETE CASCADE
-      ON UPDATE CASCADE
+      ON UPDATE CASCADE,
+  CONSTRAINT un_lang_course UNIQUE(`languageFk`,`courseFk`)
 ) ENGINE=InnoDB;
 
 

@@ -127,12 +127,12 @@ async function getListOfAllCategories() {
 //get list of distinct languages that are linked to live classes
 async function getListOfLanguages() {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT DISTINCT `languageId`, `languageName` FROM `Languages` INNER JOIN `LanguagesCourses` ON `languageId` = `languageFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `isLive` = 1 ORDER BY `languageName` ASC;", (err, rows, fields) => {
+    mysql.pool.query("SELECT DISTINCT `languageId`, `languageName` FROM `Languages`", (err, rows, fields) => {
       if (err) {
         logIt("getListOfLanguages() ERROR: " + err);
         reject("ERROR in selecting courses");
       }
-
+      console.log(rows)
       resolve(rows);
     });
   })
