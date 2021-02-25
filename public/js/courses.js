@@ -45,9 +45,14 @@ function getAvailableClasses() {
   let feedbackToUser = "";
   let queryURL = baseURL + getCoursesAPI;
 
-  if (document.getElementById('categoriesList') ) {
+  if (document.getElementById('categoriesList')) {
     queryURL += "?categoryFilter=" + document.getElementById('categoriesList').value;
   }
+
+  // if (document.getElementById('languagesList')) {
+  //   queryURL += "?languageFilter=" + document.getElementById('languagesList').value;
+  // }
+  console.log(queryURL)
 
   //make ajax request
   let req = new XMLHttpRequest();

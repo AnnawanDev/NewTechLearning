@@ -5,7 +5,6 @@ define (['module'], function (module){
     const addLanguageAPI = module.config().addLanguageAPI;
     const languagesTableBody = document.getElementById('langAdminTableBody');
 
-
     populateLanguageTable();
     let addLanguageButton = document.getElementById('addLanguageButton');
     addLanguageButton.addEventListener('click', function(){
