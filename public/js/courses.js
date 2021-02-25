@@ -16,6 +16,7 @@ const coursesURLString = module.config().coursesURLString;
 const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
 let feedbackResponse = document.getElementById('feedback');
 let categoriesDropDownList = document.getElementById('categoriesDropDownList');
+let languagesDropDownList = document.getElementById('languagesDropDownList')
 
 
 // set up event listeners -------------------------------------
@@ -122,6 +123,47 @@ function getCategoriesList() {
   event.preventDefault();
 }
 
+function getLanguagesList() {
+
+  let populateLangList = document.createElement("select");
+  populateLangList.setAttribute("name", "languageList");
+  populateLangList.setAttribute("id", "languageList");
+
+  let allOptionForDropDown = document.createElement("option");
+  allOptionForDropDown.setAttribute("value", "ALL");
+  allOptionForDropDown.text = "ALL";
+  populateCategoriesList.appendChild(allOptionForDropDown);
+
+  //make ajax request
+  let req = new XMLHttpRequest();
+  req.open("GET", baseURL + getLanguagesAPI, true);
+  req.setRequestHeader("Content-type", "application/json");
+  req.addEventListener("load", function () {
+    if (req.status >=200 && req.status < 400) {
+      let data = JSON.parse(req.response);
+      //console.log("DATA ---" + JSON.stringify(data))
+
+      if (data.results.length == 0) {
+        //populateCategoriesList += "</select>";
+      } else {
+        for (let someCategory of data.results) {
+          //populateCategoriesList += "<option value=\"" + someCategory.categoryId + "\">" + someCategory.categoryName + "</option>"
+          let option = document.createElement("option");
+          option.setAttribute("value", someCategory.categoryId);
+          option.text = someCategory.categoryName;
+          populateCategoriesList.appendChild(option);
+        }
+      }
+
+    } else {
+      //populateCategoriesList += "</select>";
+    }
+    categoriesDropDownList.appendChild(populateCategoriesList);
+    //categoriesDropDownList.innerHTML = populateCategoriesList;
+  });
+  req.send(JSON.stringify(null));
+  event.preventDefault();
+}
 
 
 // utility -------------------------------------
