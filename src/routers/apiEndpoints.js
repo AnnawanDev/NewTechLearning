@@ -15,7 +15,7 @@ const {logIt} = require('../helperFunctions');
 router.get('/api/getCourses', async (req,res,next) => {
   let context = {};
 
-  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM COURSES INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
+  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
   if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
     sqlQuery += "AND categoryId = " + req.query.categoryFilter;
   }
@@ -135,7 +135,7 @@ router.get('/api/getStudentsInClasses/:someClassId', async (req,res,next) => {
 router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `userType` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `USERS` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` = 'STUDENT' ORDER BY lastName ASC", req.params.someClassId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `userType` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` = 'STUDENT' ORDER BY lastName ASC", req.params.someClassId, (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
@@ -210,7 +210,7 @@ router.get('/api/getLanguagesForCourse/:courseId', async (req,res,next) => {
 });
 
 //--------
-// WIP 
+// WIP
 //--------
 
 router.get('/api/addLanguageToCourse/:courseId/:languageId', async (req,res,next) => {
