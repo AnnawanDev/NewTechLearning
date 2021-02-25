@@ -62,8 +62,6 @@ CREATE TABLE `CourseModules` (
   	ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
---we want to delete all courseModules when a course is deleted
-
 -- Creates Languages Table
 CREATE TABLE `Languages` (
   `languageId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
