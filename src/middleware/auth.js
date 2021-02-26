@@ -13,7 +13,7 @@ const requireLogin = (req, res, next) => {
     if (!req.session.user) {
       res.redirect('/login');
     } else {
-      if (req.session.user.userType === "STUDENT") {
+      if (req.session.user.userType == "STUDENT" && req.path.toLowerCase().substring(0,7) !== "/logout" ) {
         res.redirect('/');
       } else {
         next();
