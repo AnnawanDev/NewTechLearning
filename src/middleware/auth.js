@@ -13,7 +13,11 @@ const requireLogin = (req, res, next) => {
     if (!req.session.user) {
       res.redirect('/login');
     } else {
-      next();
+      if (req.session.user.userType === "STUDENT") {
+        res.redirect('/');
+      } else {
+        next();
+      }
     }
   } else {
     next();
