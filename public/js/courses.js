@@ -11,49 +11,53 @@ const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const getCoursesAPI= module.config().getCoursesAPI;
 const getCategoriesAPI = module.config().getCategoriesAPI;
-const getLanguagesAPI = module.config().getLanguagesAPI;
 const coursesURLString = module.config().coursesURLString;
 const courseOverviewLandingpage = module.config().courseOverviewLandingpage;
 let feedbackResponse = document.getElementById('feedback');
 let categoriesDropDownList = document.getElementById('categoriesDropDownList');
-let languagesDropDownList = document.getElementById('languagesDropDownList')
-
 
 // set up event listeners -------------------------------------
+
 if( document.readyState !== 'loading' ) {
   // document is already ready, just execute code
   getCategoriesList();
-  getAvailableClasses();
+  getAvailableClasses('');
 } else {
   document.addEventListener('DOMContentLoaded', function () {
-      // document wasn't loaded, when it is call function
-      getCategoriesList();
-      getAvailableClasses();
+    // document wasn't loaded, when it is call functions
+    getCategoriesList();
+    getAvailableClasses('');
   });
 }
 
-document.getElementById('categoriesDropDownList').addEventListener('change',function(){
+categoriesDropDownList.addEventListener('change',function(){
     //clear all classes
     document.getElementById('availableClasses').innerHTML = "";
-
+    //reset language select to ALL
+    document.getElementById('languagesList').selectedIndex=0;
+    let queryFilter = "?categoryFilter="
+    queryFilter += document.getElementById('categoriesList').value;
     //re-populate classes based on category selection
-    getAvailableClasses();
+    getAvailableClasses(queryFilter);
 });
 
-// main functions -------------------------------------
-function getAvailableClasses() {
+document.getElementById('languagesList').addEventListener('change', function(){
+  document.getElementById('categoriesList').selectedIndex=0;
+  document.getElementById('availableClasses').innerHTML = "";
+  let queryFilter = "?languageFilter="
+  queryFilter += document.getElementById('languagesList').value;
+  getAvailableClasses(queryFilter)
+})
+
+// ----------------main functions -------------------
+
+function getAvailableClasses(filter) {
   let feedbackToUser = "";
-  let queryURL = baseURL + getCoursesAPI;
-
-  if (document.getElementById('categoriesList')) {
-    queryURL += "?categoryFilter=" + document.getElementById('categoriesList').value;
-  }
-
+  let queryURL = baseURL + getCoursesAPI + filter;
   // if (document.getElementById('languagesList')) {
   //   queryURL += "?languageFilter=" + document.getElementById('languagesList').value;
   // }
-  console.log(queryURL)
-
+  
   //make ajax request
   let req = new XMLHttpRequest();
   req.open("GET", queryURL, true);
@@ -127,49 +131,6 @@ function getCategoriesList() {
   req.send(JSON.stringify(null));
   event.preventDefault();
 }
-
-function getLanguagesList() {
-
-  let populateLangList = document.createElement("select");
-  populateLangList.setAttribute("name", "languageList");
-  populateLangList.setAttribute("id", "languageList");
-
-  let allOptionForDropDown = document.createElement("option");
-  allOptionForDropDown.setAttribute("value", "ALL");
-  allOptionForDropDown.text = "ALL";
-  populateCategoriesList.appendChild(allOptionForDropDown);
-
-  //make ajax request
-  let req = new XMLHttpRequest();
-  req.open("GET", baseURL + getLanguagesAPI, true);
-  req.setRequestHeader("Content-type", "application/json");
-  req.addEventListener("load", function () {
-    if (req.status >=200 && req.status < 400) {
-      let data = JSON.parse(req.response);
-      //console.log("DATA ---" + JSON.stringify(data))
-
-      if (data.results.length == 0) {
-        //populateCategoriesList += "</select>";
-      } else {
-        for (let someCategory of data.results) {
-          //populateCategoriesList += "<option value=\"" + someCategory.categoryId + "\">" + someCategory.categoryName + "</option>"
-          let option = document.createElement("option");
-          option.setAttribute("value", someCategory.categoryId);
-          option.text = someCategory.categoryName;
-          populateCategoriesList.appendChild(option);
-        }
-      }
-
-    } else {
-      //populateCategoriesList += "</select>";
-    }
-    categoriesDropDownList.appendChild(populateCategoriesList);
-    //categoriesDropDownList.innerHTML = populateCategoriesList;
-  });
-  req.send(JSON.stringify(null));
-  event.preventDefault();
-}
-
 
 // utility -------------------------------------
 function logIt(someMessage) {
