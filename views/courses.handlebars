@@ -9,12 +9,11 @@
   <div style="margin: 0px 25px 25px 0px; padding: 0px; float: left;">
     Languages:
     <select name="languagesList" id="languagesList">
+      <option value="ALL">ALL</option>
       {{#each languages}}
         <option value="{{languageId}}">{{languageName}}</option>
       {{/each}}
     </select>
-
-    <button id="languageButton">Submit</button>
   </div>
 
   <div style="clear: both;"></div>

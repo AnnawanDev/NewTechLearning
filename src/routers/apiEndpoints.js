@@ -18,6 +18,10 @@ router.get('/api/getCourses', async (req,res,next) => {
   let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
   if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
     sqlQuery += "AND categoryId = " + req.query.categoryFilter;
+    
+  }
+  else if (req.query.languageFilter && req.query.languageFilter != 'ALL'){
+    sqlQuery += "AND languageId = " + req.query.languageFilter;
   }
 
   mysql.pool.query(sqlQuery, (err, rows, fields) => {

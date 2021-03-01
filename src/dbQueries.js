@@ -133,7 +133,6 @@ async function getListOfLanguages() {
         logIt("getListOfLanguages() ERROR: " + err);
         reject("ERROR in selecting courses");
       }
-      console.log(rows)
       resolve(rows);
     });
   })
