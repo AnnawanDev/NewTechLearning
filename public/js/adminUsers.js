@@ -12,19 +12,20 @@ const baseURL = module.config().baseURL;
 const deleteUsersAPI = "/api/deleteUser/";
 const getUserIDsAPI = "/api/getUserIds";
 const getUsersWithTypesAPI = "/api/getUsersWithTypes";
-
+const tbodyID = "tbodyToEditDelete";
+const editUserAPI = "/api/editUser/";
 
 // set up event listeners -------------------------------------
 
 
 if(document.readyState !== 'loading' ) {
-  //getUserIdsToApplyClickEvents();
+  removeAllTableRows();
   buildEditDeleteUserTable();
 }
 
 else {
   document.addEventListener('DOMContentLoaded', function () {
-    //getUserIdsToApplyClickEvents();
+    removeAllTableRows();
     buildEditDeleteUserTable();
   });
 }
@@ -33,10 +34,7 @@ else {
 
 // main functions -------------------------------------
 async function buildEditDeleteUserTable() {
-  let tbody = document.getElementById('tbodyToEditDelete');
-
-  //destroy existing rows
-  removeAllTableRows(tbody);
+  let tbody = document.getElementById(tbodyID);
 
   //get all users
   let tableData = await getUsers();
@@ -132,24 +130,14 @@ async function getUsers() {
     req.addEventListener("load", function () {
       if (req.status >=200 && req.status < 400) {
         let data = JSON.parse(req.response);
-        //console.log("DATA: " + JSON.stringify(data.results));
         resolve( data.results);
-        // data.results.forEach(user => {
-        //   applyOnClickEvents(user.userId);
-        // });
-
       } else {
-        //log error?
         reject('error')
       }
     });
     req.send(null);
   });
 }
-
-
-
-
 
 function deleteUser(e) {
   const fullButtonID = e.target.id;
@@ -158,7 +146,7 @@ function deleteUser(e) {
   if (!buttonID || isNaN(buttonID)) {
     throw new Error("No user id passed");
   }
-  console.log("TRYING TO DELETE USER ID : " + buttonID);
+
   //make ajax request
   let req = new XMLHttpRequest();
   req.open("DELETE", baseURL + deleteUsersAPI + buttonID, true);
@@ -178,11 +166,33 @@ function deleteUser(e) {
 }
 
 function editUser(e) {
-  console.log('edit user');
+  const fullButtonID = e.target.id;
+  const buttonID = fullButtonID.substring(12);
+
+  if (!buttonID || isNaN(buttonID)) {
+    throw new Error("No user id passed");
+  }
+
+  //make ajax request
+  // let req = new XMLHttpRequest();
+  // req.open("PATCH", baseURL + editUserAPI, true);
+  // req.setRequestHeader("Content-type", "application/json");
+  // req.addEventListener("load", function () {
+  //   if (req.status >=200 && req.status < 400) {
+  //     let data = JSON.parse(req.response);
+  //     document.getElementById('editDeleteFeedbackResponse').innerHTML = "user deleted";
+  //     buildEditDeleteUserTable();
+  //   } else {
+  //     document.getElementById('editDeleteFeedbackResponse').innerHTML = "ERROR: " + req.responseText;
+  //   }
+  // });
+  console.log("WIP - NOT FINISHED YET")
+  req.send(null);
   event.preventDefault();
 }
 
-function removeAllTableRows(tbody) {
+function removeAllTableRows() {
+  const tbody = document.getElementById(tbodyID);
   let tableRow = tbody.firstChild;
   while (tableRow) {
     tbody.removeChild(tableRow);
