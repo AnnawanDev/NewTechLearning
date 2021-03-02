@@ -86,23 +86,31 @@ define(['module'], function(module){
     event.preventDefault();
     }
     
-
     //calls delete category API to delete from DB 
     function deleteCategory(categoryId){
-        // let req = new XMLHttpRequest();
-        // req.open("GET", baseURL + deleteCategoryAPI, true);
-        // req.setRequestHeader("Content-type", "application/json");
-        // req.addEventListener("load", function () {
-        //     if (req.status >=200 && req.status < 400) {
-        //         let data = JSON.parse(req.response);
-        //         console.log(data)
-        //     } 
+        let req = new XMLHttpRequest();
+        req.open("GET", baseURL + deleteCategoryAPI + categoryId, true);
+        req.setRequestHeader("Content-type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >=200 && req.status < 400) {
+                let data = JSON.parse(req.response);
+                if (data.results.length == 0) {
+                    logIt("You can't delete that category! It's already been assigned to a course.  You can edit or delete a course's category from the Admin course page.")
+                }else{
+                    logIt('Category successfully deleted')
+                    //re-populates table with updated data
+                    categoriesTableBody.innerHTML = ''
+                    populateCategoriesTable();
+                }
+            } else {
+                logIt("OOPS! We've had a problem deleting that category.")
+            }
 
-
-        // })
-        // req.send(JSON.stringify(null));
-        // event.preventDefault();
+        })
+        req.send(JSON.stringify(null));
+        event.preventDefault();
     }
+    
     //TO DO: calls api to edit
     function editCategory(){
 
