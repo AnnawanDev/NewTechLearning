@@ -7,10 +7,29 @@
 
 const express = require('express');
 const router = new express.Router();
-const auth = require('../middleware/auth');
+//const auth = require('../middleware/auth');
 const mysql = require('../databaseConnection');
-const {doesUserExist, getListOfUsersWithUserTypes} = require('../dbQueries');
+const {doesUserExist} = require('../dbQueries');
 const {logIt} = require('../helperFunctions');
+const {requireLogin} = require('../middleware/auth');
+
+router.get('/api/getUsersWithTypes', async (req,res,next) => {
+  let context = {};
+  let sqlQuery = "SELECT userId, firstName, lastName, userName, email, IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT, IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR, IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN FROM Users ORDER BY lastName ASC;";
+
+
+  mysql.pool.query(sqlQuery, (err, rows, fields) => {
+      if (err) {
+        logIt("ERROR FROM /api/getUsersWithTypes: " + err);
+        return;
+      }
+
+      context.results = rows;
+      res.send(context);
+    });
+
+    return context;
+});
 
 router.get('/api/getCourses', async (req,res,next) => {
   let context = {};
@@ -18,7 +37,7 @@ router.get('/api/getCourses', async (req,res,next) => {
   let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
   if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
     sqlQuery += "AND categoryId = " + req.query.categoryFilter;
-    
+
   }
   else if (req.query.languageFilter && req.query.languageFilter != 'ALL'){
     sqlQuery += "AND languageId = " + req.query.languageFilter;
@@ -95,6 +114,7 @@ router.post('/api/login', async (req, res, next) => {
     }
 });
 
+
 router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
   try {
     let context = {};
@@ -115,8 +135,7 @@ router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
   }
 });
 
-//TODO: add security
-router.get('/api/getStudentsInClasses/:someClassId', async (req,res,next) => {
+router.get('/api/getStudentsInClasses/:someClassId', requireLogin, async (req,res,next) => {
   try {
     let context = {};
     mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? ORDER BY `userType` DESC, `userName` ASC", req.params.someClassId, (err, rows, fields) => {
@@ -135,8 +154,7 @@ router.get('/api/getStudentsInClasses/:someClassId', async (req,res,next) => {
   }
 });
 
-//TODO: add security
-router.get('/api/getStudentsNotInClass/:someClassId', async (req,res,next) => {
+router.get('/api/getStudentsNotInClass/:someClassId', requireLogin, async (req,res,next) => {
   try {
     let context = {};
     mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `userType` FROM `Users` WHERE `userId` NOT IN (SELECT `userId` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` ON `courseFk` = `courseId` WHERE `courseId` = ?) AND `userType` = 'STUDENT' ORDER BY lastName ASC", req.params.someClassId, (err, rows, fields) => {
@@ -305,20 +323,24 @@ router.get('/api/insertCategory/:categoryName', async (req,res,next) => {
   });
 });
 
-
-//TODO: add security
-router.delete('/api/deleteUser/:userId', async (req,res,next) => {
+router.delete('/api/deleteUser/:userId', requireLogin, async (req,res,next) => {
   let context = {};
-  mysql.pool.query("DELETE FROM `Users` WHERE `userId` = ?", req.params.userId, (error, results, fields) => {
-    if (error) {
-      res.status(500).send();
-    };
 
-    logIt('deleted ' + results.affectedRows + ' rows');
-    let context = {};
-    context.results = results.affectedRows;
-    res.send(context);
-  })
+  //prevent someone from deleting their own account
+  if (req.params.userId == req.session.user.userId) {
+    res.status(400).send("Can't delete your own account")
+  } else {
+    mysql.pool.query("DELETE FROM `Users` WHERE `userId` = ?", req.params.userId, (error, results, fields) => {
+      if (error) {
+        res.status(500).send();
+      };
+
+      logIt('deleted ' + results.affectedRows + ' rows');
+      let context = {};
+      context.results = results.affectedRows;
+      res.send(context);
+    })
+  }
 });
 
 //TODO: add security

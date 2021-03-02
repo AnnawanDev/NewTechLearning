@@ -47,7 +47,7 @@
   <br /><br />
 
   <h2>Edit/Delete Users</h2>
-  <div id="feedbackResponse"></div>
+  <div id="editDeleteFeedbackResponse"></div>
   <table>
     <thead>
       <th>First Name</th>
@@ -58,8 +58,10 @@
       <th>User Type</th>
       <th colspan="2"></th>
     </thead>
-    <tbody>
-      {{#each userListing}}
+    <tbody id="tbodyToEditDelete">
+
+
+      <!-- {{#each userListing}}
         <tr>
           <td><input type="text" name="editFirstName{{userId}}" id="editFirstName{{userId}}" value={{firstName}} /></td>
           <td><input type="text" name="editLastName{{userId}}" id="editLastName{{userId}}" value={{lastName}} /></td>
@@ -73,21 +75,16 @@
               <option value="Admin" {{#if ADMIN}} selected {{/if}}>Admin</option>
             </select>
           </td>
-          <td><button id="editButton{{userId}}" onClick="editUser({{userId}})">Edit</button></td>
-          <td><button id="deleteButton{{userId}}" onClick="deleteUser({{userId}})">Delete</button></td>
+          <td><button id="editButton{{userId}}">Edit</button></td>
+          <td><button id="deleteButton{{userId}}">Delete</button></td>
         </tr>
-      {{/each}}
+      {{/each}} -->
     </tbody>
   </table>
 </div>
 
-<script type="text/javascript">
-//placeholders
-function editUser() {
-
-}
-
-function deleteUser() {
-
-}
+<script>
+  requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/adminUsers.js"]);
+  });
 </script>
