@@ -73,6 +73,7 @@ requirejs.config({
             getCategoryNameForCourseAPI: "/api/getCategoryNameForCourse/"
 
         },
+
         '/js/adminCourseModules.js': {
             useLogging: true,
             baseURL: "http://localhost:14567",
@@ -80,8 +81,16 @@ requirejs.config({
             getModulesForCourseAPI: "/api/getModulesForCourse/",
             getModuleForCourseAndOrderAPI: "/api/getModuleHTMLForCourseAndOrder/",
             addCourseModuleAPI: "/api/addCourseModule/"
-        }
+        },
 
+        '/js/adminUsers.js': {
+            useLogging: true,
+            baseURL: "http://localhost:14567",
+            //baseURL:"http://flip3.engr.oregonstate.edu:14567",
+            deleteUserAPI: "/api/deleteUser/",
+            editUserAPI: "/api/editUser/",
+            getUsersWithTypesAPI: "/api/getUsersWithTypesAPI"
+        }
     },
     baseUrl: '/js',
     paths: {
@@ -92,6 +101,7 @@ requirejs.config({
         login: 'login.js',
         logout: 'logout.js',
         courseEnrollment: 'courseEnrollment.js',
-        adminCourses: 'adminCourses.js'
+        adminCourses: 'adminCourses.js',
+        adminUsers: 'adminUsers.js'
     }
 })

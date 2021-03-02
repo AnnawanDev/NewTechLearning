@@ -9,95 +9,9 @@ const mysql = require('./databaseConnection');
 const bcrypt = require('bcrypt');
 const {logIt} = require('./helperFunctions');
 
-
-async function getUserType(someUserId) {
-  return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {
-        if (err) {
-          logIt("isUserAStudent ERROR: " + err);
-          reject(new Error("Bad query"))
-        }
-
-        if (rows[0].userType == "INSTRUCTOR") {
-          resolve("INSTRUCTOR");
-        } else if (rows[0].userType == "ADMIN") {
-          resolve("ADMIN");
-        } else if (rows[0].userType == "STUDENT") {
-          resolve("STUDENT");
-        } else {
-          reject(new Error("ERROR: isUserAStudent"));
-        }
-      });
-    });
-};
-
-async function isInstructorOrStudentInClass(someContextObject, req) {
-  return new Promise(function(resolve, reject) {
-    if (!req.session || !req.session.user || req.params.id == "") {
-      resolve({"enrolled": false });
-    }
-
-    const queryParams = [req.session.user.userId, req.params.id];
-    mysql.pool.query("SELECT COUNT(*) AS count FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", queryParams, (err, rows, fields) => {
-        if (err) {
-          logIt("isUserAStudent ERROR: " + err);
-          resolve({"enrolled": false });
-        }
-
-        if (rows[0].count == undefined) {
-          resolve({"enrolled": false });
-        } else if (rows[0].count == 1) {
-          resolve({"enrolled": true });
-        } else {
-          resolve({"enrolled": false });
-        }
-      });
-    })
-}
-
-async function addNewUser(inserts) {
-  return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`, `userType`) VALUES (?, ?, ?, ?, ?, ?);', inserts, (err, result) => {
-      if (err) {
-        logIt("/api/createUser ERROR: " + err)
-        if (err.toString().includes("ER_DUP_ENTRY")) {
-          reject("Sorry - that user name is already taken.  Please try another one");
-        } else {
-          reject("Sorry - there was some kind of error.  Please try again.");
-        }
-      } else {
-        resolve("Welcome to New Tech Learning!");
-      }
-    });
-  });
-}
-
-async function getListOfLiveCourses() {
-  return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC", (err, rows, fields) => {
-      if (err) {
-        logIt("getListOfLiveCourses() ERROR: " + err);
-        reject("ERROR in selecting courses");
-      }
-
-      resolve(rows);
-    });
-  })
-}
-
-async function getListOfAllCoursesAndWhoIsTeaching() {
-  return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,100), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' ORDER BY `courseName` ASC;", (err, rows, fields) => {
-      if (err) {
-        logIt("getListOfAllCourses() ERROR: " + err);
-        reject("ERROR in selecting courses");
-      }
-
-      resolve(rows);
-    });
-  })
-}
-
+//--------------------------------------------------------
+//---------------------- CATEGORIES ----------------------
+//--------------------------------------------------------
 //get list of categories that are linked to live classes
 async function getListOfCategories() {
   return new Promise(function(resolve, reject) {
@@ -125,6 +39,52 @@ async function getListOfAllCategories() {
   })
 }
 
+//--------------------------------------------------------
+//---------------------- COURSES -------------------------
+//--------------------------------------------------------
+async function getListOfLiveCourses() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfLiveCourses() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
+async function getListOfAllCoursesAndWhoIsTeaching() {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,100), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' ORDER BY `courseName` ASC;", (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfAllCourses() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
+async function addNewCourse(courseName, courseDescription) {
+  let inserts = [courseName, courseDescription];
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (?, ?); ', inserts, (err, result) => {
+      if (err) {
+        logIt("addNewCourse ERROR: " + err)
+        reject("Sorry - there was some kind of error.  Please try again.");
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+//--------------------------------------------------------
+//---------------------- LANGUAGES -----------------------
+//--------------------------------------------------------
 //get list of distinct languages that are linked to live classes
 async function getListOfLanguages() {
   return new Promise(function(resolve, reject) {
@@ -136,6 +96,47 @@ async function getListOfLanguages() {
       resolve(rows);
     });
   })
+}
+
+//--------------------------------------------------------
+//---------------------- USERS ------------------
+//--------------------------------------------------------
+async function getUserType(someUserId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {
+        if (err) {
+          logIt("isUserAStudent ERROR: " + err);
+          reject(new Error("Bad query"))
+        }
+
+        if (rows[0].userType == "INSTRUCTOR") {
+          resolve("INSTRUCTOR");
+        } else if (rows[0].userType == "ADMIN") {
+          resolve("ADMIN");
+        } else if (rows[0].userType == "STUDENT") {
+          resolve("STUDENT");
+        } else {
+          reject(new Error("ERROR: isUserAStudent"));
+        }
+      });
+    });
+};
+
+async function addNewUser(inserts) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`, `userType`) VALUES (?, ?, ?, ?, ?, ?);', inserts, (err, result) => {
+      if (err) {
+        logIt("/api/createUser ERROR: " + err)
+        if (err.toString().includes("ER_DUP_ENTRY")) {
+          reject("Sorry - that user name is already taken.  Please try another one");
+        } else {
+          reject("Sorry - there was some kind of error.  Please try again.");
+        }
+      } else {
+        resolve("Welcome to New Tech Learning!");
+      }
+    });
+  });
 }
 
 async function getListOfUsersWithUserTypes() {
@@ -222,19 +223,6 @@ async function doesUserExist(someUserName, somePassword) {
   });
 }
 
-async function addUserToClass(inserts) {
-  return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (?, ?);', inserts, (err, result) => {
-      if (err) {
-        logIt("addUserToClass ERROR: " + err)
-        reject("Sorry - there was some kind of error.  Please try again.");
-      } else {
-        resolve("Congratulations! You've been added to the class.");
-      }
-    });
-  });
-}
-
 async function getAllInstructorsOrAdmins() {
   return new Promise(function(resolve, reject) {
 
@@ -252,20 +240,45 @@ async function getAllInstructorsOrAdmins() {
   });
 }
 
-async function addNewCourse(courseName, courseDescription) {
-  let inserts = [courseName, courseDescription];
+//--------------------------------------------------------
+//---------------------- USERSCOURSES --------------------
+//--------------------------------------------------------
+async function isInstructorOrStudentInClass(someContextObject, req) {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (?, ?); ', inserts, (err, result) => {
+    if (!req.session || !req.session.user || req.params.id == "") {
+      resolve({"enrolled": false });
+    }
+
+    const queryParams = [req.session.user.userId, req.params.id];
+    mysql.pool.query("SELECT COUNT(*) AS count FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", queryParams, (err, rows, fields) => {
+        if (err) {
+          logIt("isUserAStudent ERROR: " + err);
+          resolve({"enrolled": false });
+        }
+
+        if (rows[0].count == undefined) {
+          resolve({"enrolled": false });
+        } else if (rows[0].count == 1) {
+          resolve({"enrolled": true });
+        } else {
+          resolve({"enrolled": false });
+        }
+      });
+    })
+}
+
+async function addUserToClass(inserts) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (?, ?);', inserts, (err, result) => {
       if (err) {
-        logIt("addNewCourse ERROR: " + err)
+        logIt("addUserToClass ERROR: " + err)
         reject("Sorry - there was some kind of error.  Please try again.");
       } else {
-        resolve(result);
+        resolve("Congratulations! You've been added to the class.");
       }
     });
   });
 }
-
 
 
 module.exports = {
