@@ -20,7 +20,9 @@ define(['module'], function(module){
     let addCategoryButton = document.getElementById('addCategoryButton');
     addCategoryButton.addEventListener('click', function(){
         let categoryInput = document.getElementById('categoryNameInput').value
-        addCategory(categoryInput)
+        if(categoryInput){
+            addCategory(categoryInput)
+        }
     })
 
 
@@ -73,7 +75,6 @@ define(['module'], function(module){
                             deleteCategory(someCategory.categoryId);
                         });
                         newRow.appendChild(cell2)
-            
                         // cell3 - UPDATE
                     }
                 }
@@ -95,7 +96,7 @@ define(['module'], function(module){
             if (req.status >=200 && req.status < 400) {
                 let data = JSON.parse(req.response);
                 if (data.results.length == 0) {
-                    logIt("You can't delete that category! It's already been assigned to a course.  You can edit or delete a course's category from the Admin course page.")
+                    logIt("We weren't able to delete that category!")
                 }else{
                     logIt('Category successfully deleted')
                     //re-populates table with updated data

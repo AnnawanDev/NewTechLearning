@@ -3,6 +3,7 @@ define (['module'], function (module){
     const baseURL = module.config().baseURL;
     const getLanguagesAPI = module.config().getLanguagesAPI;
     const addLanguageAPI = module.config().addLanguageAPI;
+    const deleteLanguageAPI = module.config().deleteLanguageAPI;
     const languagesTableBody = document.getElementById('langAdminTableBody');
 
     populateLanguageTable();
@@ -10,7 +11,11 @@ define (['module'], function (module){
     addLanguageButton.addEventListener('click', function(){
         let langNameInput = document.getElementById('languageNameInput').value
         let langCountryInput = document.getElementById('languageCountryInput').value
-        addLanguage(langNameInput,langCountryInput)
+        if (langCountryInput && langNameInput) {
+            addLanguage(langNameInput,langCountryInput)
+        } else {
+            alert("Please enter all fields in order to successfully add a language.")
+        }
     })
 
 
@@ -46,8 +51,6 @@ define (['module'], function (module){
             }
         })
 
-
-       
     req.send(JSON.stringify(null));
     event.preventDefault();
     }
@@ -59,7 +62,6 @@ define (['module'], function (module){
         req.addEventListener("load", function () {
             if (req.status >=200 && req.status < 400) {
                 let data = JSON.parse(req.response);
-                logIt(data)
                 if (data.results.length == 0) {
                     logIt('There was an error in inserting your language')
                 }else {
@@ -75,7 +77,27 @@ define (['module'], function (module){
     }
 
     function deleteLanguage(languageID) {
-        //will implementLater
+        let req = new XMLHttpRequest();
+        req.open("GET", baseURL + deleteLanguageAPI + languageID, true);
+        req.setRequestHeader("Content-type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >=200 && req.status < 400) {
+                let data = JSON.parse(req.response);
+                if (data.results.length == 0) {
+                    logIt("Language couldn't be deleted :(")
+                }else{
+                    logIt('Language successfully deleted')
+                    //re-populates table with updated data
+                    languagesTableBody.innerHTML = ''
+                    populateLanguageTable();
+                }
+            } else {
+                logIt("OOPS! We've had a problem deleting that category.")
+            }
+
+        })
+        req.send(JSON.stringify(null));
+        event.preventDefault();
     }
 
     function logIt(someMessage) {
