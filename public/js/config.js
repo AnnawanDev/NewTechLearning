@@ -62,7 +62,8 @@ requirejs.config({
             baseURL: "http://localhost:14567",
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getLanguagesAPI: '/api/getListOfAllLanguages/',
-            addLanguageAPI: '/api/insertLanguage/'
+            addLanguageAPI: '/api/insertLanguage/',
+            deleteLanguageAPI: '/api/deleteLanguage/'
         },
 
         '/js/adminCourses.js': {

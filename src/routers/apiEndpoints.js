@@ -90,20 +90,21 @@ router.get('/api/getListOfAllCategories', async (req,res,next) => {
 });
 
 //deletes a category from DB
-//not sure if it's working right now
-// router.delete('/api/deleteCategory:categoryId', async (req,res,next) => {
-//   let context = {};
-//   mysql.pool.query("DELETE FROM `Categories` WHERE `categoryId` = ?", req.params.categoryId, (error, results, fields) => {
-//     if (error) {
-//       res.status(500).send();
-//     };
-
-//     logIt('deleted ' + results.affectedRows + ' rows');
-//     let context = {};
-//     context.results = results.affectedRows;
-//     res.send(context);
-//   })
-// });
+router.get('/api/deleteCategory/:categoryId', async (req,res,next) => {
+  let context = {};
+  mysql.pool.query("DELETE FROM `Categories` WHERE `categoryId` = ?", req.params.categoryId, (error, results, fields) => {
+    if (error) {
+      res.status(500).send();
+    }
+    else {
+      logIt('deleted ' + results.affectedRows + ' rows');
+      let context = {};
+      context.results = results.affectedRows;
+      res.send(context);
+    }
+    
+  })
+});
 
 router.get('/api/insertCategory/:categoryName', async (req,res,next) => {
   let context = {};
@@ -351,9 +352,7 @@ router.get('/api/getLanguagesForCourse/:courseId', async (req,res,next) => {
     return context;
 });
 
-//--------
-// WIP
-//--------
+
 
 router.get('/api/addLanguageToCourse/:courseId/:languageId', async (req,res,next) => {
   let context = {};
@@ -372,6 +371,23 @@ router.get('/api/addLanguageToCourse/:courseId/:languageId', async (req,res,next
 
     return context;
 });
+
+router.get('/api/deleteLanguage/:languageId', async (req,res,next) => {
+  let context = {};
+  mysql.pool.query("DELETE FROM `Languages` WHERE `languageId` = ?", req.params.languageId, (error, results, fields) => {
+    if (error) {
+      res.status(500).send();
+    }
+    else {
+      logIt('deleted ' + results.affectedRows + ' rows');
+      let context = {};
+      context.results = results.affectedRows;
+      res.send(context);
+    }
+    
+  })
+});
+
 
 
 //--------------------------------------------------------
