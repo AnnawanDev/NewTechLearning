@@ -191,37 +191,13 @@ function editUser(e) {
     validateEditContents(buttonID);
     goodToEditUser = true;
   } catch(e) {
-    document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">' + e + '</p>'
+    document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error</p>';
+    console.log("ERROR: " + e);
   }
 
   if (goodToEditUser) {
-    //set-up PATCH payload
     let payload = setUpPayLoad(buttonID);
-
-    //make ajax request
-    let req = new XMLHttpRequest();
-    req.open("PATCH", 'http://localhost:14567/api/editUser', true);
-    //req.open("PATCH", baseURL + editUserAPI, true);
-    req.setRequestHeader("Content-type", "application/json");
-    req.addEventListener("load", function () {
-      if (req.status >=200 && req.status < 400) {
-        let data = JSON.parse(req.response);
-        if (data.result == "DUPLICATE") {
-          document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, that user name is taken please choose another</p>';
-          document.getElementById('editUserName' + buttonID).style.backgroundColor = "yellow";
-        } else if (data.result == "ERROR") {
-          document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
-        } else {
-          document.getElementById('editUserName' + buttonID).style.backgroundColor = "white";
-          document.getElementById('editUserName' + buttonID).style.border = "1px solid #000000";
-          document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="font-weight: bold">User edit saved</p>';
-        }
-      } else {
-        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
-        console.log("ERROR: " + JSON.stringify(req));
-      }
-    });
-    req.send(JSON.stringify(payload));
+    updloadEdit(buttonID, payload);
   }
   event.preventDefault();
 }
@@ -264,26 +240,31 @@ function validateEditContents(userId) {
   }
 }
 
-async function updloadEdit(buttonID) {
-  return new Promise(function(resolve, reject) {
-    //set-up PATCH payload
-    let payload = setUpPayLoad(buttonID);
-
-    //make ajax request
-    let req = new XMLHttpRequest();
-    req.open("PATCH", baseURL + editUserAPI, true);
-    req.setRequestHeader("Content-type", "application/json");
-    req.addEventListener("load", function () {
-      if (req.status >=200 && req.status < 400) {
-        let data = JSON.parse(req.response);
-        resolve(data);
+function updloadEdit(buttonID, payload) {
+  //make ajax request
+  let req = new XMLHttpRequest();
+  req.open("PATCH", baseURL + editUserAPI, true);
+  req.setRequestHeader("Content-type", "application/json");
+  req.addEventListener("load", function () {
+    if (req.status >=200 && req.status < 400) {
+      let data = JSON.parse(req.response);
+      if (data.result == "DUPLICATE") {
+        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, that user name is taken please choose another</p>';
+        document.getElementById('editUserName' + buttonID).style.backgroundColor = "yellow";
+      } else if (data.result == "ERROR") {
+        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
       } else {
-        reject(req.responseText);
+        document.getElementById('editUserName' + buttonID).style.backgroundColor = "white";
+        document.getElementById('editUserName' + buttonID).style.border = "1px solid #000000";
+        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="font-weight: bold">User edit saved</p>';
       }
-    });
-
-    req.send(payload);
+    } else {
+      document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
+      console.log("ERROR: " + JSON.stringify(req));
+    }
   });
+  document.getElementById('editDeleteFeedbackResponse').innerHTML = "";
+  req.send(JSON.stringify(payload));
 }
 
 function setUpPayLoad(userId) {
