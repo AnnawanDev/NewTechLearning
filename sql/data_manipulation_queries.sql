@@ -84,6 +84,8 @@ SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY cours
 SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId
 INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5
 
+-- Query to get details on specific course
+SELECT `courseId`, `courseName`, `courseDescription`, `isLive`, `dateWentLive`, `categoryFk` FROM `Courses` WHERE `courseId` = :someCourseId;
 
 -- Query to get category name for a course
 SELECT categoryName FROM Categories

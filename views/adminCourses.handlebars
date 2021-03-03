@@ -58,8 +58,8 @@
           <td>{{dateWentLive}}</td>
           <td>{{isLive}}</td>
           <td>{{lastName}}, {{firstName}} ({{userName}})</td>
-          <td><button id="editButton{{courseId}}">Edit</button></td>
-          <td><button id="deleteButton{{courseId}}">Delete</button></td>
+          <td><a href="/Admin/Courses/Edit/{{courseId}}">Edit</a></td>
+          <td><a href="/Admin/Courses/Delete/{{courseId}}">Delete</a></td>
         </tr>
       {{/each}}
     </tbody>
@@ -141,7 +141,7 @@
   <div style="clear: both;"></div>
 </div>
 
-<script> 
+<script>
   requirejs(["/js/config.js"], function (config){
     requirejs(["/js/adminCourses.js"]);
   });

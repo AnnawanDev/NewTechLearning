@@ -18,7 +18,7 @@ const getCategoryNameForCourseAPI = module.config().getCategoryNameForCourseAPI;
 if(document.readyState !== 'loading' ) {
   // document is already ready, just execute code
   getCategoryForCourse(document.getElementById('selectCourseCategoryToEdit').value);
-  getLanguagesForCourse(document.getElementById('selectCourseCategoryToEdit2').value)
+  getLanguagesForCourse(document.getElementById('selectCourseCategoryToEdit2').value);
 }
 
 else {
@@ -53,44 +53,43 @@ let addLangToCourseButton = document.getElementById('addLangToCourseButton');
     })
 
 // main functions -------------------------------------
-
-  function getLanguagesForCourse (courseId){
-    let url = baseURL+ "/api/getLanguagesForCourse/" + courseId;
-    let req = new XMLHttpRequest();
-    req.open("GET", url, true);
-    req.setRequestHeader("Content-type", "application/json");
-    req.addEventListener("load", function () {
-      if (req.status >=200 && req.status < 400) {
-        let data = JSON.parse(req.response);
-        // console.log("DATA ---" + JSON.stringify(data))
-        if (data.results.length == 0) {
-          logIt( "No languages assigned")
-        } else {
-          for (let someLang of data.results) {
-            let newRow = adminLangCoursesTableBody.insertRow(-1);
-            let cell1 = newRow.insertCell(0);
-            cell1.innerHTML = someLang.languageName
-            let cell2 = newRow.insertCell(1);
-            cell2.innerHTML = someLang.country
-            var cell3 = document.createElement('input')
-            cell3.type="button";
-            cell3.value = "delete"
-            cell3.name= 'delete'
-            cell3.addEventListener("click", function() {
-                deleteLanguage(someLang.languageId);
-            });
-            newRow.appendChild(cell3)
-          }
-
+function getLanguagesForCourse (courseId){
+  let url = baseURL+ "/api/getLanguagesForCourse/" + courseId;
+  let req = new XMLHttpRequest();
+  req.open("GET", url, true);
+  req.setRequestHeader("Content-type", "application/json");
+  req.addEventListener("load", function () {
+    if (req.status >=200 && req.status < 400) {
+      let data = JSON.parse(req.response);
+      // console.log("DATA ---" + JSON.stringify(data))
+      if (data.results.length == 0) {
+        logIt( "No languages assigned")
+      } else {
+        for (let someLang of data.results) {
+          let newRow = adminLangCoursesTableBody.insertRow(-1);
+          let cell1 = newRow.insertCell(0);
+          cell1.innerHTML = someLang.languageName
+          let cell2 = newRow.insertCell(1);
+          cell2.innerHTML = someLang.country
+          var cell3 = document.createElement('input')
+          cell3.type="button";
+          cell3.value = "delete"
+          cell3.name= 'delete'
+          cell3.addEventListener("click", function() {
+              deleteLanguage(someLang.languageId);
+          });
+          newRow.appendChild(cell3)
         }
-      }else{
-        logIt('sorry, there was a problem in getting the available languages.')
-      }
-    })
 
-    req.send(null);
-    event.preventDefault();
-  }
+      }
+    }else{
+      logIt('sorry, there was a problem in getting the available languages.')
+    }
+  })
+
+  req.send(null);
+  event.preventDefault();
+}
 
 function addLanguageToCourse(courseId, languageId){
   let url = baseURL+ "/api/addLanguageToCourse/" + courseId + '/' + languageId;
@@ -175,11 +174,6 @@ function getCategoriesList() {
   req.send(JSON.stringify(null));
   event.preventDefault();
 }
-
-
-
-
-
 
 
 // utility -------------------------------------

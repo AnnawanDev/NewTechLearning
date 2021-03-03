@@ -68,6 +68,18 @@ async function getListOfAllCoursesAndWhoIsTeaching() {
   })
 }
 
+async function getSpecificCourse(courseId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `courseDescription`, `isLive`, `dateWentLive`, `categoryFk` FROM `Courses` WHERE `courseId` = ?;", courseId, (err, rows, fields) => {
+      if (err) {
+        logIt("getSpecificCourse() ERROR: " + err);
+        reject("ERROR in getSpecificCourse");
+      }
+      resolve(rows);
+    });
+  })
+}
+
 async function addNewCourse(courseName, courseDescription) {
   let inserts = [courseName, courseDescription];
   return new Promise(function(resolve, reject) {
@@ -295,6 +307,7 @@ module.exports = {
   getListOfLiveCourses,
   getListOfUsersAssociatedWithAClass,
   getListOfUsersWithUserTypes,
+  getSpecificCourse,
   getUserId,
   isInstructorOrStudentInClass
 }
