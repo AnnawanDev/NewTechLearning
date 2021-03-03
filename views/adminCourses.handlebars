@@ -11,13 +11,16 @@
   <h1>Admin Courses</h1>
 
   <h2>Add Course</h2>
-  {{addNewCourseResult}}
+  <div id="addCourseSuccess">{{{addNewCourseResult}}}</div>
+  <div id="addCourseError">{{{errorInAddingCourse}}}</div>
   <form method="post" action="/Admin/Courses/">
   <table>
     <thead>
       <th>Course Name</th>
       <th>Course Description</th>
       <th>Instructor</th>
+      <th>Category</th>
+      <th>Language(s)</th>
     </thead>
     <tbody>
       <tr>
@@ -30,11 +33,27 @@
               {{/each}}
             </select>
         </td>
+        <td>
+          <select id="categorySelectorForNewCourse" name="categorySelectorForNewCourse">
+              <option value="0" selected>None</option>
+            {{#each categories}}
+              <option value="{{categoryId}}">{{categoryName}}</option>
+            {{/each}}
+          </select>
+        </td>
+        <td>
+          <select id="languageSelectorForNewCourse" name="languageSelectorForNewCourse" multiple="multiple">
+              <option value="0" selected>None</option>
+            {{#each languages}}
+              <option value="{{languageId}}">{{languageName}}</option>
+            {{/each}}
+          </select>
+        </td>
       </tr>
     </tbody>
   </table>
   <input type="hidden" id="addNewCourseForm" name="addNewCourseForm" value="yes" />
-  <button id="addButton" style="margin-top: 20px">Add Course</button>
+  <button id="addButton" name="addButton" style="margin-top: 20px">Add Course</button>
 </form>
 
   <br /><br />
@@ -48,6 +67,8 @@
       <th width="200px">Course Start Date</th>
       <th>Is Live?</th>
       <th>Instructor</th>
+      <th>Category</th>
+      <th>Languages</th>
       <th colspan="2"></th>
     </thead>
     <tbody>
@@ -58,90 +79,20 @@
           <td>{{dateWentLive}}</td>
           <td>{{isLive}}</td>
           <td>{{lastName}}, {{firstName}} ({{userName}})</td>
-          <td><button id="editButton{{courseId}}">Edit</button></td>
-          <td><button id="deleteButton{{courseId}}">Delete</button></td>
+          <td>{{categoryName}}</td>
+          <td>{{TaughtIn}}</td>
+          <td><a href="/Admin/Courses/Edit/{{courseId}}">Edit</a></td>
+          <td><a href="/Admin/Courses/Delete/{{courseId}}">Delete</a></td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 
 
-  <br /><br />
 
-  <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 450px; float: left; margin-right: 50px;">
-  <h1>Edit Languages Associated with Courses</h1>
-      <label for="selectCourseCategoryToEdit2">Select Course:</label>
-      <select id = "selectCourseCategoryToEdit2" name="selectCourseCategoryToEdit2">
-        {{#each courses}}
-        <option value="{{courseId}}">{{courseName}}</option>
-        {{/each}}
-      </select>
-
-    <br />
-    <h4>Current Languages</h4>
-    <table>
-        <thead>
-            <th>Language</th>
-            <th>Country</th>
-            <th colspan="2"></th>
-        </thead>
-        <tbody id= 'adminLangsCoursesTableBody'>
-        </tbody>
-    </table>
-
-    <h4>Add New Language to Selected Course</h4>
-    <form>
-      <label for="selectLanguage">Select language:</label>
-      <select name="selectLanguage" id="selectLanguage">
-        {{#each languages}}
-        <option value="{{languageId}}">{{languageName}}</option>
-        {{/each}}
-      </select>
-      <input id = "addLangToCourseButton" type="submit">
-    </form>
-  </div>
-
-
-
-    <div style="padding: 20px; background-color: #ffffff; width: 400px; height: 360px; float: left; margin-right: 50px;">
-      <h1>Edit Category Associated with a Course</h1>
-
-          <label for="selectCourseCategoryToEditSpan">Select Course:</label>
-          <select id="selectCourseCategoryToEdit" name="selectCourseCategoryToEdit">
-            {{#each courses}}
-            <option value="{{courseId}}">{{courseName}}</option>
-            {{/each}}
-          </select>
-    <h4>Current Category </h4>
-    <table>
-        <thead>
-        <th>Category</th>
-        <th></th>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-              <span id="categoryThatIsAssociatedWithClass"></span>
-              </td>
-            <td><button id="drop1">Drop from Course</button></td>
-        </tr>
-        </tbody>
-    </table>
-    <h4>Change Course Category </h4>
-    <form>
-      <label for="category">Select Category:</label>
-      <select name="category" id="course">
-        {{#each categories}}
-        <option value="{{categoryId}}">{{categoryName}}</option>
-        {{/each}}
-      </select>
-      <input type="submit">
-    </form>
-  </div>
-  <div style="clear: both;"></div>
 </div>
 
-<script> 
+<script>
   requirejs(["/js/config.js"], function (config){
     requirejs(["/js/adminCourses.js"]);
   });

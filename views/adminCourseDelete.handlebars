@@ -1,0 +1,52 @@
+<!-- TODO: Move to other location? -->
+<style type="text/css">
+  table, th, td { border: 1px solid #000000; padding: 10px; }
+</style>
+
+<div style="background-color: #ff0000; height: 50px;">
+  {{>adminNavigation}}
+</div>
+
+<div id="mainContent">
+  <form method="post" action="/Admin/Courses/Delete/{{courseId}}">
+  <input type="hidden" id="courseId" name="courseId" value="{{courseId}}" />
+  <h1>{{title}}</h1>
+  {{{DeleteResult}}}
+
+  <a href="/Admin/Courses/">Back to Courses</a><br /><br />
+  <div id="deleteFormArea" style="{{{ mainContentStyle }}}>
+  <b>Course Name</b><br />
+  <input type="input" id="courseName" name="courseName" value="{{courseName}}" disabled></input>
+
+  <br /><br />
+  <b>Course Description</b><br />
+  <textarea id="courseDescription" name="courseDescription" rows="4" cols="50" disabled>{{courseDescription}}</textarea>
+
+  <br /><br />
+  <b>Is Live?</b><br />
+  <input type="checkbox" id="isLive" name="isLive" {{#if isLive}}checked {{/if}} disabled/>
+
+  <br /><br />
+  <b>Date went live</b><br />
+  <input type="input" id="dateWentLive" name="dateWentLive" value="{{dateWentLive}}" disabled /><br /> <!-- TODO: Change to just date -->
+
+  <br /><br />
+  <b>Category</b><br />
+  <input type="hidden" id="selectedItem" name="selectedItem" value="{{categoryFk}}" />
+  <select id="selectCategory" name="selectCategory" disabled>
+    <option value="0">None</option>
+    {{#each categories}}
+      <option value="{{categoryId}}">{{categoryName}}</option>
+    {{/each}}
+  </select>
+
+  <br /><br />
+  <button id="submit" name="submit">Delete Course</button>
+</div>
+</div>
+
+<script>
+  requirejs(["/js/config.js"], function (config){
+    requirejs(["/js/adminCourseEdit.js"]);
+  });
+</script>
