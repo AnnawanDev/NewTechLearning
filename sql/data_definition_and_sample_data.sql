@@ -80,7 +80,14 @@ INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `
 ("INSTRUCTOR", "Darth", "Vader", "darth", "darth@oregonstate.edu", "$2b$08$1ANevIZD2eJ8G/TgfiAw5u0nskwYNXQSv0Avioevro4xQo.h/nHYC"),
 ("INSTRUCTOR", "Leia", "Organa", "leia", "leia@oregonstate.edu", "$2b$08$lKmFk2UiXZBrT1e1nMAK6upVs/fV.pv0Ta2WdiPh31ge4Al3C.Zly"),
 ("INSTRUCTOR", "Luke", "Skywalker", "luke", "luke@oregonstate.edu", "$2b$08$j1afmx4V4V.S25Rj5O3yceAXTzodKjZfpT/1lNMyPGAHNA78k1Spe"),
-("STUDENT", "R2", "D2", "r2d2", "r2d2@oregonstate.edu", "$2b$08$Vs7uwIfYrkRKZwg8K.WWteZ.5oLxhJupYlbHSkP7ejOjzBJ/vvsie");
+("STUDENT", "R2", "D2", "r2d2", "r2d2@oregonstate.edu", "$2b$08$Vs7uwIfYrkRKZwg8K.WWteZ.5oLxhJupYlbHSkP7ejOjzBJ/vvsie"),
+("STUDENT", "James", "Kirk", "kirk", "kirk@oregonstate.edu", "$2b$08$7IgE2oZJCMyE.0Fx3y7JzODiIGaEBNsztWQr8RF2PcZv1FeqUZK9a"),
+("STUDENT", "Mister", "Spock", "spock", "spock@oregonstate.edu", "$2b$08$DbsWH0lCew9uRwf5LnYR7.Og2WGVoQ1vMEXWLSuPjBYwV9xEEARS."),
+("STUDENT", "Nyota", "Uhura", "uhura", "uhura@oregonstate.edu", "$2b$08$bIRmlQgBvbEn/9gWIWxYf.JhHLWrp1TC15hhN1SDOyaVJ4GLsyh.a"),
+("STUDENT", "Chuck", "Cheese", "cheese", "cheese@oregonstate.edu", "$2b$08$ouGPL9suKaMZ6h9lEbMIsOAHz5crw2G1x2kQXU8pFSpMmB7l2oklW"),
+("STUDENT", "Hikaru", "Sulu", "sulu", "sulu@oregonstate.edu", "$2b$08$WOqs8/XH7zhpBeBF8dZrUezJF4DHB0V3tJSmKoQRemSf8czpUoOZy"),
+("STUDENT", "Geordi", "La Forge", "geordi", "geordi@oregonstate.edu", "$2b$08$PwXmpgo6m84Dg3gfsxkNoePyON2dgMCVVwxS7i8qNFczoE/WStWje"),
+("STUDENT", "Ellen", "Ripley", "ripley", "ripley@oregonstate.edu", "$2b$08$nM/HG.54r6IJVM5fE3ToEO3dLPKm7os7Sy2UU7dSUHxYWboYSb17W");
 
 
  INSERT INTO `Categories` (`categoryName`) VALUES
@@ -102,13 +109,26 @@ INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `
  ('C++', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec varius ipsum quam, vitae fermentum dui ultrices sed. Aenean vulputate eleifend blandit. Proin viverra imperdiet risus molestie accumsan. Donec dapibus est varius tortor convallis, eu ornare tellus malesuada. Curabitur sed orci orci. Sed condimentum ex at turpis tincidunt auctor. Curabitur tristique mi turpis, ut tempus mi vulputate quis. Nulla semper erat quis fermentum semper. Proin lacinia dolor pharetra velit posuere, ut accumsan tellus fringilla. Mauris nec lacus arcu. Aliquam ut interdum sem. Phasellus rutrum pellentesque est, non tincidunt nisl posuere vel. Sed aliquam feugiat viverra. Praesent nulla leo, semper sit amet vestibulum vel, scelerisque id nunc.</p><p>Nullam placerat quam et leo molestie mattis. Mauris et tincidunt dolor. Nam sit amet sollicitudin diam. Maecenas eleifend non sapien id venenatis. Sed ligula purus, lobortis et tellus ac, lacinia blandit diam. Nullam ac efficitur nulla. Quisque nec porttitor orci. Sed arcu lacus, vulputate vel porttitor sit amet, dictum at sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;</p>',1, '2021-01-05', 4);
 
 INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
-(4, 1),
-(5, 2),
-(6, 3),
-(4, 4),
-(5, 5),
-(7, 1);
-
+(1, 1),
+(2, 2),
+(4, 3),
+(5, 4),
+(6, 5),
+(7, 1),
+(8, 2),
+(9, 3),
+(10, 4),
+(11, 5),
+(12, 1),
+(13, 2),
+(14, 3),
+(7, 4),
+(8, 5),
+(9, 1),
+(10, 2),
+(11, 3),
+(12, 4),
+(13, 5);
 
 INSERT INTO `Languages` (`languageName`,`languageCountry`) VALUES
 ('English', 'USA'),
