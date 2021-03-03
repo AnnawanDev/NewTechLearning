@@ -54,7 +54,8 @@ requirejs.config({
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getCategoriesAPI: '/api/getListOfAllCategories/',
             addCategoryAPI: '/api/insertCategory/',
-            deleteCategoryAPI: '/api/deleteCategory/'
+            deleteCategoryAPI: '/api/deleteCategory/',
+            editCategoryAPI: '/api/updateCategory/'
         },
 
         '/js/languages.js':{
@@ -63,7 +64,8 @@ requirejs.config({
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getLanguagesAPI: '/api/getListOfAllLanguages/',
             addLanguageAPI: '/api/insertLanguage/',
-            deleteLanguageAPI: '/api/deleteLanguage/'
+            deleteLanguageAPI: '/api/deleteLanguage/',
+            editLanguageAPI: '/api/updateLanguage/'
         },
 
         '/js/adminCourses.js': {
@@ -81,7 +83,8 @@ requirejs.config({
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getModulesForCourseAPI: "/api/getModulesForCourse/",
             getModuleForCourseAndOrderAPI: "/api/getModuleHTMLForCourseAndOrder/",
-            addCourseModuleAPI: "/api/addCourseModule/"
+            addCourseModuleAPI: "/api/addCourseModule/",
+            deleteCourseModuleAPI: "/api/deleteCourseModule/"
         },
 
         '/js/adminUsers.js': {
