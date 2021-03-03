@@ -1,31 +1,20 @@
--- CS 340
--- Group 20 Final Project: New Tech Learning
--- Nora Marji, Ed Wied
--- February 13, 2021
--- NOTE REGARDING ALL QUERIES
--- colon : character being used to denote the variables that will have data from NodeJS
 
-
--- DATA DEFINITION QUERIES --
-
--- Creates Users Table
-CREATE TABLE Users (
-	userId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-  userType ENUM('STUDENT', 'INSTRUCTOR', 'ADMIN') NOT NULL DEFAULT 'STUDENT',
-  firstName VARCHAR(255) NOT NULL,
-  lastName VARCHAR(255) NOT NULL,
-  userName VARCHAR(255) NOT NULL UNIQUE,
-  email VARCHAR(255) NOT NULL,
+CREATE TABLE `Users` (
+	`userId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `userType` ENUM('STUDENT', 'INSTRUCTOR', 'ADMIN') NOT NULL DEFAULT 'STUDENT',
+  `firstName` VARCHAR(255) NOT NULL,
+  `lastName` VARCHAR(255) NOT NULL,
+  `userName` VARCHAR(255) NOT NULL UNIQUE,
+  `email` VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
--- Creates Categories Table
+
 CREATE TABLE `Categories` (
   `categoryId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `categoryName` VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
--- Creates Courses Table
 CREATE TABLE `Courses` (
 	`courseId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `courseName` VARCHAR(255) NOT NULL,
@@ -38,7 +27,7 @@ CREATE TABLE `Courses` (
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- Creates UsersCourses Table
+
 CREATE TABLE `UsersCourses` (
 	`userCourseId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `userFk` INT NOT NULL,
@@ -51,7 +40,7 @@ CREATE TABLE `UsersCourses` (
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- Creates CourseModules Table
+
 CREATE TABLE `CourseModules` (
   `courseModuleId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `courseFk` INT NOT NULL,
@@ -62,14 +51,14 @@ CREATE TABLE `CourseModules` (
   	ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- Creates Languages Table
+
 CREATE TABLE `Languages` (
   `languageId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `languageName` VARCHAR(255) NOT NULL,
 	`languageCountry` VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
--- Creates LanguagesCourses Table
+
 CREATE TABLE `LanguagesCourses` (
 	`languageCourseId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	`languageFk` INT NOT NULL,
@@ -84,27 +73,6 @@ CREATE TABLE `LanguagesCourses` (
 ) ENGINE=InnoDB;
 
 
---INSERT SAMPLE DATA --
-
--- SAMPLE USER NAMES AND PASSWORDS --
--- The values you see that are being inserted are encrypted with bcrypt.
--- Any new user likewise has their password encrypted by application.
-
--- ADMIN USER NAMES:
--- User/pass: ed/ed
--- User/pass: nora/nora
--- User/pass: admin/abc
-
--- INSTRUCTORS --
--- user/pass darth/abc
--- user/pass leia/abc
--- user/pass luke/abc
-
--- STUDENTS --
--- user/pass r2/abc
-
-
--- Table: Users
 INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `password`) VALUES
 ("ADMIN", "Ed", "Wied", "ed", "ed@oregonstate.edu", "$2b$08$ql53fvqiCbtywsY6dbL8V.4CsISAYGpTErQAkbcDJND1ndrWHNzrK"),
 ("ADMIN", "Nora", "Marji", "nora", "nora@oregonstate.edu", "$2b$08$VQh0G7Biue9v9LMy9rI26.V28CVz.Az3FI7BymAhrhgueP9M8uyu6"),
@@ -115,7 +83,6 @@ INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `
 ("STUDENT", "R2", "D2", "r2d2", "r2d2@oregonstate.edu", "$2b$08$Vs7uwIfYrkRKZwg8K.WWteZ.5oLxhJupYlbHSkP7ejOjzBJ/vvsie");
 
 
- -- Table:  Categories
  INSERT INTO `Categories` (`categoryName`) VALUES
  ('Web Development'),
  ('Mobile App Development'),
@@ -126,7 +93,7 @@ INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `
  ('SQL');
 
 
--- Table: Courses
+
  INSERT INTO `Courses` (`courseName`, `courseDescription`, `isLive`, `dateWentLive`, `categoryFk`) VALUES
  ('Java', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec varius ipsum quam, vitae fermentum dui ultrices sed. Aenean vulputate eleifend blandit. Proin viverra imperdiet risus molestie accumsan. Donec dapibus est varius tortor convallis, eu ornare tellus malesuada. Curabitur sed orci orci. Sed condimentum ex at turpis tincidunt auctor. Curabitur tristique mi turpis, ut tempus mi vulputate quis. Nulla semper erat quis fermentum semper. Proin lacinia dolor pharetra velit posuere, ut accumsan tellus fringilla. Mauris nec lacus arcu. Aliquam ut interdum sem. Phasellus rutrum pellentesque est, non tincidunt nisl posuere vel. Sed aliquam feugiat viverra. Praesent nulla leo, semper sit amet vestibulum vel, scelerisque id nunc.</p><p>Nullam placerat quam et leo molestie mattis. Mauris et tincidunt dolor. Nam sit amet sollicitudin diam. Maecenas eleifend non sapien id venenatis. Sed ligula purus, lobortis et tellus ac, lacinia blandit diam. Nullam ac efficitur nulla. Quisque nec porttitor orci. Sed arcu lacus, vulputate vel porttitor sit amet, dictum at sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;</p>', 1, '2021-01-01', 5),
  ('Swift', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec varius ipsum quam, vitae fermentum dui ultrices sed. Aenean vulputate eleifend blandit. Proin viverra imperdiet risus molestie accumsan. Donec dapibus est varius tortor convallis, eu ornare tellus malesuada. Curabitur sed orci orci. Sed condimentum ex at turpis tincidunt auctor. Curabitur tristique mi turpis, ut tempus mi vulputate quis. Nulla semper erat quis fermentum semper. Proin lacinia dolor pharetra velit posuere, ut accumsan tellus fringilla. Mauris nec lacus arcu. Aliquam ut interdum sem. Phasellus rutrum pellentesque est, non tincidunt nisl posuere vel. Sed aliquam feugiat viverra. Praesent nulla leo, semper sit amet vestibulum vel, scelerisque id nunc.</p><p>Nullam placerat quam et leo molestie mattis. Mauris et tincidunt dolor. Nam sit amet sollicitudin diam. Maecenas eleifend non sapien id venenatis. Sed ligula purus, lobortis et tellus ac, lacinia blandit diam. Nullam ac efficitur nulla. Quisque nec porttitor orci. Sed arcu lacus, vulputate vel porttitor sit amet, dictum at sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;</p>',1, '2021-01-02', 2),
@@ -134,10 +101,6 @@ INSERT INTO `Users` (`userType`, `firstName`, `lastName`, `userName`, `email`, `
  ('NoSQL-with-DynamoDB', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec varius ipsum quam, vitae fermentum dui ultrices sed. Aenean vulputate eleifend blandit. Proin viverra imperdiet risus molestie accumsan. Donec dapibus est varius tortor convallis, eu ornare tellus malesuada. Curabitur sed orci orci. Sed condimentum ex at turpis tincidunt auctor. Curabitur tristique mi turpis, ut tempus mi vulputate quis. Nulla semper erat quis fermentum semper. Proin lacinia dolor pharetra velit posuere, ut accumsan tellus fringilla. Mauris nec lacus arcu. Aliquam ut interdum sem. Phasellus rutrum pellentesque est, non tincidunt nisl posuere vel. Sed aliquam feugiat viverra. Praesent nulla leo, semper sit amet vestibulum vel, scelerisque id nunc.</p><p>Nullam placerat quam et leo molestie mattis. Mauris et tincidunt dolor. Nam sit amet sollicitudin diam. Maecenas eleifend non sapien id venenatis. Sed ligula purus, lobortis et tellus ac, lacinia blandit diam. Nullam ac efficitur nulla. Quisque nec porttitor orci. Sed arcu lacus, vulputate vel porttitor sit amet, dictum at sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;</p>',1, '2021-01-04', 6),
  ('C++', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec varius ipsum quam, vitae fermentum dui ultrices sed. Aenean vulputate eleifend blandit. Proin viverra imperdiet risus molestie accumsan. Donec dapibus est varius tortor convallis, eu ornare tellus malesuada. Curabitur sed orci orci. Sed condimentum ex at turpis tincidunt auctor. Curabitur tristique mi turpis, ut tempus mi vulputate quis. Nulla semper erat quis fermentum semper. Proin lacinia dolor pharetra velit posuere, ut accumsan tellus fringilla. Mauris nec lacus arcu. Aliquam ut interdum sem. Phasellus rutrum pellentesque est, non tincidunt nisl posuere vel. Sed aliquam feugiat viverra. Praesent nulla leo, semper sit amet vestibulum vel, scelerisque id nunc.</p><p>Nullam placerat quam et leo molestie mattis. Mauris et tincidunt dolor. Nam sit amet sollicitudin diam. Maecenas eleifend non sapien id venenatis. Sed ligula purus, lobortis et tellus ac, lacinia blandit diam. Nullam ac efficitur nulla. Quisque nec porttitor orci. Sed arcu lacus, vulputate vel porttitor sit amet, dictum at sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;</p>',1, '2021-01-05', 4);
 
--- Table: UsersCourses
--- TeacherA teaches Java
--- TeacherB teaches Swift, AdvancedSQL
--- TeacherC teaches NoSQL, C++
 INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
 (4, 1),
 (5, 2),
@@ -146,16 +109,12 @@ INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES
 (5, 5),
 (7, 1);
 
--- Table: Languages
+
 INSERT INTO `Languages` (`languageName`,`languageCountry`) VALUES
 ('English', 'USA'),
 ('Spanish', 'Spain'),
 ('French', 'France');
 
--- Table: LanguagesCourses
--- Java is available in English and Spanish
--- Swift is available in English and French
--- Advanced-SQL, NoSQL-with-DynamoDB, and C++ are available in English
 INSERT INTO `LanguagesCourses` (`courseFk`,`languageFk`) VALUES
 (1,1),
 (1,2),
@@ -165,7 +124,7 @@ INSERT INTO `LanguagesCourses` (`courseFk`,`languageFk`) VALUES
 (4,1),
 (5,1);
 
--- Table: CourseModules
+
 INSERT INTO `CourseModules` (`courseFk`, `courseModuleHTML`, `courseModuleOrder`) VALUES
 
 (1,'<h3>The beginning</h3>

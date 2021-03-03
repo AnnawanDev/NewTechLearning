@@ -57,9 +57,9 @@ async function getListOfLiveCourses() {
 
 async function getListOfAllCoursesAndWhoIsTeaching() {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,100), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' ORDER BY `courseName` ASC;", (err, rows, fields) => {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' GROUP BY courseId ORDER BY courseId;", (err, rows, fields) => {
       if (err) {
-        logIt("getListOfAllCourses() ERROR: " + err);
+        logIt("getListOfAllCoursesAndWhoIsTeaching() ERROR: " + err);
         reject("ERROR in selecting courses");
       }
 
@@ -70,7 +70,7 @@ async function getListOfAllCoursesAndWhoIsTeaching() {
 
 async function getSpecificCourse(courseId) {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName`, `courseDescription`, `isLive`, `dateWentLive`, `categoryFk` FROM `Courses` WHERE `courseId` = ?;", courseId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `courseId` = ? AND (`userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN') GROUP BY courseId ORDER BY courseId;", courseId, (err, rows, fields) => {
       if (err) {
         logIt("getSpecificCourse() ERROR: " + err);
         reject("ERROR in getSpecificCourse");
@@ -80,12 +80,35 @@ async function getSpecificCourse(courseId) {
   })
 }
 
-async function addNewCourse(courseName, courseDescription) {
-  let inserts = [courseName, courseDescription];
+async function addNewCourse(courseName, courseDescription, categoryId) {
+  if (isNaN(categoryId) || categoryId < 0) {
+    reject("The category ID is not correct");
+  }
+
+  if (categoryId == 0) { categoryId = null ; }
+
+  let inserts = [courseName, courseDescription, categoryId];
   return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`) VALUES (?, ?); ', inserts, (err, result) => {
+    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`, `categoryFk`) VALUES (?, ?, ?); ', inserts, (err, result) => {
       if (err) {
         logIt("addNewCourse ERROR: " + err)
+        reject("Sorry - there was some kind of error.  Please try again.");
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+async function deleteCourse(courseId) {
+  if (isNaN(courseId) || courseId < 0) {
+    reject("The category ID is not correct");
+  }
+
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('DELETE FROM `Courses` WHERE `courseId` = ? ', [courseId], (err, result) => {
+      if (err) {
+        logIt("deleteCourse ERROR: " + err + " --- trying to delete course # " + courseId);
         reject("Sorry - there was some kind of error.  Please try again.");
       } else {
         resolve(result);
@@ -108,6 +131,41 @@ async function getListOfLanguages() {
       resolve(rows);
     });
   })
+}
+
+//--------------------------------------------------------
+//---------------------- LANGUAGESCOURSES ----------------
+//--------------------------------------------------------
+//add 1 or more languages to a course
+async function addLanguagesToCourse(languageIds, newCourseId) {
+  if (isNaN(newCourseId) || newCourseId < 1) {
+    reject("The course ID is not correct");
+  }
+
+  if (languageIds.length == 0 || languageIds[0] == 0) {
+    reject("No languages to add")
+  }
+
+  //build sql values to add
+  let sqlAdd = "";
+  for (let i = 0; i < languageIds.length; i++) {
+    if (i > 0) {
+        sqlAdd += ", ";
+    }
+    sqlAdd += "(" + languageIds[i] + ", " + newCourseId + ")";
+  }
+
+  let inserts = [sqlAdd];
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query('INSERT INTO `LanguagesCourses` (`languageFk`, `courseFk`) VALUES ' + sqlAdd, (err, result) => {
+      if (err) {
+        logIt("addLanguagesToCourse ERROR: " + err)
+        reject("Sorry - there was some kind of error.  Please try again.");
+      } else {
+        resolve(result);
+      }
+    });
+  });
 }
 
 //--------------------------------------------------------
@@ -294,9 +352,11 @@ async function addUserToClass(inserts) {
 
 
 module.exports = {
+  addLanguagesToCourse,
   addNewCourse,
   addNewUser,
   addUserToClass,
+  deleteCourse,
   doesUserExist,
   getAllInstructorsOrAdmins,
   getUserType,

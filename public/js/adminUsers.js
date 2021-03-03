@@ -155,6 +155,7 @@ function deleteUser(e) {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       document.getElementById('editDeleteFeedbackResponse').innerHTML = "user deleted";
+      removeAllTableRows();
       buildEditDeleteUserTable();
     } else {
       document.getElementById('editDeleteFeedbackResponse').innerHTML = "ERROR: " + req.responseText;

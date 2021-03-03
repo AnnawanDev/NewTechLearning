@@ -115,19 +115,45 @@ UPDATE `Courses` SET `courseName` = :someCourseName, `courseDescription` = :some
 -- Query to delete a course
 DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
 
--- Query to get all courses, regardless of whether they are live or not
--- Associate with who's teaching (could be userType Instrurctor or Admin)
--- limit description string to 150 characters
+-- Query to get,
+-- (1) all courses, regardless of whether they are live or not
+-- (2) associate with who's teaching (could be userType Instrurctor or Admin)
+-- (3) limit description string to 150 characters
+-- (4) get language (or languages) taught in
+-- (5) get category associated with
 SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`,
-CONCAT(LEFT(`courseDescription`,100), '...') AS 'description',
-`dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive
+CONCAT(LEFT(`courseDescription`,25), '...') AS 'description',
+`dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive,
+categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn'
 FROM `Courses`
 INNER JOIN `UsersCourses` ON courseId = courseFk
 INNER JOIN `Users` ON userFk = userId
+LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk
+LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId
+LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId
 WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN'
-ORDER BY `courseName` ASC;
+GROUP BY courseId
+ORDER BY courseId;
 
-
+-- For a specific course Id, this query will get,
+-- (1) all courses, regardless of whether they are live or not
+-- (2) associate with who's teaching (could be userType Instrurctor or Admin)
+-- (3) limit description string to 150 characters
+-- (4) get language (or languages) taught in
+-- (5) get category associated with
+SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`,
+CONCAT(LEFT(`courseDescription`,25), '...') AS 'description',
+`dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive,
+categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn'
+FROM `Courses`
+INNER JOIN `UsersCourses` ON courseId = courseFk
+INNER JOIN `Users` ON userFk = userId
+LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk
+LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId
+LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId
+WHERE `courseId` = :someCourseId AND (`userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN')
+GROUP BY courseId
+ORDER BY courseId;
 
 
 -- Table: UsersCourses
