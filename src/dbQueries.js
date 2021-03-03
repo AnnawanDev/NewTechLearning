@@ -252,8 +252,6 @@ async function getUserId(userName) {
         }
 
         if (rows[0] != undefined) {
-          logIt("getUserId ROWS: " + JSON.stringify(rows))
-          logIt("GET USER ID: ROWS RESULT: " + rows[0].userId);
           resolve(rows[0].userId);
         } else {
           reject(new Error("User ID not found"));
