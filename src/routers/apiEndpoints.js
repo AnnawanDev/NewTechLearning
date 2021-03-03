@@ -152,6 +152,20 @@ router.get('/api/getCategoryNameForCourse/:courseId', async (req,res,next) => {
 });
 
 
+router.post('/api/updateCategory/', async(req,res,next) => {
+  let context = {};
+  let filter = [req.body.categoryName, req.body.categoryId]
+  //get the current mySQL content (if it exists)
+  mysql.pool.query("UPDATE Categories SET categoryName = ? where categoryId = ?", filter, (err, results, fields) => {
+    if(err){
+      res.status(500).send
+    }
+  context.results = results.affectedRows;
+  res.send(context)
+  });
+});
+
+
 //--------------------------------------------------------
 //---------------------- COURSES ------------------
 //--------------------------------------------------------
@@ -295,6 +309,22 @@ router.post('/api/addCourseModule/', async (req,res) => {
   });
 });
 
+router.get('/api/deleteCourseModule/:courseModuleId', async (req,res,next) => {
+  let context = {};
+  mysql.pool.query("DELETE FROM `CourseModules` WHERE `courseModuleId` = ?", req.params.courseModuleId, (error, results, fields) => {
+    if (error) {
+      res.status(500).send();
+    }
+    else {
+      logIt('deleted ' + results.affectedRows + ' rows');
+      let context = {};
+      context.results = results.affectedRows;
+      res.send(context);
+    }
+  })
+});
+
+
 
 //--------------------------------------------------------
 //---------------------- LANGUAGES ----------------------
@@ -388,6 +418,19 @@ router.get('/api/deleteLanguage/:languageId', async (req,res,next) => {
   })
 });
 
+// Update language
+router.post('/api/updateLanguage/', async(req,res,next) => {
+  let context = {};
+  let filter = [req.body.languageName, req.body.languageCountry, req.body.languageId]
+  //get the current mySQL content (if it exists)
+  mysql.pool.query("UPDATE Languages SET languageName = ?, languageCountry = ? WHERE languageId = ?", filter, (err, results, fields) => {
+    if(err){
+      res.status(500).send
+    }
+  context.results = results.affectedRows;
+  res.send(context)
+  });
+});
 
 
 //--------------------------------------------------------

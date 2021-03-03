@@ -5,24 +5,25 @@ define (['module'], function (module){
     const getModulesForCourseAPI = module.config().getModulesForCourseAPI;
     const getModuleHTMLForCourseAndOrder = module.config().getModuleForCourseAndOrderAPI;
     const addCourseModuleAPI = module.config().addCourseModuleAPI;
-    
-    let moduleTableBody = document.getElementById('selectedModuleHTML');
+    const deleteCourseModuleAPI = module.config().deleteCourseModuleAPI;
+
+    let moduleTable =  document.getElementById("selectedModuleDisplayTable")
+    moduleTable.style.display = 'none';
     let moduleSelect = document.getElementById('moduleOrderChoice');
     let currentCourse = document.getElementById('courseToGetModulesFrom');
     let addModuleButton = document.getElementById('addModuleButton');
     
-
 // ------------- Event Listeners----------------
     document.getElementById('moduleOrderForm').style.display = 'none'
 
     currentCourse.addEventListener('change',function(){
         //clear current modules displayed (if any)
         document.getElementById('moduleOrderForm').style.display = 'none'
-        moduleTableBody.innerHTML = "";
+        moduleTable.innerHTML = "";
         moduleSelect.innerHTML= '';
-
+        
         if (currentCourse.value == "noSelection"){
-            moduleTableBody.innerHTML = "";
+            moduleTable.innerHTML = '';
             moduleSelect.innerHTML= '';
             return
         }
@@ -33,7 +34,7 @@ define (['module'], function (module){
 
     moduleSelect.addEventListener('change', function(){
         if (moduleSelect.value == "noSelection"){
-            moduleTableBody.innerHTML = "";
+            moduleTable.innerHTML = "";
             moduleSelect.innerHTML= '';
             populateModulesSelect(currentCourse.value)
 
@@ -44,8 +45,9 @@ define (['module'], function (module){
     })
 
     addModuleButton.addEventListener('click', function(){
-        if(currentCourse.value == "noSelection"){
+        if(currentCourse.value == "noSelection") {
             alert('Oops! You have to select a course')
+            return
         }
         moduleHTML= document.getElementById('moduleHTMLInput')
         moduleOrder = document.getElementById('moduleOrderInput')
@@ -68,9 +70,11 @@ define (['module'], function (module){
                     logIt('There was an error in inserting your language')
                 }else {
                     logIt('Module successfully inserted')
+                    alert("Module successfully inserted'")
                     //re-populates table with updated data
-                    //moduleTableBody.innerHTML = ''
-                    //populateModulesSelect(currentCourse.value)
+                    moduleTable.innerHTML = ''
+                    moduleSelect.innerHTML= '';
+                    populateModulesSelect(currentCourse.value)
                 }
             }
         })
@@ -79,7 +83,6 @@ define (['module'], function (module){
     }
 
     function populateModulesSelect(courseId){
-
         let req = new XMLHttpRequest();
         req.open("GET", baseURL + getModulesForCourseAPI + courseId, true);
         req.setRequestHeader("Content-type", "application/json");
@@ -101,7 +104,6 @@ define (['module'], function (module){
                     }
                 }
             }
-        
             document.getElementById('moduleOrderForm').style.display = 'block'
     })  
     req.send(JSON.stringify(null));
@@ -118,13 +120,85 @@ function getModuleHTML(courseId, moduleId){
             let data = JSON.parse(req.response);
             if (data.results.length == 0) {
             } else {
-                let cell1 = document.getElementById('selectedModuleHTML')
-                cell1.innerHTML = data.results[0].courseModuleHTML
+                moduleTable.innerHTML = ''
+                let tbody = document.createElement('tbody')
+                let trow = moduleTable.insertRow(-1); 
+                let td = document.createElement('td');
+                let cell = document.createElement('textarea')
+                cell.value = data.results[0].courseModuleHTML
+                // or
+                cell.rows = '70'
+                cell.cols = '120'
+                cell.innerHTML = data.results[0].courseModuleHTML
+                cell.style = 
+                td.appendChild(cell)
+                trow.appendChild(td)
+                
+                var cell2 = document.createElement('input')
+                cell2.type="button";
+                cell2.value = "DELETE THIS MODULE"
+                cell2.name= 'delete'
+                cell2.addEventListener("click", function() {
+                    deleteModule(courseId, moduleId);
+                });
+                let td2 = document.createElement('td')
+                td2.appendChild(cell2)
+                let trow2 = document.createElement('tr')
+                trow2.appendChild(td2);
+                tbody.appendChild(trow2)
+                
+                //-----------WIP---------------
+
+                var cell3 = document.createElement('input')
+                cell3.type="button";
+                cell3.value = "UPDATE THIS MODULE"
+                cell3.name= 'update'
+                cell3.addEventListener("click", function() {
+                    //let newOrder = cell.value
+                    let newHTML = cell1.value
+                    editCourseModule(moduleId, newHTML);
+                });
+                let td3 = document.createElement('td')
+                td3.appendChild(cell3)
+                let trow3 = document.createElement('tr')
+                trow3.appendChild(td3);
+                // to do:
+                //edit CourseModule function
+                //make API enpoint
+                //--------------------------
+                tbody.appendChild(trow3)
+                moduleTable.appendChild(tbody)
+                moduleTable.style.display = 'block'
             }
         }
     })
     req.send(JSON.stringify(null));
     event.preventDefault();
+}
+
+function deleteModule(courseId, moduleId){
+        let req = new XMLHttpRequest();
+        req.open("GET", baseURL + deleteCourseModuleAPI + moduleId, true);
+        req.setRequestHeader("Content-type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >=200 && req.status < 400) {
+                let data = JSON.parse(req.response);
+                if (data.results.length == 0) {
+                    logIt("We weren't able to delete that module!")
+                }else{
+                    logIt('Module successfully deleted')
+                    //re-populates table with updated data
+                    moduleTable.innerHTML = "";
+                    moduleSelect.innerHTML= '';
+                    populateModulesSelect(courseId)
+                }
+            } else {
+                logIt("OOPS! We've had a problem deleting that category.")
+            }
+
+        })
+        req.send(JSON.stringify(null));
+        event.preventDefault();
 }
 
 function logIt(someMessage) {
