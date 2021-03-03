@@ -7,11 +7,11 @@
 
 const express = require('express');
 const router = new express.Router();
-//const auth = require('../middleware/auth');
 const mysql = require('../databaseConnection');
+const bcrypt = require('bcrypt');
 const {doesUserExist} = require('../dbQueries');
 const {logIt} = require('../helperFunctions');
-const {requireLogin} = require('../middleware/auth');
+const {requireAdminLogin,requireLogin} = require('../middleware/auth');
 
 //--------------------------------------------------------
 //---------------------- AUTHENTICATION ----------------------
@@ -102,7 +102,7 @@ router.get('/api/deleteCategory/:categoryId', async (req,res,next) => {
       context.results = results.affectedRows;
       res.send(context);
     }
-    
+
   })
 });
 
@@ -241,7 +241,7 @@ router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
 router.get('/api/getStudentsInClasses/:someClassId', requireLogin, async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? ORDER BY `userType` DESC, `userName` ASC", req.params.someClassId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? AND `userType` = 'STUDENT' ORDER BY `userType` DESC, `userName` ASC", req.params.someClassId, (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
@@ -414,7 +414,7 @@ router.get('/api/deleteLanguage/:languageId', async (req,res,next) => {
       context.results = results.affectedRows;
       res.send(context);
     }
-    
+
   })
 });
 
@@ -437,7 +437,7 @@ router.post('/api/updateLanguage/', async(req,res,next) => {
 //---------------------- USERS ------------------
 //--------------------------------------------------------
 
-router.delete('/api/deleteUser/:userId', requireLogin, async (req,res,next) => {
+router.delete('/api/deleteUser/:userId', requireAdminLogin, async (req,res,next) => {
   let context = {};
 
   //prevent someone from deleting their own account
@@ -457,21 +457,32 @@ router.delete('/api/deleteUser/:userId', requireLogin, async (req,res,next) => {
   }
 });
 
-router.patch('/api/editUser/:userId', requireLogin, async (req,res,next) => {
-  let hashedPassword = await bcrypt.hash(password, 8);
-  const updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], hashedPassword, userId];
+router.patch('/api/editUser', requireAdminLogin, async (req,res,next) => {
+  let updates = "";
+  let sql = "";
+  let hashedPassword = "";
 
-  mysql.pool.query("UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ?, `password` = ? WHERE `userId` = ?;", updates, (err, result) => {
-      if (err) {
-        reject(new Error("editUser Bad query: " + err))
-      }
+  if (req.body['password'] && req.body['password'] != "") {
+    hashedPassword = await bcrypt.hash(req.body['password'], 8);
+    updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], hashedPassword, req.body['userId']];
+    sql = "UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ?, `password` = ? WHERE `userId` = ?";
+  } else {
+    updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], req.body['userId']];
+    console.log(JSON.stringify(updates));
+    sql = "UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ? WHERE `userId` = ?";
+  }
 
-      if (result.affectedRows) {
-        resolve(result.affectedRows);
-      } else {
-        reject(new Error("Could not delete"));
-      }
-    });
+  mysql.pool.query(sql, updates, (err, result) => {
+    let context = {};
+    if (err && err.code == "ER_DUP_ENTRY" ) {
+      context.result = "DUPLICATE";
+    } else if (err) {
+      context.result = "ERROR";
+    } else {
+      context.result = result;
+    }
+    res.send(context);
+  });
 });
 
 router.get('/api/getUsersWithTypes', async (req,res,next) => {

@@ -93,7 +93,11 @@ requirejs.config({
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             deleteUserAPI: "/api/deleteUser/",
             editUserAPI: "/api/editUser/",
-            getUsersWithTypesAPI: "/api/getUsersWithTypesAPI"
+            getUsersWithTypesAPI: "/api/getUsersWithTypesAPI",
+            deleteUsersAPI: "/api/deleteUser/",
+            getUserIDsAPI: "/api/getUserIds",
+            getUsersWithTypesAPI: "/api/getUsersWithTypes",
+            editUserAPI: "/api/editUser/"
         }
     },
     baseUrl: '/js',
