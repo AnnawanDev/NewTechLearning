@@ -10,7 +10,8 @@ define (['module'], function(module){
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const getStudentsEnrolledAPI = module.config().getStudentsEnrolledAPI;
-const getStudentsNotInClass = module.config().getStudentsNotEnrolledAPI;
+const getStudentsNotInClassAPI = module.config().getStudentsNotEnrolledAPI;
+const dropStudentFromClassAPI = module.config().dropStudentFromClassAPI;
 let addStudentListing = document.getElementById('addUserToCourseSelectElement');
 
 // set up event listeners -------------------------------------
@@ -50,8 +51,37 @@ function dropUserFromCourse(e) {
   const buttonID = fullButtonID.substring(8);
   console.log("Dropping: " + buttonID);
 
+
+  //make ajax request
+  let req = new XMLHttpRequest();
+  req.open("GET", baseURL + dropStudentFromClassAPI + buttonID, true);
+  req.setRequestHeader("Content-type", "application/json");
+  req.addEventListener("load", function () {
+    if (req.status >=200 && req.status < 400) {
+      let data = JSON.parse(req.response);
+      console.log(JSON.stringify(data));
+      // if (data.results.length == 0) {
+      //   selectElement  = "There are no students to add";
+      // } else {
+      //   selectElement += "<select name=\"userIdToAddToCourse\" id=\"userIdToAddToCourse\">";
+      //   for (let someUser of data.results) {
+      //     selectElement += "<option value=\"" + someUser.userId + "\">" + someUser.lastName + ", " + someUser.firstName + "(" + someUser.userName + ") - " + someUser.userType + "</option>";
+      //   }
+      //   selectElement += "</select>";
+      // }
+
+      document.getElementById('dropuserFromCourseFeedback').innerHTML = "Student dropped";
+    } else {
+      //selectElement  = "Sorry, there was an error in getting the available classes.";
+      document.getElementById('dropuserFromCourseFeedback').innerHTML = "Error";
+    }
+
+
+  });
+  req.send(null);
   event.preventDefault();
 }
+
 
 function getListOfUsersEnrolled(someClassId) {
   let tbody = document.getElementById('userListingTbody');
@@ -120,7 +150,7 @@ function getUsersNotEnrolled(someClassId) {
 
   //make ajax request
   let req = new XMLHttpRequest();
-  req.open("GET", baseURL + getStudentsNotInClass + someClassId, true);
+  req.open("GET", baseURL + getStudentsNotInClassAPI + someClassId, true);
   req.setRequestHeader("Content-type", "application/json");
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {

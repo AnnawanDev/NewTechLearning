@@ -45,7 +45,8 @@ requirejs.config({
             baseURL: "http://localhost:14567",
             //baseURL:"http://flip3.engr.oregonstate.edu:14567",
             getStudentsEnrolledAPI: "/api/getStudentsInClasses/",
-            getStudentsNotEnrolledAPI: "/api/getStudentsNotInClass/"
+            getStudentsNotEnrolledAPI: "/api/getStudentsNotInClass/",
+            dropStudentFromClassAPI: "/api/deleteUserFromCourse/"
         },
 
         '/js/categories.js':{

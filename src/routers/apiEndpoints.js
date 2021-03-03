@@ -526,5 +526,27 @@ router.get('/api/getStudentsNotInClass/:someClassId', requireLogin, async (req,r
 //---------------------- USERSCOURSES --------------------
 //--------------------------------------------------------
 
+router.delete('/api/deleteUserFromCourse/:userId', requireAdminLogin, async (req,res,next) => {
+  let context = {};
+
+  //prevent someone from deleting their own account
+  if (!req.params.userId || isNaN(req.params.userId) || req.params.userId == "") {
+    res.status(400).send("User ID sent not valid")
+  } else if (!req.body['courseId'] || isNaN(req.body['courseId']) || req.body['courseId'] == "") {
+    res.status(400).send("Course ID sent not valid")
+  } else {
+    let inserts = [req.params.userId, req.body['courseId']];
+    mysql.pool.query("DELETE FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", inserts, (error, results, fields) => {
+      if (error) {
+        res.status(500).send();
+      };
+
+      logIt('deleted ' + results.affectedRows + ' rows');
+      let context = {};
+      context.results = results.affectedRows;
+      res.send(context);
+    })
+  }
+});
 
 module.exports = router;
