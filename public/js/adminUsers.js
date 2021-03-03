@@ -9,11 +9,12 @@ define (['module'], function (module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
-const deleteUsersAPI = "/api/deleteUser/";
-const getUserIDsAPI = "/api/getUserIds";
-const getUsersWithTypesAPI = "/api/getUsersWithTypes";
+const deleteUsersAPI = module.config().deleteUsersAPI;
+const getUserIDsAPI = module.config().getUserIDsAPI;
+const getUsersWithTypesAPI = module.config().getUsersWithTypesAPI;
+const editUserAPI = module.config().editUserAPI;
 const tbodyID = "tbodyToEditDelete";
-const editUserAPI = "/api/editUser/";
+
 
 // set up event listeners -------------------------------------
 
