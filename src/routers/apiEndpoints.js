@@ -11,7 +11,7 @@ const router = new express.Router();
 const mysql = require('../databaseConnection');
 const {doesUserExist} = require('../dbQueries');
 const {logIt} = require('../helperFunctions');
-const {requireLogin} = require('../middleware/auth');
+const {requireLogin, requireAdminLogin} = require('../middleware/auth');
 
 //--------------------------------------------------------
 //---------------------- AUTHENTICATION ----------------------
@@ -102,7 +102,7 @@ router.get('/api/deleteCategory/:categoryId', async (req,res,next) => {
       context.results = results.affectedRows;
       res.send(context);
     }
-    
+
   })
 });
 
@@ -241,7 +241,7 @@ router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
 router.get('/api/getStudentsInClasses/:someClassId', requireLogin, async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? ORDER BY `userType` DESC, `userName` ASC", req.params.someClassId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? AND `userType` = 'STUDENT' ORDER BY `userName` ASC", req.params.someClassId, (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
@@ -414,7 +414,7 @@ router.get('/api/deleteLanguage/:languageId', async (req,res,next) => {
       context.results = results.affectedRows;
       res.send(context);
     }
-    
+
   })
 });
 
@@ -434,10 +434,10 @@ router.post('/api/updateLanguage/', async(req,res,next) => {
 
 
 //--------------------------------------------------------
-//---------------------- USERS ------------------
+//---------------------- USERS ---------------------------
 //--------------------------------------------------------
 
-router.delete('/api/deleteUser/:userId', requireLogin, async (req,res,next) => {
+router.delete('/api/deleteUser/:userId', requireAdminLogin, async (req,res,next) => {
   let context = {};
 
   //prevent someone from deleting their own account
@@ -457,7 +457,7 @@ router.delete('/api/deleteUser/:userId', requireLogin, async (req,res,next) => {
   }
 });
 
-router.patch('/api/editUser/:userId', requireLogin, async (req,res,next) => {
+router.patch('/api/editUser/:userId', requireAdminLogin, async (req,res,next) => {
   let hashedPassword = await bcrypt.hash(password, 8);
   const updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], hashedPassword, userId];
 
@@ -510,6 +510,10 @@ router.get('/api/getStudentsNotInClass/:someClassId', requireLogin, async (req,r
     res.status(401).send()
   }
 });
+
+//--------------------------------------------------------
+//---------------------- USERSCOURSES --------------------
+//--------------------------------------------------------
 
 
 module.exports = router;

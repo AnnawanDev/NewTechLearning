@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 21, 2021
+   March 3, 2021
 */
 
 define (['module'], function(module){
@@ -11,19 +11,18 @@ const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
 const getStudentsEnrolledAPI = module.config().getStudentsEnrolledAPI;
 const getStudentsNotInClass = module.config().getStudentsNotEnrolledAPI;
-let feedbackResponse = document.getElementById('userListingTbody');
 let addStudentListing = document.getElementById('addUserToCourseSelectElement');
 
 // set up event listeners -------------------------------------
-if( document.readyState !== 'loading' ) {
-  // document is already ready, just execute code
+if(document.readyState !== 'loading' ) {
   getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
   getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
-} else {
-  document.addEventListener('DOMContentLoaded', function () {
-    // document wasn't loaded, when it is call function
-    getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
-    getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
+}
+
+else {
+  document.addEventListener('DOMContentLoaded', async function () {
+      getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
+      getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
   });
 }
 
@@ -46,8 +45,16 @@ document.getElementById('courseToDropUserFrom').addEventListener('change',functi
 });
 
 // main functions -------------------------------------
+function dropUserFromCourse(e) {
+  const fullButtonID = e.target.id;
+  const buttonID = fullButtonID.substring(8);
+  console.log("Dropping: " + buttonID);
+
+  event.preventDefault();
+}
+
 function getListOfUsersEnrolled(someClassId) {
-  let feedbackToUser = "";
+  let tbody = document.getElementById('userListingTbody');
 
   //make ajax request
   let req = new XMLHttpRequest();
@@ -57,29 +64,55 @@ function getListOfUsersEnrolled(someClassId) {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       if (data.results.length == 0) {
-        feedbackToUser = "<tr><td colspan=\"6\">No one enrolled</td></tr>";
+        addMessageToDropStudent(tbody, "No one enrolled");
       } else {
-
         for (let someUser of data.results) {
-          feedbackToUser += "<tr>";
-          feedbackToUser += "<td>" + someUser.firstName + "</td>";
-          feedbackToUser += "<td>" + someUser.lastName + "</td>";
-          feedbackToUser += "<td>" + someUser.userName + "</td>";
-          feedbackToUser += "<td>" + someUser.email + "</td>";
-          feedbackToUser += "<td>" + someUser.userType + "</td>";
-          feedbackToUser += "<td><button id=\"drop" + someUser.userId + "\">drop user</td>";
-          feedbackToUser += "</tr>";
-        }
+          let tr = document.createElement('tr');
+          let td1 = document.createElement('td');
+          let td2 = document.createElement('td');
+          let td3 = document.createElement('td');
+          let td4 = document.createElement('td');
+          let td5 = document.createElement('td');
+          let td6 = document.createElement('td');
+          let button = document.createElement('button');
 
+          button.setAttribute('id', 'dropUser' + someUser.userId);
+          button.setAttribute('name', 'dropUser' + someUser.userId);
+          button.textContent= "Drop Student";
+          button.addEventListener('click', dropUserFromCourse);
+
+          td1.innerHTML = someUser.firstName;
+          td2.innerHTML = someUser.lastName;
+          td3.innerHTML = someUser.userName;
+          td4.innerHTML = someUser.email;
+          td5.innerHTML = someUser.userType;
+          td6.appendChild(button);
+
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
+          tr.appendChild(td4);
+          tr.appendChild(td5);
+          tr.appendChild(td6);
+
+          tbody.appendChild(tr);
+        }
       }
     } else {
-      feedbackToUser = "<tr><td>Sorry, there was an error in getting the available classes.</td></tr>";
+      addMessageToDropStudent(tbody, "Sorry, there was an error in getting the available classes");
     }
-
-    feedbackResponse.innerHTML = feedbackToUser;
   });
   req.send(null);
   event.preventDefault();
+}
+
+function addMessageToDropStudent(tbody, message) {
+  let tr = document.createElement('tr');
+  let td = document.createElement('td');
+  td.setAttribute('colspan', 6);
+  td.innerHTML = message;
+  tr.appendChild(td);
+  tbody.appendChild(tr);
 }
 
 function getUsersNotEnrolled(someClassId) {
@@ -93,7 +126,7 @@ function getUsersNotEnrolled(someClassId) {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       if (data.results.length == 0) {
-        selectElement  = "There are no students to add"; 
+        selectElement  = "There are no students to add";
       } else {
         selectElement += "<select name=\"userIdToAddToCourse\" id=\"userIdToAddToCourse\">";
         for (let someUser of data.results) {
@@ -110,7 +143,6 @@ function getUsersNotEnrolled(someClassId) {
   req.send(null);
   event.preventDefault();
 }
-
 
 
 // utility -------------------------------------

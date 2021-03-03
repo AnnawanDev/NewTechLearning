@@ -10,13 +10,13 @@ define (['module'], function (module){
 // set up event listeners -------------------------------------
 if(document.readyState !== 'loading' ) {
   // document is already ready, just execute code
-  bindSubmitButtons()
+  bindSubmitButtons();
 }
 
 else {
   document.addEventListener('DOMContentLoaded', function () {
       // document wasn't loaded, when it is call function
-      bindSubmitButtons()
+      bindSubmitButtons();
   });
 }
 
