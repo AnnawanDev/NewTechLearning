@@ -41,6 +41,7 @@ router.post('/Admin/Users/', requireLogin, async (req, res) => {
       context.addEditUserFeedback = "<div class='formSuccess'>User added!</div>";
     } catch(e) {
       logIt("ERROR: " + e);
+      context.addEditUserFeedback = "<div class='formError'>" + e + "</div>";
       context.addUserFeedback = "<div class='formError'>" + e + "</div>";
       context.addFirstName = req.body['addFirstName'];
       context.addLastName = req.body['addLastName'];

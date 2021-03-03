@@ -24,6 +24,22 @@ const requireLogin = (req, res, next) => {
   }
 };
 
+const requireAdminLogin = (req, res, next) => {
+  if (useSecurity) {
+    if (!req.session.user) {
+      res.redirect('/login');
+    } else {
+      if (req.session.user.userType != "ADMIN") {
+        res.redirect('/');
+      } else {
+        next();
+      }
+    }
+  } else {
+    next();
+  }
+};
+
 //adds to context object whether or not user is logged in; and if so, what kind of userType they are
 async function getLoginContext(someContextObject, req) {
   someContextObject.isNotLoggedIn = await isNotLoggedIn(req);
@@ -71,5 +87,6 @@ function checkIfLoggedIn(req) {
 
 module.exports = {
   requireLogin,
+  requireAdminLogin,
   getLoginContext
 }
