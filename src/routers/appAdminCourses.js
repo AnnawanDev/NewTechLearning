@@ -88,7 +88,7 @@ router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   context.courseId = courseInfo[0].courseId;
   context.courseName = courseInfo[0].courseName;
   context.courseDescription = courseInfo[0].courseDescription;
-  context.isLive = courseInfo[0].isLive;
+  context.isLive = (courseInfo[0].isLive == 'NO') ? false : true; 
   context.dateWentLive = courseInfo[0].dateWentLive;
   context.taughtById = courseInfo[0].userId;
 
