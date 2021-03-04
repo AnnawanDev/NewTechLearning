@@ -27,9 +27,9 @@
 
   <br /><br /><br />
 
-  <form method="post" action="/Admin/Users/">
-    <input type="hidden" id="dropUserFromCourse" name="dropUserFromCourse" value="yes" />
-    <h4>Drop Students from Selected Course</h4>
+
+    <h4>Drop Users from Selected Course</h4>
+    <div id="dropuserFromCourseFeedback"></div>
     <label for="course">Select Course:</label>
     <select name="courseToDropUserFrom" id="courseToDropUserFrom">
       {{#each courses}}
@@ -48,7 +48,7 @@
       </thead>
       <tbody id="userListingTbody"></tbody>
     </table>
-  </form>
+
 </div>
 
 <script> requirejs(["/js/config.js"], function (config){

@@ -155,6 +155,24 @@ WHERE `courseId` = :someCourseId AND (`userType` = 'INSTRUCTOR' OR `userType` = 
 GROUP BY courseId
 ORDER BY courseId;
 
+-- Query to get students enrolled in a particular class
+SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType`
+FROM `Users`
+INNER JOIN `UsersCourses` ON `userId` = `userFk`
+INNER JOIN `Courses` on `courseFk` = `courseId`
+WHERE `courseId` = :someCourseId AND `userType` = 'STUDENT'
+ORDER BY `userName` ASC
+
+-- Query to get students NOT enrolled in a particular class
+SELECT `userId`, `firstName`, `lastName`, `userName`, `userType`
+FROM `Users`
+WHERE `userId` NOT IN
+	(SELECT `userId` FROM `Users`
+		INNER JOIN `UsersCourses` ON `userId` = `userFk`
+		INNER JOIN `Courses` ON `courseFk` = `courseId`
+		WHERE `courseId` = :someCourseId) 
+AND `userType` = 'STUDENT' ORDER BY lastName ASC
+
 
 -- Table: UsersCourses
 -- +--------------+---------+------+-----+---------+----------------+

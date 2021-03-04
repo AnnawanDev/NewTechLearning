@@ -192,7 +192,7 @@ function editUser(e) {
     goodToEditUser = true;
   } catch(e) {
     document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error</p>';
-    console.log("ERROR: " + e);
+    logIt("ERROR: " + e);
   }
 
   if (goodToEditUser) {
@@ -260,7 +260,7 @@ function updloadEdit(buttonID, payload) {
       }
     } else {
       document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
-      console.log("ERROR: " + JSON.stringify(req));
+      logIt("ERROR: " + JSON.stringify(req));
     }
   });
   document.getElementById('editDeleteFeedbackResponse').innerHTML = "";

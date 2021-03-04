@@ -241,7 +241,7 @@ router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
 router.get('/api/getStudentsInClasses/:someClassId', requireLogin, async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? AND `userType` = 'STUDENT' ORDER BY `userType` DESC, `userName` ASC", req.params.someClassId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `userId`, `firstName`, `lastName`, `userName`, `email`, `userType` FROM `Users` INNER JOIN `UsersCourses` ON `userId` = `userFk` INNER JOIN `Courses` on `courseFk` = `courseId` WHERE `courseId` = ? AND `userType` = 'STUDENT' ORDER BY `userName` ASC", req.params.someClassId, (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
@@ -434,7 +434,7 @@ router.post('/api/updateLanguage/', async(req,res,next) => {
 
 
 //--------------------------------------------------------
-//---------------------- USERS ------------------
+//---------------------- USERS ---------------------------
 //--------------------------------------------------------
 
 router.delete('/api/deleteUser/:userId', requireAdminLogin, async (req,res,next) => {
@@ -468,7 +468,6 @@ router.patch('/api/editUser', requireAdminLogin, async (req,res,next) => {
     sql = "UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ?, `password` = ? WHERE `userId` = ?";
   } else {
     updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], req.body['userId']];
-    console.log(JSON.stringify(updates));
     sql = "UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ? WHERE `userId` = ?";
   }
 
@@ -522,5 +521,31 @@ router.get('/api/getStudentsNotInClass/:someClassId', requireLogin, async (req,r
   }
 });
 
+//--------------------------------------------------------
+//---------------------- USERSCOURSES --------------------
+//--------------------------------------------------------
+
+router.delete('/api/deleteUserFromCourse/:userId', requireAdminLogin, async (req,res,next) => {
+  let context = {};
+
+  //prevent someone from deleting their own account
+  if (!req.params.userId || isNaN(req.params.userId) || req.params.userId == "") {
+    res.status(400).send("User ID sent not valid")
+  } else if (!req.body['courseId'] || isNaN(req.body['courseId']) || req.body['courseId'] == "") {
+    res.status(400).send("Course ID sent not valid")
+  } else {
+    let inserts = [req.params.userId, req.body['courseId']];
+    mysql.pool.query("DELETE FROM `UsersCourses` WHERE `userFk` = ? AND `courseFk` = ?", inserts, (error, results, fields) => {
+      if (error) {
+        res.status(500).send();
+      };
+
+      logIt('deleted ' + results.affectedRows + ' rows');
+      let context = {};
+      context.results = results.affectedRows;
+      res.send(context);
+    })
+  }
+});
 
 module.exports = router;

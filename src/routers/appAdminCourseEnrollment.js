@@ -34,7 +34,6 @@ router.post('/Admin/CourseEnrollment/', requireLogin, async (req, res) => {
     context.addUserToClassResult = await addUserToClass(inserts); //TODO (1) error check of result (2) some other message than "Success!"
   }
 
-
   context.courses = await getListOfLiveCourses();
   context.usersAssociatedWithAParticularClass = await getListOfUsersAssociatedWithAClass(context.courses[0].courseId);
   res.render('adminCourseEnrollment', context);
