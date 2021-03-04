@@ -34,15 +34,29 @@ document.getElementById('courseToAddSelectElement').addEventListener('change',fu
 
     //populate with new rows
     getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
+
+    //switch "drop student" select element to match what the "add student" select element is
+    document.getElementById('courseToDropUserFrom').value = document.getElementById('courseToAddSelectElement').value;
+
+    //refresh the "drop student" listing
+    removeAllTableRows(document.getElementById('userListingTbody'));
+    getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
 });
 
 //dynamically change users to drop based on the class
 document.getElementById('courseToDropUserFrom').addEventListener('change',function(){
     //remove all result rows
-    removeAllTableRows(feedbackResponse);
+    removeAllTableRows(document.getElementById('userListingTbody'));
 
     //populate with new rows
     getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
+
+    //switch "add student" select element to match what the "drop student" select element is
+    document.getElementById('courseToAddSelectElement').value = document.getElementById('courseToDropUserFrom').value;
+
+    //refresh the "add student" listing
+    addStudentListing.removeChild(addStudentListing.firstChild);
+    getUsersNotEnrolled(document.getElementById('courseToAddSelectElement').value);
 });
 
 // main functions -------------------------------------
