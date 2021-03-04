@@ -121,7 +121,7 @@ async function deleteCourse(courseId) {
 async function editCourse(courseId, courseName, courseDescription, isLive, category) {
   return new Promise(function(resolve, reject) {
     //set dateWentLive if isLive=1
-    let dateWentLive = (isLive == 1) ? new Date() : '';
+    let dateWentLive = (isLive == 1) ? new Date() : null;
 
     //if category is 0, then user is trying to set it to "none", thus the value stored is null
     const inserts = (category == 0) ? [courseName, courseDescription, isLive, dateWentLive, null, courseId] : [courseName, courseDescription, isLive, dateWentLive, category, courseId];;
