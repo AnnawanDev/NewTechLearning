@@ -53,7 +53,11 @@ define (['module'], function (module){
         }
         moduleHTML= document.getElementById('moduleHTMLInput')
         moduleOrder = document.getElementById('moduleOrderInput')
-        addModuleToCourseAPI(moduleOrder.value, moduleHTML.value, currentCourse.value)
+        if (moduleOrder.value && moduleHTML.value){
+            addModuleToCourseAPI(moduleOrder.value, moduleHTML.value, currentCourse.value)
+        } else{
+            alert('Please enter Module Order and HTML')
+        }
     })
 
 //------------- Main functions-------------

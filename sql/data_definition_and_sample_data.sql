@@ -55,7 +55,8 @@ CREATE TABLE `CourseModules` (
 CREATE TABLE `Languages` (
   `languageId` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `languageName` VARCHAR(255) NOT NULL,
-	`languageCountry` VARCHAR(255) NOT NULL
+	`languageCountry` VARCHAR(255) NOT NULL,
+  CONSTRAINT un_lang_country UNIQUE(`languageName`,`languageCountry`)
 ) ENGINE=InnoDB;
 
 

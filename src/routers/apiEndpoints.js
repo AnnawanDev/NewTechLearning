@@ -186,7 +186,6 @@ router.get('/api/getCourses', async (req,res,next) => {
         logIt("ERROR FROM /api/getCourses: " + err);
         return;
       }
-
       //logIt("/api/getCourses query result: " + JSON.stringify(rows));
       context.results = rows;
       res.send(context);
@@ -214,9 +213,9 @@ router.get('/api/getCourseOverview/:courseName', async (req,res,next) => {
       context.results = rows;
       res.send(context);
     });
-
     return context;
 });
+
 
 router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
   try {
@@ -262,7 +261,6 @@ router.get('/api/getStudentsInClasses/:someClassId', requireLogin, async (req,re
 //---------------------- COURSE MODULES ------------------
 //--------------------------------------------------------
 
-
 router.get('/api/getModulesForCourse/:courseId', async (req,res,next) => {
   let context = {};
 
@@ -302,8 +300,7 @@ router.post('/api/addCourseModule/', async (req,res) => {
     if (error) {
       res.status(500).send
     };
-
-    let context= {};
+    
     context.results = results.affectedRows;
     res.send(context)
   });
@@ -339,7 +336,6 @@ router.post('/api/updateCourseModule/', async(req,res,next) => {
 });
 
 
-
 //--------------------------------------------------------
 //---------------------- LANGUAGES ----------------------
 //--------------------------------------------------------
@@ -372,9 +368,9 @@ router.get('/api/insertLanguage/:languageName/:languageCountry', async (req,res,
     if (error) {
       res.status(500).send
     };
-
-    let context= {};
-    context.results = results.affectedRows;
+    if(results) {
+      context.results = results.affectedRows;
+    }
     res.send(context)
   });
 });

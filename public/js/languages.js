@@ -96,6 +96,8 @@ define (['module'], function (module){
                     languagesTableBody.innerHTML = ''
                     populateLanguageTable();
                 }
+            } else {
+                alert("Oops! Your language couldn't be inserted.")
             }
         })
         req.send(JSON.stringify(null));
