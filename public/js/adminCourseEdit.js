@@ -19,6 +19,7 @@ if(document.readyState !== 'loading' ) {
   // document is already ready, just execute code
   selectCategoryDropDown();
   selectLanguageDropDown();
+  selectInstructorDropDown();
 }
 
 else {
@@ -26,6 +27,7 @@ else {
       // document wasn't loaded, when it is call function
       selectCategoryDropDown();
       selectLanguageDropDown();
+      selectInstructorDropDown();
   });
 }
 
@@ -54,6 +56,22 @@ function selectLanguageDropDown() {
     }
   }
 }
+
+
+function selectInstructorDropDown() {
+  let instructorId = document.getElementById('selectedInstructorId').value;
+  if (instructorId != null) {
+    let dropDown = document.getElementById('selectInstructor');
+
+    for (let i=0; i < dropDown.options.length; i++) {
+      if (dropDown.options[i].value == instructorId) {
+          dropDown.options[i].selected = true;
+          return;
+      }
+    }
+  }
+}
+
 
 
 // utility -------------------------------------

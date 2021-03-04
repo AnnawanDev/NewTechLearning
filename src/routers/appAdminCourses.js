@@ -84,11 +84,13 @@ router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
   context.categories = await getListOfAllCategories();
   context.languages = await getListOfLanguages();
+  context.userId = courseInfo[0].userId; 
   context.courseId = courseInfo[0].courseId;
   context.courseName = courseInfo[0].courseName;
   context.courseDescription = courseInfo[0].courseDescription;
   context.isLive = courseInfo[0].isLive;
   context.dateWentLive = courseInfo[0].dateWentLive;
+  context.taughtById = courseInfo[0].userId;
 
   if (courseInfo[0].categoryFk === null) {
     context.categoryFk = 0;
@@ -147,6 +149,7 @@ router.get('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
   context.courseDescription = courseInfo[0].courseDescription;
   context.isLive = courseInfo[0].isLive;
   context.dateWentLive = courseInfo[0].dateWentLive;
+  context.instructor = courseInfo[0].lastName + ", " + courseInfo[0].firstName + " (" + courseInfo[0].userName + ")";
 
   if (courseInfo[0].categoryFk === null) {
     context.categoryFk = 0;
