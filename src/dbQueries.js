@@ -117,11 +117,12 @@ async function deleteCourse(courseId) {
   });
 }
 
-//editCourse(courseId, courseName, instructor, courseDescription, isLive, category, language);
+
 async function editCourse(courseId, courseName, courseDescription, isLive, category) {
   return new Promise(function(resolve, reject) {
-    //category = 0 ? null : category; //if category is 0, then user is trying to set it to "none", thus the value stored is null
-    const inserts = [courseName, courseDescription, isLive, category, courseId];
+    //if category is 0, then user is trying to set it to "none", thus the value stored is null
+    const inserts = (category == 0) ? [courseName, courseDescription, isLive, null, courseId] : [courseName, courseDescription, isLive, category, courseId];;
+
     mysql.pool.query('UPDATE `Courses` set `courseName` = ?, `courseDescription` = ?, `isLive` = ?, `categoryFk` = ? WHERE `courseId` = ?', inserts, (err, result) => {
       if (err) {
         logIt("Edit Course ERROR: " + err + " --- trying to edit course # " + courseId);
@@ -184,6 +185,18 @@ async function addLanguagesToCourse(languageIds, newCourseId) {
   });
 }
 
+async function deleteAllLanguagesForCourse(courseId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("DELETE FROM `LanguagesCourses` WHERE `courseFk` = ?", [courseId], (err, rows, fields) => {
+      if (err) {
+        logIt("deleteAllLanguagesForCourse() ERROR: " + err);
+        reject("ERROR in deleting courses: " + err);
+      }
+      resolve("success");
+    });
+  })
+}
+
 //--------------------------------------------------------
 //---------------------- USERS ------------------
 //--------------------------------------------------------
@@ -220,6 +233,20 @@ async function addNewUser(inserts) {
         }
       } else {
         resolve("Welcome to New Tech Learning!");
+      }
+    });
+  });
+}
+
+async function updateInstructorForCourse(courseId, oldInstructor, newInstructor) {
+  return new Promise(function(resolve, reject) {
+    const inserts = [newInstructor, courseId, oldInstructor, courseId];
+    mysql.pool.query('UPDATE `UsersCourses` SET `userFk` = ?, `courseFk` = ? WHERE `userFk`=? AND `courseFk`=?', inserts, (err, result) => {
+      if (err) {
+        logIt("changeInstructorForCourse ERROR: " + err)
+        reject("ERROR: " + err);
+      } else {
+        resolve("success");
       }
     });
   });
@@ -371,6 +398,7 @@ module.exports = {
   addNewUser,
   addUserToClass,
   deleteCourse,
+  deleteAllLanguagesForCourse,
   doesUserExist,
   editCourse,
   getAllInstructorsOrAdmins,
@@ -384,5 +412,6 @@ module.exports = {
   getListOfUsersWithUserTypes,
   getSpecificCourse,
   getUserId,
-  isInstructorOrStudentInClass
+  isInstructorOrStudentInClass,
+  updateInstructorForCourse
 }

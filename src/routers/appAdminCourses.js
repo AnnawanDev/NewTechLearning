@@ -8,7 +8,7 @@
 const express = require('express');
 const router = new express.Router();
 const {getLoginContext, requireLogin} = require('../middleware/auth');
-const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, editCourse, getCategoryNameForCourse, getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories, getListOfLanguages, getSpecificCourse } = require('../dbQueries');
+const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, deleteAllLanguagesForCourse, editCourse, getCategoryNameForCourse, getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories, getListOfLanguages, getSpecificCourse, updateInstructorForCourse } = require('../dbQueries');
 const bcrypt = require('bcrypt');
 const {logIt} = require('../helperFunctions');
 
@@ -123,23 +123,21 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   //set up updates to pass
   let courseId = req.params.id;
   let courseName = req.body['courseName'];
-  let instructor = req.body['selectInstructor'];
+  let oldInstructor = req.body['selectedInstructorId'];
+  let newInstructor = req.body['selectInstructor'];
   let courseDescription = req.body['courseDescription'];
   let isLive = (req.body['isLive'] == null) ? 0 : 1; //if isLive is checked it will have a value posted; otherwise, will be null
   let category = req.body['selectCategory'];
-  let language = req.body['selectLanguage'];
-
-  logIt("courseId: " + courseId);
-  logIt("course name: " + courseName);
-  logIt("instructor: " + instructor);
-  logIt("course description: " + courseDescription);
-  logIt("is live: " + isLive);
-  logIt("category: " + category);
-  logIt("language: " + language);
+  let oldLanguageIds = req.body['languageSelectedItem'];
+  let newLanguageIds = req.body['selectLanguage'];
 
   //pass on edits to course
-  //let result = await editCourse(courseId, courseName, instructor, courseDescription, isLive, category, language);
   let result = await editCourse(courseId, courseName, courseDescription, isLive, category);
+  let updateInstructorResult = await updateInstructorForCourse(courseId, oldInstructor, newInstructor);
+  let deleteLanguageResult = await deleteAllLanguagesForCourse(courseId);
+  let insertNewLanguageResult = await addLanguagesToCourse(newLanguageIds, courseId);
+
+  //TODO: Verify all 4 updates pass before passing on success message
 
   // set up return context object
   let context = {};

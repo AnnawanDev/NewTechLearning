@@ -209,6 +209,10 @@ FROM `Users` WHERE `userId` NOT IN
 	WHERE `courseId` = :someCourseId)
 AND `userType` = 'STUDENT' ORDER BY lastName ASC;
 
+-- query to update instructor for course
+UPDATE `UsersCourses` SET `userFk` = :someNewUserId, `courseFk` = :courseId WHERE `userFk`=:someOldUserId AND `courseFk`=:courseId
+
+
 -- Table Languages
 -- +-----------------+--------------+------+-----+---------+----------------+
 -- | Field           | Type         | Null | Key | Default | Extra          |
@@ -334,3 +338,6 @@ WHERE `isLive` = 1 ORDER BY `languageName` ASC;
 
 	--Admin: Disassociate a language with a course (M-to-M relationship deletion)
 	DELETE FROM `LanguagesCourses` WHERE `languageId` = :languageId_selected_from_LanguagesCourses_table AND `courseId` = :courseId_from_dropdown_input
+
+-- Query to delete languages from LanaguagesCourses
+DELETE FROM `LanguagesCourses` WHERE `courseFk` = :someCourseId
