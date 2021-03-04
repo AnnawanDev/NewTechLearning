@@ -56,14 +56,16 @@ define(['module'], function(module){
 
         let req = new XMLHttpRequest();
         req.open("GET", baseURL + getCategoriesAPI, true);
+        console.log(baseURL+getCategoriesAPI )
         req.setRequestHeader("Content-type", "application/json");
         req.addEventListener("load", function () {
             if (req.status >=200 && req.status < 400) {
                 let data = JSON.parse(req.response);
+                console.log(data)
                 if (data.results.length == 0) {
                 } else {
-                    for (let someCategory of data.results) {
-
+                    for (let someCategory of data.results) {    
+                        //add category name column
                         let newRow = categoriesTableBody.insertRow(-1);
                         let newTd1 = document.createElement('td')
                         let cell1 =document.createElement('input')

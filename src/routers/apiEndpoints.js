@@ -172,7 +172,7 @@ router.post('/api/updateCategory/', async(req,res,next) => {
 router.get('/api/getCourses', async (req,res,next) => {
   let context = {};
 
-  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses LEFT OUTER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
+  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
   if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
     sqlQuery += "AND categoryId = " + req.query.categoryFilter;
 
@@ -186,7 +186,6 @@ router.get('/api/getCourses', async (req,res,next) => {
         logIt("ERROR FROM /api/getCourses: " + err);
         return;
       }
-
       //logIt("/api/getCourses query result: " + JSON.stringify(rows));
       context.results = rows;
       res.send(context);
@@ -214,9 +213,9 @@ router.get('/api/getCourseOverview/:courseName', async (req,res,next) => {
       context.results = rows;
       res.send(context);
     });
-
     return context;
 });
+
 
 router.get('/api/selectMostRecentAddedClasses', async (req,res,next) => {
   try {
@@ -262,7 +261,6 @@ router.get('/api/getStudentsInClasses/:someClassId', requireLogin, async (req,re
 //---------------------- COURSE MODULES ------------------
 //--------------------------------------------------------
 
-
 router.get('/api/getModulesForCourse/:courseId', async (req,res,next) => {
   let context = {};
 
@@ -302,7 +300,6 @@ router.post('/api/addCourseModule/', async (req,res) => {
     if (error) {
       res.status(500).send
     };
-
     let context= {};
     context.results = results.affectedRows;
     res.send(context)
@@ -339,7 +336,6 @@ router.post('/api/updateCourseModule/', async(req,res,next) => {
 });
 
 
-
 //--------------------------------------------------------
 //---------------------- LANGUAGES ----------------------
 //--------------------------------------------------------
@@ -372,9 +368,9 @@ router.get('/api/insertLanguage/:languageName/:languageCountry', async (req,res,
     if (error) {
       res.status(500).send
     };
-
-    let context= {};
-    context.results = results.affectedRows;
+    if(results) {
+      context.results = results.affectedRows;
+    }
     res.send(context)
   });
 });
