@@ -85,7 +85,8 @@ requirejs.config({
             getModulesForCourseAPI: "/api/getModulesForCourse/",
             getModuleForCourseAndOrderAPI: "/api/getModuleHTMLForCourseAndOrder/",
             addCourseModuleAPI: "/api/addCourseModule/",
-            deleteCourseModuleAPI: "/api/deleteCourseModule/"
+            deleteCourseModuleAPI: "/api/deleteCourseModule/",
+            editCourseModuleAPI: '/api/updateCourseModule/' 
         },
 
         '/js/adminUsers.js': {

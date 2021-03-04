@@ -6,12 +6,14 @@ define (['module'], function (module){
     const getModuleHTMLForCourseAndOrder = module.config().getModuleForCourseAndOrderAPI;
     const addCourseModuleAPI = module.config().addCourseModuleAPI;
     const deleteCourseModuleAPI = module.config().deleteCourseModuleAPI;
+    const editCourseModuleAPI = module.config().editCourseModuleAPI;
 
     let moduleTable =  document.getElementById("selectedModuleDisplayTable")
     moduleTable.style.display = 'none';
     let moduleSelect = document.getElementById('moduleOrderChoice');
     let currentCourse = document.getElementById('courseToGetModulesFrom');
     let addModuleButton = document.getElementById('addModuleButton');
+    
     
 // ------------- Event Listeners----------------
     document.getElementById('moduleOrderForm').style.display = 'none'
@@ -70,7 +72,7 @@ define (['module'], function (module){
                     logIt('There was an error in inserting your language')
                 }else {
                     logIt('Module successfully inserted')
-                    alert("Module successfully inserted'")
+                    alert("Module successfully inserted")
                     //re-populates table with updated data
                     moduleTable.innerHTML = ''
                     moduleSelect.innerHTML= '';
@@ -128,9 +130,8 @@ function getModuleHTML(courseId, moduleId){
                 cell.value = data.results[0].courseModuleHTML
                 // or
                 cell.rows = '70'
-                cell.cols = '120'
+                cell.cols = '100'
                 cell.innerHTML = data.results[0].courseModuleHTML
-                cell.style = 
                 td.appendChild(cell)
                 trow.appendChild(td)
                 
@@ -147,7 +148,6 @@ function getModuleHTML(courseId, moduleId){
                 trow2.appendChild(td2);
                 tbody.appendChild(trow2)
                 
-                //-----------WIP---------------
 
                 var cell3 = document.createElement('input')
                 cell3.type="button";
@@ -155,16 +155,14 @@ function getModuleHTML(courseId, moduleId){
                 cell3.name= 'update'
                 cell3.addEventListener("click", function() {
                     //let newOrder = cell.value
-                    let newHTML = cell1.value
-                    editCourseModule(moduleId, newHTML);
+                    let newHTML = cell.value
+                    editCourseModule(courseId, moduleId, newHTML);
                 });
                 let td3 = document.createElement('td')
                 td3.appendChild(cell3)
                 let trow3 = document.createElement('tr')
                 trow3.appendChild(td3);
-                // to do:
-                //edit CourseModule function
-                //make API enpoint
+
                 //--------------------------
                 tbody.appendChild(trow3)
                 moduleTable.appendChild(tbody)
@@ -201,12 +199,36 @@ function deleteModule(courseId, moduleId){
         event.preventDefault();
 }
 
+function editCourseModule(courseId, moduleId, newHTML){
+    let input = {courseModuleId: moduleId, newHTML: newHTML,}
+    let req = new XMLHttpRequest();
+    req.open("POST", baseURL + editCourseModuleAPI, true);
+    req.setRequestHeader("Content-type", "application/json");
+    req.addEventListener('load', function(){
+        if (req.status >=200 && req.status < 400) {
+            let data = JSON.parse(req.response);
+            if (data.results.length == 0) {
+                logIt("We weren't able to edit that courseModule!")
+            }else{
+                logIt('Module was successfully edited')
+                //re-populates table with updated data
+                moduleTable.innerHTML = "";
+                moduleSelect.innerHTML= '';
+                populateModulesSelect(courseId)
+            }
+        } else {
+            logIt("OOPS! We've had a problem editing that category.")
+        }
+    })
+    req.send(JSON.stringify(input));
+    event.preventDefault();
+}
+
 function logIt(someMessage) {
     if (useLogging) {
       console.log(someMessage);
     }
   }
-
 })
 
 
