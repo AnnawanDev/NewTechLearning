@@ -57,7 +57,7 @@ async function getListOfLiveCourses() {
 
 async function getListOfAllCoursesAndWhoIsTeaching() {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' GROUP BY courseId ORDER BY courseId;", (err, rows, fields) => {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' GROUP BY courseId ORDER BY courseId;", (err, rows, fields) => {
       if (err) {
         logIt("getListOfAllCoursesAndWhoIsTeaching() ERROR: " + err);
         reject("ERROR in selecting courses");
@@ -70,7 +70,7 @@ async function getListOfAllCoursesAndWhoIsTeaching() {
 
 async function getSpecificCourse(courseId) {
   return new Promise(function(resolve, reject) {
-    mysql.pool.query("SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `courseId` = ? AND (`userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN') GROUP BY courseId ORDER BY courseId;", courseId, (err, rows, fields) => {
+    mysql.pool.query("SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `courseId` = ? AND (`userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN') GROUP BY courseId ORDER BY courseId;", courseId, (err, rows, fields) => {
       if (err) {
         logIt("getSpecificCourse() ERROR: " + err);
         reject("ERROR in getSpecificCourse");
@@ -112,6 +112,26 @@ async function deleteCourse(courseId) {
         reject("Sorry - there was some kind of error.  Please try again.");
       } else {
         resolve(result);
+      }
+    });
+  });
+}
+
+
+async function editCourse(courseId, courseName, courseDescription, isLive, category) {
+  return new Promise(function(resolve, reject) {
+    //set dateWentLive if isLive=1
+    let dateWentLive = (isLive == 1) ? new Date() : null;
+
+    //if category is 0, then user is trying to set it to "none", thus the value stored is null
+    const inserts = (category == 0) ? [courseName, courseDescription, isLive, dateWentLive, null, courseId] : [courseName, courseDescription, isLive, dateWentLive, category, courseId];;
+
+    mysql.pool.query('UPDATE `Courses` set `courseName` = ?, `courseDescription` = ?, `isLive` = ?, `dateWentLive` = ?, `categoryFk` = ? WHERE `courseId` = ?', inserts, (err, result) => {
+      if (err) {
+        logIt("Edit Course ERROR: " + err + " --- trying to edit course # " + courseId);
+        reject("Sorry - there was some kind of error while updating the course details.  Please try again.");
+      } else {
+        resolve("Success - the course has been updated");
       }
     });
   });
@@ -168,6 +188,18 @@ async function addLanguagesToCourse(languageIds, newCourseId) {
   });
 }
 
+async function deleteAllLanguagesForCourse(courseId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("DELETE FROM `LanguagesCourses` WHERE `courseFk` = ?", [courseId], (err, rows, fields) => {
+      if (err) {
+        logIt("deleteAllLanguagesForCourse() ERROR: " + err);
+        reject("ERROR in deleting courses: " + err);
+      }
+      resolve("success");
+    });
+  })
+}
+
 //--------------------------------------------------------
 //---------------------- USERS ------------------
 //--------------------------------------------------------
@@ -204,6 +236,20 @@ async function addNewUser(inserts) {
         }
       } else {
         resolve("Welcome to New Tech Learning!");
+      }
+    });
+  });
+}
+
+async function updateInstructorForCourse(courseId, oldInstructor, newInstructor) {
+  return new Promise(function(resolve, reject) {
+    const inserts = [newInstructor, courseId, oldInstructor, courseId];
+    mysql.pool.query('UPDATE `UsersCourses` SET `userFk` = ?, `courseFk` = ? WHERE `userFk`=? AND `courseFk`=?', inserts, (err, result) => {
+      if (err) {
+        logIt("changeInstructorForCourse ERROR: " + err)
+        reject("ERROR: " + err);
+      } else {
+        resolve("success");
       }
     });
   });
@@ -355,7 +401,9 @@ module.exports = {
   addNewUser,
   addUserToClass,
   deleteCourse,
+  deleteAllLanguagesForCourse,
   doesUserExist,
+  editCourse,
   getAllInstructorsOrAdmins,
   getUserType,
   getListOfAllCoursesAndWhoIsTeaching,
@@ -367,5 +415,6 @@ module.exports = {
   getListOfUsersWithUserTypes,
   getSpecificCourse,
   getUserId,
-  isInstructorOrStudentInClass
+  isInstructorOrStudentInClass,
+  updateInstructorForCourse
 }

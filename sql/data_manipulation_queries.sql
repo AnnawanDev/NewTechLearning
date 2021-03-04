@@ -81,7 +81,7 @@ SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY cours
 
 -- Query to select Courses but this is open ended so we can append on the end extra sql from the business logic side
 -- For example, this gets all courses, but on the business logic we could append, " AND CATEGORY ='someValue'"
-SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId
+SELECT DISTINCT courseId, courseName FROM Courses LEFT OUTER JOIN Categories ON categoryFk = categoryId
 INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5
 
 -- Query to get details on specific course
@@ -124,7 +124,7 @@ DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
 SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`,
 CONCAT(LEFT(`courseDescription`,25), '...') AS 'description',
 `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive,
-categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn'
+categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId'
 FROM `Courses`
 INNER JOIN `UsersCourses` ON courseId = courseFk
 INNER JOIN `Users` ON userFk = userId
@@ -144,7 +144,7 @@ ORDER BY courseId;
 SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`,
 CONCAT(LEFT(`courseDescription`,25), '...') AS 'description',
 `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive,
-categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn'
+categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId'
 FROM `Courses`
 INNER JOIN `UsersCourses` ON courseId = courseFk
 INNER JOIN `Users` ON userFk = userId
@@ -170,7 +170,7 @@ WHERE `userId` NOT IN
 	(SELECT `userId` FROM `Users`
 		INNER JOIN `UsersCourses` ON `userId` = `userFk`
 		INNER JOIN `Courses` ON `courseFk` = `courseId`
-		WHERE `courseId` = :someCourseId) 
+		WHERE `courseId` = :someCourseId)
 AND `userType` = 'STUDENT' ORDER BY lastName ASC
 
 
@@ -208,6 +208,10 @@ FROM `Users` WHERE `userId` NOT IN
 	INNER JOIN `Courses` ON `courseFk` = `courseId`
 	WHERE `courseId` = :someCourseId)
 AND `userType` = 'STUDENT' ORDER BY lastName ASC;
+
+-- query to update instructor for course
+UPDATE `UsersCourses` SET `userFk` = :someNewUserId, `courseFk` = :courseId WHERE `userFk`=:someOldUserId AND `courseFk`=:courseId
+
 
 -- Table Languages
 -- +-----------------+--------------+------+-----+---------+----------------+
@@ -334,3 +338,6 @@ WHERE `isLive` = 1 ORDER BY `languageName` ASC;
 
 	--Admin: Disassociate a language with a course (M-to-M relationship deletion)
 	DELETE FROM `LanguagesCourses` WHERE `languageId` = :languageId_selected_from_LanguagesCourses_table AND `courseId` = :courseId_from_dropdown_input
+
+-- Query to delete languages from LanaguagesCourses
+DELETE FROM `LanguagesCourses` WHERE `courseFk` = :someCourseId
