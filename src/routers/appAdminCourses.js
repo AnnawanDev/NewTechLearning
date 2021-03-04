@@ -8,7 +8,7 @@
 const express = require('express');
 const router = new express.Router();
 const {getLoginContext, requireLogin} = require('../middleware/auth');
-const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, getCategoryNameForCourse, getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories, getListOfLanguages, getSpecificCourse } = require('../dbQueries');
+const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, editCourse, getCategoryNameForCourse, getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories, getListOfLanguages, getSpecificCourse } = require('../dbQueries');
 const bcrypt = require('bcrypt');
 const {logIt} = require('../helperFunctions');
 
@@ -84,7 +84,7 @@ router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
   context.categories = await getListOfAllCategories();
   context.languages = await getListOfLanguages();
-  context.userId = courseInfo[0].userId; 
+  context.userId = courseInfo[0].userId;
   context.courseId = courseInfo[0].courseId;
   context.courseName = courseInfo[0].courseName;
   context.courseDescription = courseInfo[0].courseDescription;
@@ -113,12 +113,37 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
     res.redirect("/Admin/Courses/");
   }
 
+  if (
+    !req.body['courseId'] || !req.body['courseName'] || !req.body['selectInstructor'] ||
+    !req.body['courseDescription'] || !req.body['selectCategory'] ||
+    !req.body['selectLanguage']) {
+    res.redirect("/Admin/Courses/");
+  }
+
+  //set up updates to pass
+  let courseId = req.params.id;
+  let courseName = req.body['courseName'];
+  let instructor = req.body['selectInstructor'];
+  let courseDescription = req.body['courseDescription'];
+  let isLive = (req.body['isLive'] == null) ? 0 : 1; //if isLive is checked it will have a value posted; otherwise, will be null
+  let category = req.body['selectCategory'];
+  let language = req.body['selectLanguage'];
+
+  logIt("courseId: " + courseId);
+  logIt("course name: " + courseName);
+  logIt("instructor: " + instructor);
+  logIt("course description: " + courseDescription);
+  logIt("is live: " + isLive);
+  logIt("category: " + category);
+  logIt("language: " + language);
+
+  //pass on edits to course
+  //let result = await editCourse(courseId, courseName, instructor, courseDescription, isLive, category, language);
+  let result = await editCourse(courseId, courseName, courseDescription, isLive, category);
+
   // set up return context object
   let context = {};
-
-  //edit course
-  //let result = await deleteCourse(req.params.id);
-  context.EditResult = "SUCCESS! Course edited<br /><br />";
+  context.EditResult = result + "<br /><br />"; //"SUCCESS! Course edited<br /><br />";
   context.mainContentStyle = "display: none;"
 
   //show result of page

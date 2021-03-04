@@ -7,13 +7,6 @@
 
 define (['module'], function (module){
 
-const useLogging = module.config().useLogging;
-const baseURL = module.config().baseURL;
-const getListOfAllCategoriesAPI = module.config().getListOfAllCategoriesAPI;
-const adminLangCoursesTableBody = document.getElementById('adminLangsCoursesTableBody');
-const getCategoryNameForCourseAPI = module.config().getCategoryNameForCourseAPI;
-
-
 // set up event listeners -------------------------------------
 if(document.readyState !== 'loading' ) {
   // document is already ready, just execute code
@@ -59,12 +52,12 @@ function selectLanguageDropDown() {
 
 
 function selectInstructorDropDown() {
-  let instructorId = document.getElementById('selectedInstructorId').value;
+  let instructorId = document.getElementById('selectedInstructorId');
   if (instructorId != null) {
     let dropDown = document.getElementById('selectInstructor');
 
     for (let i=0; i < dropDown.options.length; i++) {
-      if (dropDown.options[i].value == instructorId) {
+      if (dropDown.options[i].value == instructorId.value) {
           dropDown.options[i].selected = true;
           return;
       }

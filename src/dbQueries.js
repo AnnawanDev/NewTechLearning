@@ -117,6 +117,22 @@ async function deleteCourse(courseId) {
   });
 }
 
+//editCourse(courseId, courseName, instructor, courseDescription, isLive, category, language);
+async function editCourse(courseId, courseName, courseDescription, isLive, category) {
+  return new Promise(function(resolve, reject) {
+    //category = 0 ? null : category; //if category is 0, then user is trying to set it to "none", thus the value stored is null
+    const inserts = [courseName, courseDescription, isLive, category, courseId];
+    mysql.pool.query('UPDATE `Courses` set `courseName` = ?, `courseDescription` = ?, `isLive` = ?, `categoryFk` = ? WHERE `courseId` = ?', inserts, (err, result) => {
+      if (err) {
+        logIt("Edit Course ERROR: " + err + " --- trying to edit course # " + courseId);
+        reject("Sorry - there was some kind of error while updating the course details.  Please try again.");
+      } else {
+        resolve("Success - the course has been updated");
+      }
+    });
+  });
+}
+
 //--------------------------------------------------------
 //---------------------- LANGUAGES -----------------------
 //--------------------------------------------------------
@@ -356,6 +372,7 @@ module.exports = {
   addUserToClass,
   deleteCourse,
   doesUserExist,
+  editCourse,
   getAllInstructorsOrAdmins,
   getUserType,
   getListOfAllCoursesAndWhoIsTeaching,
