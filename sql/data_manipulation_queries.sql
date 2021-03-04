@@ -81,7 +81,7 @@ SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY cours
 
 -- Query to select Courses but this is open ended so we can append on the end extra sql from the business logic side
 -- For example, this gets all courses, but on the business logic we could append, " AND CATEGORY ='someValue'"
-SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId
+SELECT DISTINCT courseId, courseName FROM Courses LEFT OUTER JOIN Categories ON categoryFk = categoryId
 INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5
 
 -- Query to get details on specific course

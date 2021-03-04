@@ -132,12 +132,11 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   let newLanguageIds = req.body['selectLanguage'];
 
   //pass on edits to course
+  //TODO: Verify all 4 updates pass before passing on success message
   let result = await editCourse(courseId, courseName, courseDescription, isLive, category);
   let updateInstructorResult = await updateInstructorForCourse(courseId, oldInstructor, newInstructor);
   let deleteLanguageResult = await deleteAllLanguagesForCourse(courseId);
   let insertNewLanguageResult = await addLanguagesToCourse(newLanguageIds, courseId);
-
-  //TODO: Verify all 4 updates pass before passing on success message
 
   // set up return context object
   let context = {};

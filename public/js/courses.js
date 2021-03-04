@@ -54,10 +54,7 @@ document.getElementById('languagesList').addEventListener('change', function(){
 function getAvailableClasses(filter) {
   let feedbackToUser = "";
   let queryURL = baseURL + getCoursesAPI + filter;
-  // if (document.getElementById('languagesList')) {
-  //   queryURL += "?languageFilter=" + document.getElementById('languagesList').value;
-  // }
-  
+
   //make ajax request
   let req = new XMLHttpRequest();
   req.open("GET", queryURL, true);
