@@ -124,7 +124,7 @@ DELETE FROM `Courses` WHERE `courseId` = :someCourseId;
 SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`,
 CONCAT(LEFT(`courseDescription`,25), '...') AS 'description',
 `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive,
-categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn'
+categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId'
 FROM `Courses`
 INNER JOIN `UsersCourses` ON courseId = courseFk
 INNER JOIN `Users` ON userFk = userId
@@ -144,7 +144,7 @@ ORDER BY courseId;
 SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`,
 CONCAT(LEFT(`courseDescription`,25), '...') AS 'description',
 `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive,
-categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn'
+categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId'
 FROM `Courses`
 INNER JOIN `UsersCourses` ON courseId = courseFk
 INNER JOIN `Users` ON userFk = userId
@@ -170,7 +170,7 @@ WHERE `userId` NOT IN
 	(SELECT `userId` FROM `Users`
 		INNER JOIN `UsersCourses` ON `userId` = `userFk`
 		INNER JOIN `Courses` ON `courseFk` = `courseId`
-		WHERE `courseId` = :someCourseId) 
+		WHERE `courseId` = :someCourseId)
 AND `userType` = 'STUDENT' ORDER BY lastName ASC
 
 

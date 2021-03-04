@@ -96,6 +96,33 @@ router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
     context.categoryFk = courseInfo[0].categoryFk;
   }
 
+  if (courseInfo[0].TaughtInId === null) {
+    context.TaughtInId = '';
+  } else {
+    context.TaughtInId = courseInfo[0].TaughtInId;
+  }
+
+  res.render('adminCourseEdit', context);
+});
+
+router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
+
+  if (!req.params.id || isNaN(req.params.id)) {
+    res.redirect("/Admin/Courses/");
+  }
+
+  // set up return context object
+  let context = {};
+
+  //edit course
+  //let result = await deleteCourse(req.params.id);
+  context.EditResult = "SUCCESS! Course edited<br /><br />";
+  context.mainContentStyle = "display: none;"
+
+  //show result of page
+  context.title = 'New Tech Learning | Edit Course | Result';
+  context = await getLoginContext(context, req);
+
   res.render('adminCourseEdit', context);
 });
 
@@ -114,6 +141,7 @@ router.get('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
   context.instructorsOrAdmins = await getAllInstructorsOrAdmins();
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
   context.categories = await getListOfAllCategories();
+  context.languages = await getListOfLanguages();
   context.courseId = courseInfo[0].courseId;
   context.courseName = courseInfo[0].courseName;
   context.courseDescription = courseInfo[0].courseDescription;
@@ -126,14 +154,14 @@ router.get('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
     context.categoryFk = courseInfo[0].categoryFk;
   }
 
+  if (courseInfo[0].TaughtInId === null) {
+    context.TaughtInId = '';
+  } else {
+    context.TaughtInId = courseInfo[0].TaughtInId;
+  }
+
   res.render('adminCourseDelete', context);
 });
-
-
-
-
-
-
 
 router.post('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
 
@@ -152,7 +180,6 @@ router.post('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
   //show result of page
   context.title = 'New Tech Learning | Delete Course | Result';
   context = await getLoginContext(context, req);
-
 
   res.render('adminCourseDelete', context);
 });
