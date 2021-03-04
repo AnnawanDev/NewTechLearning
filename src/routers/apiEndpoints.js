@@ -324,6 +324,20 @@ router.get('/api/deleteCourseModule/:courseModuleId', async (req,res,next) => {
   })
 });
 
+router.post('/api/updateCourseModule/', async(req,res,next) => {
+  let context = {};
+  let filter = [req.body.newHTML, req.body.courseModuleId]
+  //get the current mySQL content (if it exists)
+  mysql.pool.query("UPDATE CourseModules SET courseModuleHTML = ? WHERE courseModuleId = ?", filter, (err, results, fields) => {
+    if(err){
+      res.status(500).send
+    }
+  context.results = results.affectedRows;
+  console.log(context)
+  res.send(context)
+  });
+});
+
 
 
 //--------------------------------------------------------
