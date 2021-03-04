@@ -468,7 +468,6 @@ router.patch('/api/editUser', requireAdminLogin, async (req,res,next) => {
     sql = "UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ?, `password` = ? WHERE `userId` = ?";
   } else {
     updates = [req.body['userType'], req.body['firstName'], req.body['lastName'], req.body['userName'], req.body['email'], req.body['userId']];
-    console.log(JSON.stringify(updates));
     sql = "UPDATE `Users` SET `userType` = ?, `firstName` = ?, `lastName` = ?, `userName` = ?, `email` = ? WHERE `userId` = ?";
   }
 
