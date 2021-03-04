@@ -83,6 +83,7 @@ router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   context.instructorsOrAdmins = await getAllInstructorsOrAdmins();
   context.courses = await getListOfAllCoursesAndWhoIsTeaching();
   context.categories = await getListOfAllCategories();
+  context.languages = await getListOfLanguages();
   context.courseId = courseInfo[0].courseId;
   context.courseName = courseInfo[0].courseName;
   context.courseDescription = courseInfo[0].courseDescription;
