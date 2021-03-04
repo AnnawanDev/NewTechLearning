@@ -172,7 +172,7 @@ router.post('/api/updateCategory/', async(req,res,next) => {
 router.get('/api/getCourses', async (req,res,next) => {
   let context = {};
 
-  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses INNER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
+  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses LEFT OUTER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
   if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
     sqlQuery += "AND categoryId = " + req.query.categoryFilter;
 
@@ -300,7 +300,7 @@ router.post('/api/addCourseModule/', async (req,res) => {
     if (error) {
       res.status(500).send
     };
-    let context= {};
+    
     context.results = results.affectedRows;
     res.send(context)
   });
