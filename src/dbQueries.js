@@ -162,7 +162,7 @@ async function addLanguagesToCourse(languageIds, newCourseId) {
     reject("The course ID is not correct");
   }
 
-  if (languageIds.length == 0 || languageIds[0] == 0) {
+  if (!languageIds || languageIds.length == 0 || languageIds[0] == 0) {
     reject("No languages to add")
   }
 

@@ -56,7 +56,7 @@ router.post('/api/login', async (req, res, next) => {
 router.get('/api/getListOfAvailableCategories', async (req,res,next) => {
   try {
     let context = {};
-    mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
+    mysql.pool.query("SELECT DISTINCT `categoryId`, `categoryName` FROM `Categories` INNER JOIN `Courses` ON `categoryId` = `categoryFk` WHERE `isLive` = 1 ORDER BY `categoryName` ASC;", (err, rows, fields) => {
       if (err) {
         next(err);
         res.status(500).send();
@@ -172,7 +172,7 @@ router.post('/api/updateCategory/', async(req,res,next) => {
 router.get('/api/getCourses', async (req,res,next) => {
   let context = {};
 
-  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses LEFT OUTER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE 5=5 ";
+  let sqlQuery = "SELECT DISTINCT courseId, courseName FROM Courses LEFT OUTER JOIN Categories ON categoryFk = categoryId INNER JOIN LanguagesCourses ON courseId = courseFk INNER JOIN Languages ON languageFk = languageId WHERE isLive=1 AND 5=5 ";
   if (req.query.categoryFilter && req.query.categoryFilter != "ALL") {
     sqlQuery += "AND categoryId = " + req.query.categoryFilter;
 
@@ -300,7 +300,7 @@ router.post('/api/addCourseModule/', async (req,res) => {
     if (error) {
       res.status(500).send
     };
-    
+
     context.results = results.affectedRows;
     res.send(context)
   });
