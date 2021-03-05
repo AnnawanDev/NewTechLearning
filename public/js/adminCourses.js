@@ -11,12 +11,14 @@ define (['module'], function (module){
 if(document.readyState !== 'loading' ) {
   // document is already ready, just execute code
   bindSubmitButtons();
+  document.getElementById('languageSelectorForNewCourse').selectedIndex = 0;
 }
 
 else {
   document.addEventListener('DOMContentLoaded', function () {
       // document wasn't loaded, when it is call function
       bindSubmitButtons();
+      document.getElementById('languageSelectorForNewCourse').selectedIndex = 0;
   });
 }
 
