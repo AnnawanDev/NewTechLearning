@@ -87,8 +87,6 @@ function getAvailableClasses(filter) {
 }
 
 function getCategoriesList() {
-  //let populateCategoriesList = "<select name=\"categoriesList\" id=\"categoriesList\"><option value=\"all\">All</option>";
-
   let populateCategoriesList = document.createElement("select");
   populateCategoriesList.setAttribute("name", "categoriesList");
   populateCategoriesList.setAttribute("id", "categoriesList");
@@ -105,13 +103,11 @@ function getCategoriesList() {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      //console.log("DATA ---" + JSON.stringify(data))
 
       if (data.results.length == 0) {
         //populateCategoriesList += "</select>";
       } else {
         for (let someCategory of data.results) {
-          //populateCategoriesList += "<option value=\"" + someCategory.categoryId + "\">" + someCategory.categoryName + "</option>"
           let option = document.createElement("option");
           option.setAttribute("value", someCategory.categoryId);
           option.text = someCategory.categoryName;
@@ -120,10 +116,8 @@ function getCategoriesList() {
       }
 
     } else {
-      //populateCategoriesList += "</select>";
     }
     categoriesDropDownList.appendChild(populateCategoriesList);
-    //categoriesDropDownList.innerHTML = populateCategoriesList;
   });
   req.send(JSON.stringify(null));
   event.preventDefault();
