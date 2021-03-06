@@ -146,7 +146,7 @@ function addMessageToDropStudent(tbody, message) {
   let tr = document.createElement('tr');
   let td = document.createElement('td');
   td.setAttribute('colspan', 6);
-  td.innerHTML = "ssss: " + message;
+  td.innerHTML = message;
   tr.appendChild(td);
   tbody.appendChild(tr);
 }
