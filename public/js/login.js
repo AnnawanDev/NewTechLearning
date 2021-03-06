@@ -5,7 +5,7 @@
    January 25, 2021
 */
 
-define (['module'],function(module){ 
+define (['module'],function(module){
 
 const useLogging = module.config().useLogging;
 const baseURL = module.config().baseURL;
@@ -13,18 +13,17 @@ const loginAPI = module.config().loginAPI;
 let feedbackResponse = document.getElementById('feedback');
 
 // set up event listeners  -------------------------------------
-
 if(document.readyState !== 'loading' ) {
   document.getElementById('submit').addEventListener('click', logUserIn);
 } else {
   document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('submit').addEventListener('click', logUserIn);
-
   });
 }
 
 
 // main functions -------------------------------------
+//function to log the user in
 function logUserIn() {
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
@@ -51,7 +50,7 @@ function logUserIn() {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       //console.log("DATA ---" + JSON.stringify(data))
-      location.reload();  //reloading so we can get login/logout context nav reloaded 
+      location.reload();  //reloading so we can get login/logout context nav reloaded
     } else {
       userFeedback.innerHTML = "<span style=\"color: #ff0000\">Sorry, we couldn't log you in. Please try again</span>";
     }
@@ -62,6 +61,7 @@ function logUserIn() {
 
 
 // utility -------------------------------------
+//utility function to log messages to console window if logging is turned on
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);

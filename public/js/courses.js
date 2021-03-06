@@ -50,7 +50,7 @@ document.getElementById('languagesList').addEventListener('change', function(){
 })
 
 // ----------------main functions -------------------
-
+//gets available classes to list on page
 function getAvailableClasses(filter) {
   let feedbackToUser = "";
   let queryURL = baseURL + getCoursesAPI + filter;
@@ -66,8 +66,8 @@ function getAvailableClasses(filter) {
         feedbackToUser = "<p>Sorry, we currently don't have any available classes.</p>";
       } else {
         for (let someClass of data.results) {
-          let fakeCourseID = someClass.courseId;
-          let classURL = baseURL + coursesURLString + "/" + fakeCourseID + "/" + someClass.courseName + courseOverviewLandingpage;
+          let courseID = someClass.courseId;
+          let classURL = baseURL + coursesURLString + "/" + courseID + "/" + someClass.courseName + courseOverviewLandingpage;
           feedbackToUser += "<div>";
           feedbackToUser += "<a href=\"" + classURL + "\"><img src=\"/images/courseImage1.jpg\" width=\"150\" height=\"150\" /></a>";
           feedbackToUser += "<a href=\"" + classURL + "\">" + someClass.courseName + "</a>";
@@ -86,6 +86,7 @@ function getAvailableClasses(filter) {
   event.preventDefault();
 }
 
+//gets available categories that the user can filter for
 function getCategoriesList() {
   let populateCategoriesList = document.createElement("select");
   populateCategoriesList.setAttribute("name", "categoriesList");
@@ -124,6 +125,7 @@ function getCategoriesList() {
 }
 
 // utility -------------------------------------
+//utility function to log messages to console window if logging is turned on
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);

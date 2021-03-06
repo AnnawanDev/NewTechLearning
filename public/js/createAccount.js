@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 14, 2021
+   March 6, 2021
 */
 
 define (['module'],function (module){
@@ -17,11 +17,12 @@ if(document.readyState !== 'loading' ) {
   bindSubmitButton();
   });
 }
-
+  //binds event listener to button when adding user
   function bindSubmitButton() {
     document.getElementById("createAccountSubmit").addEventListener("click", addNewUser);
   }
 
+  //validate new user form fields
   function addNewUser() {
     if (document.getElementById("firstName").value == "") {
       statusUpdate("First name cannot be empty", true);
@@ -60,6 +61,7 @@ if(document.readyState !== 'loading' ) {
     }
   }
 
+  //checks if a passed in input element is blank
   function checkField(element, message) {
     if (element == "") {
       statusUpdate(message, true);
@@ -67,14 +69,16 @@ if(document.readyState !== 'loading' ) {
     };
   }
 
+  //function to verify that passwords are the same
   function verifyPasswordFieldsAreEqual(password1, password2) {
-    if (document.getElementById(password1).value != document.getElementById(password2).value) {
+    if (document.getElementById(password1).value !== document.getElementById(password2).value) {
       statusUpdate("Password fields do not match", true);
       event.preventDefault();
       return;
     };
   }
 
+  //sets status error message
   function statusUpdate(message, error) {
     let displayMessage = "";
     if (error) {

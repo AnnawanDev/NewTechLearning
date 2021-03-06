@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 23, 2021
+   March 6, 2021
 */
 
 define (['module'], function (module){
@@ -24,6 +24,7 @@ else {
   });
 }
 
+//sets the selected category in the category select element
 function selectCategoryDropDown() {
   let categoryId = document.getElementById('selectedItem').value;
   let dropDown = document.getElementById('selectCategory');
@@ -36,6 +37,7 @@ function selectCategoryDropDown() {
   }
 }
 
+//sets the selected language in the language select element
 function selectLanguageDropDown() {
   const languages = document.getElementById('languageSelectedItem').value;
   const languageArray = languages.split(',');
@@ -50,7 +52,7 @@ function selectLanguageDropDown() {
   }
 }
 
-
+//sets the selected instructor in the instructor select element
 function selectInstructorDropDown() {
   let instructorId = document.getElementById('selectedInstructorId');
   if (instructorId != null) {
@@ -68,6 +70,7 @@ function selectInstructorDropDown() {
 
 
 // utility -------------------------------------
+//utility function to load messages if logging is turned on
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);

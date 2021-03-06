@@ -18,7 +18,7 @@ let feedbackResponse = document.getElementById('recentlyAddedClasses');
 
 
 if( document.readyState !== 'loading' ) {
-  // document is already ready, just execute code 
+  // document is already ready, just execute code
   getRecentlyAddedClasses()
 } else {
   document.addEventListener('DOMContentLoaded', function () {
@@ -28,6 +28,7 @@ if( document.readyState !== 'loading' ) {
 }
 
 // main functions -------------------------------------
+//gets the 3 most recently added classes to display on home page
 function getRecentlyAddedClasses() {
   let feedbackToUser = "";
   //make ajax request
@@ -37,7 +38,6 @@ function getRecentlyAddedClasses() {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      // console.log("DATA ---" + JSON.stringify(data))
       if (data.results.length == 0) {
         feedbackToUser = "<p>Sorry, we currently don't have any available classes.</p>";
       } else {
@@ -60,6 +60,7 @@ function getRecentlyAddedClasses() {
 
 
 // utility -------------------------------------
+//utility function to log messages to console window if logging is turned on
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);
