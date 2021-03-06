@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   March 3, 2021
+   March 6, 2021
 */
 
 define (['module'], function(module){
@@ -60,6 +60,7 @@ document.getElementById('courseToDropUserFrom').addEventListener('change',functi
 });
 
 // main functions -------------------------------------
+//handles event when user presses button to drop a user from a course
 function dropUserFromCourse(e) {
   const fullButtonID = e.target.id;
   const buttonID = fullButtonID.substring(8);
@@ -75,7 +76,6 @@ function dropUserFromCourse(e) {
       removeAllTableRows(document.getElementById('userListingTbody'));
       getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
     } else {
-      //selectElement  = "Sorry, there was an error in getting the available classes.";
       document.getElementById('dropuserFromCourseFeedback').innerHTML = "Error";
     }
 
@@ -86,7 +86,7 @@ function dropUserFromCourse(e) {
   event.preventDefault();
 }
 
-
+//calls api endpoint to get all users who've signed up for a particular class - it then builds table body of all users
 function getListOfUsersEnrolled(someClassId) {
   let tbody = document.getElementById('userListingTbody');
 
@@ -140,15 +140,17 @@ function getListOfUsersEnrolled(someClassId) {
   event.preventDefault();
 }
 
+//if there are no students for a class, or an error, prints out message in the table tbody rather than print out each table cell
 function addMessageToDropStudent(tbody, message) {
   let tr = document.createElement('tr');
   let td = document.createElement('td');
   td.setAttribute('colspan', 6);
-  td.innerHTML = message;
+  td.innerHTML = "ssss: " + message;
   tr.appendChild(td);
   tbody.appendChild(tr);
 }
 
+//gets list of students *not* enrolled in a class so they may be possibly added 
 function getUsersNotEnrolled(someClassId) {
   let selectElement = "";
 
@@ -180,12 +182,14 @@ function getUsersNotEnrolled(someClassId) {
 
 
 // utility -------------------------------------
+//utility function to log messages to console if turned on
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);
   }
 }
 
+//removes all table rows from table tbody element id that's passed in
 function removeAllTableRows(tbody) {
   let tableRow = tbody.firstChild;
   while (tableRow) {
