@@ -72,7 +72,8 @@ function dropUserFromCourse(e) {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      document.getElementById('dropuserFromCourseFeedback').innerHTML = "<b>Student dropped</b>";
+      document.getElementById('dropuserFromCourseFeedback').innerHTML = "";
+      alert('Student dropped from course');
       removeAllTableRows(document.getElementById('userListingTbody'));
       getListOfUsersEnrolled(document.getElementById('courseToDropUserFrom').value);
     } else {
@@ -150,7 +151,7 @@ function addMessageToDropStudent(tbody, message) {
   tbody.appendChild(tr);
 }
 
-//gets list of students *not* enrolled in a class so they may be possibly added 
+//gets list of students *not* enrolled in a class so they may be possibly added
 function getUsersNotEnrolled(someClassId) {
   let selectElement = "";
 

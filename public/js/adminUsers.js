@@ -187,7 +187,8 @@ function deleteUser(e) {
   req.addEventListener("load", function () {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
-      document.getElementById('editDeleteFeedbackResponse').innerHTML = "user deleted";
+      document.getElementById('editDeleteFeedbackResponse').innerHTML = "";
+      alert("User deleted");
       removeAllTableRows();
       buildEditDeleteUserTable();
     } else {
@@ -216,7 +217,7 @@ function editUser(e) {
 
   if (goodToEditUser) {
     let payload = setUpPayLoad(buttonID);
-    updloadEdit(buttonID, payload);
+    uploadEdit(buttonID, payload);
   }
   event.preventDefault();
 }
@@ -261,7 +262,7 @@ function validateEditContents(userId) {
 }
 
 //Ajax call to modify user
-function updloadEdit(buttonID, payload) {
+function uploadEdit(buttonID, payload) {
   //make ajax request
   let req = new XMLHttpRequest();
   req.open("PATCH", baseURL + editUserAPI, true);
@@ -270,14 +271,14 @@ function updloadEdit(buttonID, payload) {
     if (req.status >=200 && req.status < 400) {
       let data = JSON.parse(req.response);
       if (data.result == "DUPLICATE") {
-        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, that user name is taken please choose another</p>';
+        alert('Sorry, that user name is taken please choose another');
         document.getElementById('editUserName' + buttonID).style.backgroundColor = "yellow";
       } else if (data.result == "ERROR") {
-        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
+        alert('Sorry, there was an error.  Please try again');
       } else {
         document.getElementById('editUserName' + buttonID).style.backgroundColor = "white";
         document.getElementById('editUserName' + buttonID).style.border = "1px solid #000000";
-        document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="font-weight: bold">User edit saved</p>';
+        alert("User edit saved");
       }
     } else {
       document.getElementById('editDeleteFeedbackResponse').innerHTML = '<p style="color: #ff0000">Sorry, there was an error.  Please try again</p>';
