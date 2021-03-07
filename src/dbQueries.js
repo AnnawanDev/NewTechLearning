@@ -26,6 +26,7 @@ async function getListOfCategories() {
   })
 }
 
+//gets list of all categories
 async function getListOfAllCategories() {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `categoryId`, `categoryName` FROM `Categories` ORDER BY `categoryName` ASC;", (err, rows, fields) => {
@@ -42,6 +43,7 @@ async function getListOfAllCategories() {
 //--------------------------------------------------------
 //---------------------- COURSES -------------------------
 //--------------------------------------------------------
+//gets list of all live courses
 async function getListOfLiveCourses() {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `courseId`, `courseName` FROM `Courses` WHERE `isLive` = 1 ORDER BY courseName ASC", (err, rows, fields) => {
@@ -55,6 +57,7 @@ async function getListOfLiveCourses() {
   })
 }
 
+//gits list of all courses and who is teaching
 async function getListOfAllCoursesAndWhoIsTeaching() {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `courseId`, `courseName`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN' GROUP BY courseId ORDER BY courseId;", (err, rows, fields) => {
@@ -68,6 +71,7 @@ async function getListOfAllCoursesAndWhoIsTeaching() {
   })
 }
 
+//returns details on a specific course
 async function getSpecificCourse(courseId) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `courseId`, `courseName`, `courseDescription`, `categoryFk`, `userId`, `firstName`, `lastName`, `userName`, CONCAT(LEFT(`courseDescription`,25), '...') AS 'description', `dateWentLive`, IF(STRCMP(isLive, 1), 'NO', 'YES') AS isLive, categoryName, GROUP_CONCAT(languageName) AS 'TaughtIn', GROUP_CONCAT(languageId) AS 'TaughtInId' FROM `Courses` INNER JOIN `UsersCourses` ON courseId = courseFk INNER JOIN `Users` ON userFk = userId LEFT OUTER JOIN `LanguagesCourses` ON Courses.courseId = LanguagesCourses.courseFk LEFT OUTER JOIN `Languages` ON LanguagesCourses.languageFk = Languages.languageId LEFT OUTER JOIN `Categories` ON Courses.categoryFk = Categories.categoryId WHERE `courseId` = ? AND (`userType` = 'INSTRUCTOR' OR `userType` = 'ADMIN') GROUP BY courseId ORDER BY courseId;", courseId, (err, rows, fields) => {
@@ -80,6 +84,7 @@ async function getSpecificCourse(courseId) {
   })
 }
 
+//function adds a new course
 async function addNewCourse(courseName, courseDescription, categoryId) {
   if (isNaN(categoryId) || categoryId < 0) {
     reject("The category ID is not correct");
@@ -100,6 +105,7 @@ async function addNewCourse(courseName, courseDescription, categoryId) {
   });
 }
 
+//deletes a particular course
 async function deleteCourse(courseId) {
   if (isNaN(courseId) || courseId < 0) {
     reject("The category ID is not correct");
@@ -117,7 +123,7 @@ async function deleteCourse(courseId) {
   });
 }
 
-
+//edits a particular course
 async function editCourse(courseId, courseName, courseDescription, isLive, category) {
   return new Promise(function(resolve, reject) {
     //set dateWentLive if isLive=1
@@ -188,6 +194,7 @@ async function addLanguagesToCourse(languageIds, newCourseId) {
   });
 }
 
+//deletes all languages associated with a particular course
 async function deleteAllLanguagesForCourse(courseId) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("DELETE FROM `LanguagesCourses` WHERE `courseFk` = ?", [courseId], (err, rows, fields) => {
@@ -203,6 +210,7 @@ async function deleteAllLanguagesForCourse(courseId) {
 //--------------------------------------------------------
 //---------------------- USERS ------------------
 //--------------------------------------------------------
+//returns the user type for a particular userId
 async function getUserType(someUserId) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT `userType` FROM `Users` WHERE `userId` = ?", someUserId, (err, rows, fields) => {
@@ -224,6 +232,7 @@ async function getUserType(someUserId) {
     });
 };
 
+//adds a new user
 async function addNewUser(inserts) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query('INSERT INTO `Users` (`firstName`, `lastName`, `userName`, `email`, `password`, `userType`) VALUES (?, ?, ?, ?, ?, ?);', inserts, (err, result) => {
@@ -241,6 +250,7 @@ async function addNewUser(inserts) {
   });
 }
 
+//updates who the instructor is for a particular course
 async function updateInstructorForCourse(courseId, oldInstructor, newInstructor) {
   return new Promise(function(resolve, reject) {
     const inserts = [newInstructor, courseId, oldInstructor, courseId];
@@ -255,6 +265,7 @@ async function updateInstructorForCourse(courseId, oldInstructor, newInstructor)
   });
 }
 
+//returns a list of all users and breaks out their user type into TRUE/FALSE pairs for whether they are a STUDENT, INSTRUCTOR or ADMIN
 async function getListOfUsersWithUserTypes() {
   return new Promise(function(resolve, reject) {
     mysql.pool.query("SELECT userId, firstName, lastName, userName, email, IF(STRCMP(userType, 'STUDENT'), false, true) AS STUDENT, IF(STRCMP(userType, 'INSTRUCTOR'), false, true) AS INSTRUCTOR, IF(STRCMP(userType, 'ADMIN'), false, true) AS ADMIN FROM Users ORDER BY lastName ASC;", (err, rows, fields) => {
@@ -268,6 +279,7 @@ async function getListOfUsersWithUserTypes() {
   })
 }
 
+//gets list of users associated with a class
 async function getListOfUsersAssociatedWithAClass(someClassId) {
   return new Promise(function(resolve, reject) {
 
@@ -286,6 +298,7 @@ async function getListOfUsersAssociatedWithAClass(someClassId) {
   })
 }
 
+//gets a userID for a particular user name
 async function getUserId(userName) {
   return new Promise(function(resolve, reject) {
 
@@ -337,6 +350,7 @@ async function doesUserExist(someUserName, somePassword) {
   });
 }
 
+//gets a list of all instructors or admins
 async function getAllInstructorsOrAdmins() {
   return new Promise(function(resolve, reject) {
 
@@ -357,6 +371,7 @@ async function getAllInstructorsOrAdmins() {
 //--------------------------------------------------------
 //---------------------- USERSCOURSES --------------------
 //--------------------------------------------------------
+//checks if a particular user is either an instructor or student in a class
 async function isInstructorOrStudentInClass(someContextObject, req) {
   return new Promise(function(resolve, reject) {
     if (!req.session || !req.session.user || req.params.id == "") {
@@ -381,6 +396,7 @@ async function isInstructorOrStudentInClass(someContextObject, req) {
     })
 }
 
+//adds a user to a class 
 async function addUserToClass(inserts) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query('INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (?, ?);', inserts, (err, result) => {
