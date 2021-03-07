@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 17, 2021
+   March 6, 2021
 */
 
 const express = require('express');
@@ -12,7 +12,7 @@ const {addUserToClass, getListOfLiveCourses, addNewUser, getListOfUsersWithUserT
 const bcrypt = require('bcrypt');
 const logIt = require('../helperFunctions');
 
-
+//route handler when landing on /Admin/CourseEnrollment from a GET request
 router.get('/Admin/CourseEnrollment/', requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin Course Enrollment';
@@ -22,6 +22,7 @@ router.get('/Admin/CourseEnrollment/', requireLogin, async (req, res) => {
   res.render('adminCourseEnrollment', context);
 });
 
+//route handler when POST to /Admin/CourseEnrollment page
 router.post('/Admin/CourseEnrollment/', requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin Course Enrollment';
@@ -31,14 +32,13 @@ router.post('/Admin/CourseEnrollment/', requireLogin, async (req, res) => {
     let userId = req.body['userIdToAddToCourse'];
     let courseId = req.body['courseToAddSelectElement'];
     const inserts = [userId, courseId ];
-    context.addUserToClassResult = await addUserToClass(inserts); //TODO (1) error check of result (2) some other message than "Success!"
+    let result = await addUserToClass(inserts);
+    context.addUserToClassResult =   "<script>document.addEventListener('DOMContentLoaded', function(event) { alert('User added to course');});</script>";
   }
 
   context.courses = await getListOfLiveCourses();
   context.usersAssociatedWithAParticularClass = await getListOfUsersAssociatedWithAClass(context.courses[0].courseId);
   res.render('adminCourseEnrollment', context);
 });
-
-
 
 module.exports = router;

@@ -8,6 +8,7 @@
 const dbQueries = require('../dbQueries');
 const useSecurity = true;
 
+//middleware function to that makes sure that user is logged in as either Instructor or Admin
 const requireLogin = (req, res, next) => {
   if (useSecurity) {
     if (!req.session.user) {
@@ -24,6 +25,7 @@ const requireLogin = (req, res, next) => {
   }
 };
 
+//middleware function that checks if user is logged in as Admin
 const requireAdminLogin = (req, res, next) => {
   if (useSecurity) {
     if (!req.session.user) {
@@ -60,6 +62,7 @@ async function getLoginContext(someContextObject, req) {
   return someContextObject;
 }
 
+//checks if user is at least logged in
 async function isNotLoggedIn(req) {
   if (!req.session || !req.session.user) {
     return true;
@@ -67,6 +70,7 @@ async function isNotLoggedIn(req) {
   return false;
 }
 
+//verifies that user is logged in as some type
 async function isLoggedInAs(req, someType) {
   if (!req.session || !req.session.user) {
     return false;
@@ -78,6 +82,7 @@ async function isLoggedInAs(req, someType) {
   return false;
 }
 
+//makes sure that user session is set to verify if user is at least logged in
 function checkIfLoggedIn(req) {
   if (!req.session.user) {
     return true;

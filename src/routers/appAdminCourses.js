@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 17, 2021
+   March 6, 2021
 */
 
 const express = require('express');
@@ -12,6 +12,7 @@ const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, deleteA
 const bcrypt = require('bcrypt');
 const {logIt} = require('../helperFunctions');
 
+//route handler for GET when going to /Admin/Courses/
 router.get('/Admin/Courses/', requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin Courses';
@@ -23,18 +24,19 @@ router.get('/Admin/Courses/', requireLogin, async (req, res) => {
   res.render('adminCourses', context);
 });
 
+//route handler for POSTs to /Admin/Courses/
 router.post('/Admin/Courses/', requireLogin, async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Admin Courses';
   context = await getLoginContext(context, req);
 
+  //user has POSTed back to back to add a course
   if (req.body['addNewCourseForm']) {
     let courseName = req.body['courseName'];
     let courseDescription = req.body['courseDescription'];
     let categoryId = req.body['categorySelectorForNewCourse'];
     let languageIds = req.body['languageSelectorForNewCourse'];
 
-    //TODO: ADD MORE ERROR CHECKING/HANDLING
     if (courseName == "" || courseDescription == "") {
       context.errorInAddingCourse = "<p style=\"color: #ff0000;\">You must enter both a course name and description</p>";
     } else if (languageIds[0] == 0 && languageIds.length > 1) {
@@ -56,8 +58,7 @@ router.post('/Admin/Courses/', requireLogin, async (req, res) => {
       let addToUsersCoursesResult = await addUserToClass(inserts);
 
       //show result
-      //TODO: GET NEW SUCCESS MESSAGE
-      context.addNewCourseResult = addToUsersCoursesResult;
+      context.addNewCourseResult = "<script>document.addEventListener('DOMContentLoaded', function(event) { alert('New course added.\\n\\nYour next step is to add course modules and then make it live.');});</script>";
     }
   }
 
@@ -68,6 +69,7 @@ router.post('/Admin/Courses/', requireLogin, async (req, res) => {
   res.render('adminCourses', context);
 });
 
+//route handler when user is landing on page details to edit a course
 router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
 
   if (!req.params.id || isNaN(req.params.id)) {
@@ -107,6 +109,7 @@ router.get('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   res.render('adminCourseEdit', context);
 });
 
+//route handler when user has posted changed to edit a specific course
 router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
 
   if (!req.params.id || isNaN(req.params.id)) {
@@ -132,7 +135,6 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   let newLanguageIds = req.body['selectLanguage'];
 
   //pass on edits to course
-  //TODO: Verify all 4 updates pass before passing on success message
   let result = await editCourse(courseId, courseName, courseDescription, isLive, category);
   let updateInstructorResult = await updateInstructorForCourse(courseId, oldInstructor, newInstructor);
   let deleteLanguageResult = await deleteAllLanguagesForCourse(courseId);
@@ -140,7 +142,7 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
 
   // set up return context object
   let context = {};
-  context.EditResult = result + "<br /><br />"; //"SUCCESS! Course edited<br /><br />";
+  context.EditResult = result + "<br /><br />";
   context.mainContentStyle = "display: none;"
 
   //show result of page
@@ -150,6 +152,7 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   res.render('adminCourseEdit', context);
 });
 
+//route handler when user wants to delete a specific course - shows user all the fields before they actually delete
 router.get('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
 
   if (!req.params.id || isNaN(req.params.id)) {
@@ -169,7 +172,7 @@ router.get('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
   context.courseId = courseInfo[0].courseId;
   context.courseName = courseInfo[0].courseName;
   context.courseDescription = courseInfo[0].courseDescription;
-  context.isLive = (courseInfo[0].isLive == 'NO') ? false : true; 
+  context.isLive = (courseInfo[0].isLive == 'NO') ? false : true;
   context.dateWentLive = courseInfo[0].dateWentLive;
   context.instructor = courseInfo[0].lastName + ", " + courseInfo[0].firstName + " (" + courseInfo[0].userName + ")";
 
@@ -188,6 +191,7 @@ router.get('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
   res.render('adminCourseDelete', context);
 });
 
+//route handler when user deletes a class and POSTs back to page
 router.post('/Admin/Courses/Delete/:id', requireLogin, async (req, res) => {
 
   if (!req.params.id || isNaN(req.params.id)) {

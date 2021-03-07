@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 23, 2021
+   March 6, 2021
 */
 
 define (['module'], function (module){
@@ -22,36 +22,39 @@ else {
   });
 }
 
+//binds click listener to validate course submission when button is clicked
 function bindSubmitButtons() {
   document.getElementById("addButton").addEventListener("click", validateNewCourse);
 }
 
 
 // main functions -------------------------------------
+//validates form when adding a new course
 function validateNewCourse() {
+  //make sure course name is not blank
   if (document.getElementById("courseName").value == "") {
-    document.getElementById("addCourseError").innerHTML = "<p style=\"color: #ff0000;\">You need to enter a course name</p>";
-    document.getElementById("addCourseSuccess").innerHTML = "";
+    alert('You need to enter a course name');
     event.preventDefault();
     return;
   }
 
+  //make sure there is a course description
   if (document.getElementById("courseDescription").value == "") {
-    document.getElementById("addCourseError").innerHTML = "<p style=\"color: #ff0000;\">You need to enter a course description</p>";
-    document.getElementById("addCourseSuccess").innerHTML = "";
+    alert('You need to enter a course description');
     event.preventDefault();
     return;
   }
 
-  if (document.getElementById("languageSelectorForNewCourse").length > 1 && document.getElementById("languageSelectorForNewCourse")[0] == 0) {
-    document.getElementById("addCourseError").innerHTML = "<p style=\"color: #ff0000;\">You can't select both no languages and languages</p>";
-    document.getElementById("addCourseSuccess").innerHTML = "";
+  //make sure there's at least one language selected
+  if (document.getElementById("languageSelectorForNewCourse").length > 0 && document.getElementById("languageSelectorForNewCourse")[0] == 0) {
+    alert("You can't select both no languages and languages");
     event.preventDefault();
     return;
   }
 }
 
 // utility -------------------------------------
+//utility function to log messages if logging is turned on
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);
