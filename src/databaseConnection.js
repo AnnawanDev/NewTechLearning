@@ -8,6 +8,7 @@
 require('dotenv').config({path: __dirname + '/.env'})
 let mysql = require('mysql');
 
+//creates connection pool for MariaDB - pulls credentials from .env file
 let pool = mysql.createPool({
   connectionLimit : 10,
   host            : process.env['DATABASE_HOST'],
