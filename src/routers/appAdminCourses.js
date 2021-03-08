@@ -8,7 +8,7 @@
 const express = require('express');
 const router = new express.Router();
 const {getLoginContext, requireLogin} = require('../middleware/auth');
-const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, deleteAllLanguagesForCourse, editCourse, getCategoryNameForCourse, getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories, getListOfLanguages, getSpecificCourse, updateInstructorForCourse } = require('../dbQueries');
+const {addLanguagesToCourse, addNewCourse, addUserToClass, deleteCourse, deleteAllLanguagesForCourse, editCourse, getCategoryNameForCourse, getAllInstructorsOrAdmins, getListOfAllCoursesAndWhoIsTeaching, getListOfAllCategories, getListOfLanguages, getSpecificCourse, updateInstructorForCourse, updatesCourseWithTransaction } = require('../dbQueries');
 const bcrypt = require('bcrypt');
 const {logIt} = require('../helperFunctions');
 
@@ -135,14 +135,18 @@ router.post('/Admin/Courses/Edit/:id', requireLogin, async (req, res) => {
   let newLanguageIds = req.body['selectLanguage'];
 
   //pass on edits to course
-  let result = await editCourse(courseId, courseName, courseDescription, isLive, category);
-  let updateInstructorResult = await updateInstructorForCourse(courseId, oldInstructor, newInstructor);
+  //let result = await editCourse(courseId, courseName, courseDescription, isLive, category);
+  //let updateInstructorResult = await updateInstructorForCourse(courseId, oldInstructor, newInstructor);
+
+  //experiment - calling transaction stored procedure to update
+  let result = await  updatesCourseWithTransaction(courseName, courseDescription, isLive, '2021-03-07', category, courseId, oldInstructor, newInstructor);
+  console.log("RESULT: " + result);
   let deleteLanguageResult = await deleteAllLanguagesForCourse(courseId);
   let insertNewLanguageResult = await addLanguagesToCourse(newLanguageIds, courseId);
 
   // set up return context object
   let context = {};
-  context.EditResult = result + "<br /><br />";
+  context.EditResult = "Success<br /><br />";
   context.mainContentStyle = "display: none;"
 
   //show result of page

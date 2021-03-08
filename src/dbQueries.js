@@ -57,6 +57,21 @@ async function getListOfLiveCourses() {
   })
 }
 
+//gets list of all live courses
+async function updatesCourseWithTransaction(courseName, courseDescription, isLive, dateWentLive, categoryFk, courseId, oldInstructor, newInstructor) {
+  return new Promise(function(resolve, reject) {
+    const inserts = [courseName, courseDescription, isLive, dateWentLive, categoryFk, courseId, oldInstructor, newInstructor];
+    mysql.pool.query("Call UpdateCourse(?, ?, ?, ?, ?, ?, ?, ?);", inserts, (err, rows, fields) => {
+      if (err) {
+        logIt("getListOfLiveCourses() ERROR: " + err);
+        reject("ERROR in selecting courses");
+      }
+
+      resolve(rows);
+    });
+  })
+}
+
 //gits list of all courses and who is teaching
 async function getListOfAllCoursesAndWhoIsTeaching() {
   return new Promise(function(resolve, reject) {
@@ -396,7 +411,7 @@ async function isInstructorOrStudentInClass(someContextObject, req) {
     })
 }
 
-//adds a user to a class 
+//adds a user to a class
 async function addUserToClass(inserts) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query('INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (?, ?);', inserts, (err, result) => {
@@ -432,5 +447,6 @@ module.exports = {
   getSpecificCourse,
   getUserId,
   isInstructorOrStudentInClass,
-  updateInstructorForCourse
+  updateInstructorForCourse,
+  updatesCourseWithTransaction
 }
