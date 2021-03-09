@@ -69,7 +69,8 @@ function getAvailableClasses(filter) {
           let courseID = someClass.courseId;
           let classURL = baseURL + coursesURLString + "/" + courseID + "/" + someClass.courseName + courseOverviewLandingpage;
           feedbackToUser += "<div>";
-          feedbackToUser += "<a href=\"" + classURL + "\"><img src=\"/images/courseImage1.jpg\" width=\"150\" height=\"150\" /></a>";
+          feedbackToUser += "<!-- Image Credit: Public domain image taken from: https://www.publicdomainpictures.net/en/view-image.php?image=151542&picture=computer-notebook-coffee Taken on: 3/8/21 -->";
+          feedbackToUser += "<a href=\"" + classURL + "\"><img src=\"/images/poste-de-travail-pc-portable-cafe.jpg\" width=\"150\" height=\"150\" /></a>";
           feedbackToUser += "<a href=\"" + classURL + "\">" + someClass.courseName + "</a>";
           feedbackToUser += "</div>";
         }

@@ -2,7 +2,7 @@
    CS 340 Final Project: New Tech Learning
    Nora Marji
    Ed Wied
-   February 17, 2021
+   March 8, 2021
 */
 
 const express = require('express');
@@ -14,6 +14,7 @@ const mysql = require('../databaseConnection');
 const bcrypt = require('bcrypt');
 const useLogging = true;
 
+//route handler for homepage
 router.get('/', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Home';
@@ -21,6 +22,7 @@ router.get('/', async (req, res) => {
   res.render('home', context);
 });
 
+//route handler for about page
 router.get('/About', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | About';
@@ -28,6 +30,7 @@ router.get('/About', async (req, res) => {
   res.render('about', context);
 });
 
+//route handler for logging the user in
 router.get('/Login', async (req, res) => {
   let context = {};
 
@@ -41,14 +44,16 @@ router.get('/Login', async (req, res) => {
   res.render('login',context);
 });
 
+//route handler for logging the usre out
 router.get('/Logout', requireLogin, async (req, res) => {
-  req.session.reset();
+  req.session.reset();  //resets user session
   let context = {};
   context.title = 'New Tech Learning | Logout';
   context = await getLoginContext(context, req);
   res.render('logout', context);
 });
 
+//route handler for Create Account when user lands on page
 router.get('/CreateAccount', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Create Account';
@@ -56,6 +61,7 @@ router.get('/CreateAccount', async (req, res) => {
   res.render('createAccount', context);
 });
 
+//route handler for creating an account after user does a POST back to the page
 router.post('/CreateAccount', async (req, res) => {
   let context = {};
   context.title = 'New Tech Learning | Create Account';
@@ -100,6 +106,7 @@ router.get('/Courses', async (req, res) => {
   res.render('courses', context);
 });
 
+//route handler for displaying the course overview page for a particualr course ID 
 router.get('/Courses/:id/:courseName/overview', async (req, res) => {
   let context = {};
   context.results = "";
@@ -138,6 +145,8 @@ router.get('/Courses/:id/:courseName/overview', async (req, res) => {
     });
 });
 
+//route handler for when a user signs up for a course - it will post back to this page and then provide
+//the user with links to go to course modules
 router.post('/Courses/:id/:courseName/overview', async (req, res) => {
   //if user is not logged in then reroute to GET version of page
   if (!req.session || !req.session.user) {
@@ -186,7 +195,7 @@ router.post('/Courses/:id/:courseName/overview', async (req, res) => {
     });
 });
 
-//removed login but I think in reality we'd want to make sure that someone has enrolled in class or is the instructor
+//route handler for course module
 router.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
   //if courseModule parameter is missing assume it's equal to 1
   if (!req.params.courseModule) {
@@ -230,6 +239,7 @@ router.get('/Courses/:id/:courseName/module/:courseModule?', (req, res) => {
   });
 });
 
+//utility function to log messages to console based on whether use logging is enabled
 function logIt(someMessage) {
   if (useLogging) {
     console.log(someMessage);
