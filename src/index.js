@@ -40,14 +40,18 @@ const appAdmin = require('./routers/appAdmin');
 const appAdminUsers = require('./routers/appAdminUsers');
 const appAdminCourses = require('./routers/appAdminCourses');
 const appAdminCourseEnrollment = require('./routers/appAdminCourseEnrollment');
-const appAdminPagesNora = require('./routers/appAdminPagesNora');
+const appAdminCategories  = require('./routers/appAdminCategories');
+const appAdminCourseModules = require('./routers/appAdminCourseModules');
+const appAdminLanguages = require('./routers/appAdminLanguages');
 const apiEndpoints = require('./routers/apiEndpoints');
 app.use(appPublicPages);
 app.use(appAdmin);
 app.use(appAdminUsers);
 app.use(appAdminCourses);
 app.use(appAdminCourseEnrollment);
-app.use(appAdminPagesNora);
+app.use(appAdminCategories);
+app.use(appAdminCourseModules);
+app.use(appAdminLanguages);
 app.use(apiEndpoints);
 
 // serve 404 on anything else ------------------------------------------
