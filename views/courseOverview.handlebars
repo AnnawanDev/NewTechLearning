@@ -20,25 +20,37 @@
 
         {{#if isStudent}}
           {{#if isEnrolled}}
+            {{#if isThereAModule}}
               <a href="{{{moduleLink}}}">Go to first module</a>
             {{else}}
-              <form method="post">
-                <input type="hidden" id="signUpForClass" name="signUpForClass" value="yes" />
-                <button id="signUpForClassButton">Sign up for class</button>
-              </form>
+              Class details coming soon.<br />Your instructor just needs to add some course modules.
             {{/if}}
+          {{else}}
+            <form method="post">
+              <input type="hidden" id="signUpForClass" name="signUpForClass" value="yes" />
+              <button id="signUpForClassButton">Sign up for class</button>
+            </form>
+          {{/if}}
         {{/if}}
 
         {{#if isInstructor}}
           {{#if isEnrolled}}
-            <a href="{{{moduleLink}}}">Go to first module</a>
+            {{#if isThereAModule}}
+              <a href="{{{moduleLink}}}">Go to first module</a>
+            {{else}}
+              Class details coming soon.<br />Your instructor just needs to add some course modules.
+            {{/if}}
           {{else}}
             <!-- nothing is shown because instructors can't sign up for classes -->
           {{/if}}
         {{/if}}
 
         {{#if isAdmin}}
-          <a href="{{{moduleLink}}}">Go to first module</a>
+          {{#if isThereAModule}}
+            <a href="{{{moduleLink}}}">Go to first module</a>
+          {{else}}
+            Class details coming soon.<br />Your instructor just needs to add some course modules.
+          {{/if}}
         {{/if}}
 
       </div>

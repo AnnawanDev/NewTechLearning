@@ -9,7 +9,9 @@ const express = require('express');
 const router = new express.Router();
 const {getLoginContext, requireLogin} = require('../middleware/auth');
 const helper = require ('../helperFunctions');
-const {doesUserExist, addNewUser, getListOfCategories, getListOfLanguages, isInstructorOrStudentInClass, addUserToClass} = require('../dbQueries');
+const { doesUserExist, addNewUser,
+  getListOfCategories, getListOfLanguages, doesCourseHaveAtLeastOneModule,
+  isInstructorOrStudentInClass, addUserToClass} = require('../dbQueries');
 const mysql = require('../databaseConnection');
 const bcrypt = require('bcrypt');
 const useLogging = true;
@@ -106,11 +108,14 @@ router.get('/Courses', async (req, res) => {
   res.render('courses', context);
 });
 
-//route handler for displaying the course overview page for a particualr course ID 
+//route handler for displaying the course overview page for a particualr course ID
 router.get('/Courses/:id/:courseName/overview', async (req, res) => {
   let context = {};
   context.results = "";
   context = await getLoginContext(context, req);
+
+  //is there at least one course module?  if so, then show link. if not, provide 'coming soon' message
+  context.isThereAModule = await doesCourseHaveAtLeastOneModule(req.params.id) == 'true';
 
   mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
       if (err) {
@@ -161,6 +166,9 @@ router.post('/Courses/:id/:courseName/overview', async (req, res) => {
   //add user to class
   const inserts = [req.session.user.userId, req.params.id];
   context.addingClass = await addUserToClass(inserts);
+
+  //is there at least one course module?  if so, then show link. if not, provide 'coming soon' message
+  context.isThereAModule = await doesCourseHaveAtLeastOneModule(req.params.id) == 'true';
 
   mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
       if (err) {
