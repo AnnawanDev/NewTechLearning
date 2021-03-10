@@ -115,8 +115,7 @@ router.get('/Courses/:id/:courseName/overview', async (req, res) => {
   context = await getLoginContext(context, req);
 
   //is there at least one course module?  if so, then show link. if not, provide 'coming soon' message
-   context.isThereAModule = await doesCourseHaveAtLeastOneModule(req.params.id) == 'true';
-
+  context.isThereAModule = await doesCourseHaveAtLeastOneModule(req.params.id) == 'true';
 
   mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
       if (err) {
@@ -126,9 +125,6 @@ router.get('/Courses/:id/:courseName/overview', async (req, res) => {
       context.title = rows[0].courseName;
       context.htmlContent = rows[0].courseDescription;
       context.moduleLink = '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1';
-
-
-
 
       //if admin then show link to go to class module
       //if instructor then see if instructor is teaching that class.  If teaching, then show link. If not, then don't show anything
@@ -171,6 +167,9 @@ router.post('/Courses/:id/:courseName/overview', async (req, res) => {
   const inserts = [req.session.user.userId, req.params.id];
   context.addingClass = await addUserToClass(inserts);
 
+  //is there at least one course module?  if so, then show link. if not, provide 'coming soon' message
+  context.isThereAModule = await doesCourseHaveAtLeastOneModule(req.params.id) == 'true';
+
   mysql.pool.query('SELECT `courseName`, `courseDescription` FROM `Courses` WHERE `courseId` = ?', req.params.id, async (err, rows, fields) => {
       if (err) {
         logIt("ERROR FROM /Courses/:id/:courseName/overview: " + err);
@@ -179,9 +178,6 @@ router.post('/Courses/:id/:courseName/overview', async (req, res) => {
       context.title = rows[0].courseName;
       context.htmlContent = rows[0].courseDescription;
       context.moduleLink = '/courses/' + req.params.id + '/' + rows[0].courseName + '/module/1';
-
-      //is there at least one course module?  if so, then show link. if not, provide 'coming soon' message
-      context.isThereAModule = true;
 
       //if admin then show link to go to class module
       //if instructor then see if instructor is teaching that class.  If teaching, then show link. If not, then don't show anything
