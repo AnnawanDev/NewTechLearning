@@ -143,6 +143,28 @@ async function editCourse(courseId, courseName, courseDescription, isLive, categ
   });
 }
 
+
+//--------------------------------------------------------
+//---------------------- COURSE MODULES ------------------
+//--------------------------------------------------------
+
+async function doesCourseHaveAtLeastOneModule(someCourseId) {
+  return new Promise(function(resolve, reject) {
+    mysql.pool.query("SELECT `courseModuleId` FROM `CourseModules` WHERE `courseFk` = ?;", someCourseId, (err, rows, fields) => {
+      if (err) {
+        logIt("doesCourseHaveAtLeastOneModule() ERROR: " + err);
+        reject("ERROR in getting number of course modules");
+      }
+
+      if (rows.length > 0) {
+        resolve('true');
+      } else {
+        resolve('false');
+      }
+    });
+  })
+}
+
 //--------------------------------------------------------
 //---------------------- LANGUAGES -----------------------
 //--------------------------------------------------------
@@ -396,7 +418,7 @@ async function isInstructorOrStudentInClass(someContextObject, req) {
     })
 }
 
-//adds a user to a class 
+//adds a user to a class
 async function addUserToClass(inserts) {
   return new Promise(function(resolve, reject) {
     mysql.pool.query('INSERT INTO `UsersCourses` (`userFk`, `courseFk`) VALUES (?, ?);', inserts, (err, result) => {
@@ -418,6 +440,7 @@ module.exports = {
   addUserToClass,
   deleteCourse,
   deleteAllLanguagesForCourse,
+  doesCourseHaveAtLeastOneModule,
   doesUserExist,
   editCourse,
   getAllInstructorsOrAdmins,
