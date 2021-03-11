@@ -20,6 +20,7 @@
       <th>Instructor</th>
       <th>Category</th>
       <th>Language(s)</th>
+      <th>Is Live?</th>
     </thead>
     <tbody>
       <tr>
@@ -46,6 +47,9 @@
               <option value="{{languageId}}">{{languageName}}</option>
             {{/each}}
           </select>
+        </td>
+        <td>
+          <input type="checkbox" id="addCourseIsLive" name="addCourseIsLive" checked />
         </td>
       </tr>
     </tbody>

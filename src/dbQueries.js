@@ -85,16 +85,17 @@ async function getSpecificCourse(courseId) {
 }
 
 //function adds a new course
-async function addNewCourse(courseName, courseDescription, categoryId) {
+async function addNewCourse(courseName, courseDescription, categoryId, isLive) {
+  console.log("IS LIVE: " +  isLive)
   if (isNaN(categoryId) || categoryId < 0) {
     reject("The category ID is not correct");
   }
 
   if (categoryId == 0) { categoryId = null ; }
 
-  let inserts = [courseName, courseDescription, categoryId];
+  let inserts = [courseName, courseDescription, categoryId, isLive];
   return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`, `categoryFk`) VALUES (?, ?, ?); ', inserts, (err, result) => {
+    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`, `categoryFk`, `isLive`) VALUES (?, ?, ?, ?); ', inserts, (err, result) => {
       if (err) {
         logIt("addNewCourse ERROR: " + err)
         reject("Sorry - there was some kind of error.  Please try again.");
