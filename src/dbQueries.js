@@ -86,7 +86,6 @@ async function getSpecificCourse(courseId) {
 
 //function adds a new course
 async function addNewCourse(courseName, courseDescription, categoryId, isLive) {
-  console.log("IS LIVE: " +  isLive)
   if (isNaN(categoryId) || categoryId < 0) {
     reject("The category ID is not correct");
   }
