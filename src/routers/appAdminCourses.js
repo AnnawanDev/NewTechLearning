@@ -36,13 +36,14 @@ router.post('/Admin/Courses/', requireLogin, async (req, res) => {
     let courseDescription = req.body['courseDescription'];
     let categoryId = req.body['categorySelectorForNewCourse'];
     let languageIds = req.body['languageSelectorForNewCourse'];
+    let isLive = (req.body['addCourseIsLive'] == null) ? 0 : 1; //if isLive is checked it will have a value posted; otherwise, will be null
 
     if (courseName == "" || courseDescription == "") {
       context.errorInAddingCourse = "<p style=\"color: #ff0000;\">You must enter both a course name and description</p>";
     } else if (languageIds[0] == 0 && languageIds.length > 1) {
       context.errorInAddingCourse = "<p style=\"color: #ff0000;\">Select language(s) or none, but not both</p>";
     } else {
-      let result = await addNewCourse(courseName, courseDescription, categoryId);
+      let result = await addNewCourse(courseName, courseDescription, categoryId, isLive);
 
       //get new course id
       let newCourseId = result.insertId;
@@ -58,7 +59,7 @@ router.post('/Admin/Courses/', requireLogin, async (req, res) => {
       let addToUsersCoursesResult = await addUserToClass(inserts);
 
       //show result
-      context.addNewCourseResult = "<script>document.addEventListener('DOMContentLoaded', function(event) { alert('New course added.\\n\\nYour next step is to add course modules and then make it live.');});</script>";
+      context.addNewCourseResult = "<script>document.addEventListener('DOMContentLoaded', function(event) { alert('New course added.\\n\\nIf your course is live, your next step is to add one or more course modules.');});</script>";
     }
   }
 
