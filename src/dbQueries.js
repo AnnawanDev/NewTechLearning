@@ -91,10 +91,11 @@ async function addNewCourse(courseName, courseDescription, categoryId, isLive) {
   }
 
   if (categoryId == 0) { categoryId = null ; }
+  let dateWentLive = (isLive == 1) ? new Date() : null;
 
-  let inserts = [courseName, courseDescription, categoryId, isLive];
+  let inserts = [courseName, courseDescription, categoryId, isLive, dateWentLive];
   return new Promise(function(resolve, reject) {
-    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`, `categoryFk`, `isLive`) VALUES (?, ?, ?, ?); ', inserts, (err, result) => {
+    mysql.pool.query('INSERT INTO `Courses` (`courseName`, `courseDescription`, `categoryFk`, `isLive`, `dateWentLive`) VALUES (?, ?, ?, ?, ?); ', inserts, (err, result) => {
       if (err) {
         logIt("addNewCourse ERROR: " + err)
         reject("Sorry - there was some kind of error.  Please try again.");
@@ -126,7 +127,6 @@ async function deleteCourse(courseId) {
 //edits a particular course
 async function editCourse(courseId, courseName, courseDescription, isLive, category) {
   return new Promise(function(resolve, reject) {
-    //set dateWentLive if isLive=1
     let dateWentLive = (isLive == 1) ? new Date() : null;
 
     //if category is 0, then user is trying to set it to "none", thus the value stored is null
